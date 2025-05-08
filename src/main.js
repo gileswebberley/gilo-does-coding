@@ -1,24 +1,20 @@
-import './style.css'
-import javascriptLogo from './javascript.svg'
-import viteLogo from '/vite.svg'
-import { setupCounter } from './counter.js'
+import './style.css';
+import javascriptLogo from './javascript.svg';
+import viteLogo from '/vite.svg';
+import { setupCounter } from './counter.js';
+import Floater from './scripts/Floater.js';
 
-document.querySelector('#app').innerHTML = `
-  <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="${viteLogo}" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank">
-      <img src="${javascriptLogo}" class="logo vanilla" alt="JavaScript logo" />
-    </a>
-    <h1>Hello Vite!</h1>
-    <div class="card">
-      <button id="counter" type="button"></button>
-    </div>
-    <p class="read-the-docs">
-      Click on the Vite logo to learn more
-    </p>
-  </div>
-`
+const container = document.querySelector('#container');
 
-setupCounter(document.querySelector('#counter'))
+const floater = new Floater(container, 'floater1', 10, 10);
+// floater.setPosition(100, 100);
+floater.float();
+const floater2 = new Floater(container, 'floater2', 10, 140);
+// floater.setPosition(100, 100);
+floater2.float();
+const floater3 = new Floater(container, 'floater3', 10, 270);
+// floater.setPosition(100, 100);
+floater3.float();
+const floater4 = new Floater(container, 'floater4', 10, 420);
+// floater.setPosition(100, 100);
+floater4.float();
