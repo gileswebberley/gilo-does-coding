@@ -5,11 +5,20 @@ class Floater {
     if (!container || !(container instanceof HTMLElement)) {
       throw new Error('A valid container element must be provided.');
     }
-    //create our div and apply some styling
+    //create our moving div
     this.element = document.createElement('div');
+    //Add an element to hold the content so it can have it's visibilty toggled
+    this.contentHolder = document.createElement('iframe');
+    this.contentHolder.className = 'content-holder'; // Add a class for styling
+    this.contentHolder.style.border = 'none'; // Remove border for the content holder
+    this.contentHolder.style.width = '100%'; // Set width to 100% of the parent element
+    this.element.appendChild(this.contentHolder); // Append content holder to the element
+
     this.container = container;
     this.container.style.zIndex = World.DEPTH * -1; // Set z-index for the container
     this.container.style.position = 'fixed'; // Set position to relative for absolute positioning of children
+    this.containerRect = this.container.getBoundingClientRect(); // Get the bounding rectangle of the container
+
     this.element.style.position = 'absolute'; // Set position to absolute for the floater
     this.element.id = id;
     this.element.className = 'floater'; // Add a class for styling
@@ -34,13 +43,14 @@ class Floater {
     //This was for calculating their starting positions when using relative positioning - now moved on to absolute positioning with a display position passed through as revealX and revealY
     // this.startX = this.element.getBoundingClientRect().x;
     // this.startY = this.element.getBoundingClientRect().y;
-    console.log(this.startX, this.startY);
+    // console.log(this.startX, this.startY);
     const { x, y, z } = this.createRandomPosition();
     this.moveTo(x, y, z, this.myDuration); // move to initial position
   }
 
   float() {
     let counter = 0;
+    this.contentHolder.style.visibility = 'hidden'; // Hide the content holder initially
     // const myDuration = World.DURATION * this.speed;
     const interval = setInterval(() => {
       if (!this.isFloating || counter > 5) {
@@ -58,9 +68,9 @@ class Floater {
 
   createRandomPosition() {
     const actualSize = this.element.getBoundingClientRect();
-    const containerSize = this.container.getBoundingClientRect();
-    const x = Math.random() * (containerSize.width - actualSize.width); // - this.startX; // Random x position
-    const y = Math.random() * (containerSize.height - actualSize.height); // - this.startY; // Random y position
+    // const containerSize = this.container.getBoundingClientRect();
+    const x = Math.random() * (this.containerRect.right - actualSize.width); // - this.startX; // Random x position
+    const y = Math.random() * (window.innerHeight - actualSize.height); // - this.startY; // Random y position
     const z = Math.floor(Math.random() * World.DEPTH + 1) * -1; // Random z-index between -1 and -100
     return { x, y, z };
   }
@@ -80,7 +90,7 @@ class Floater {
     this.rotateTowardsTarget(x, y); // Rotate towards the target position
   }
 
-  // E
+  // Due to the += operator this needs to be called AFTER the setZBasedScale function to avoid overwriting the transform property
   rotateTowardsTarget(targetX, targetY) {
     if (typeof targetX !== 'number' || typeof targetY !== 'number') {
       throw new Error('Target coordinates must be numbers.');
@@ -112,10 +122,19 @@ class Floater {
 
   reveal() {
     // this.element.style.position = 'relative'; // Change position to relative for content display
-    this.element.innerHTML = `<p>This is ${this.element.id} test content</p>`;
-    this.moveTo(this.revealX, this.revealY, 1, this.myDuration); // Move to the top left corner
+    const containerRect = this.container.getBoundingClientRect();
+    console.table(containerRect);
+    console.log(this.element.style.width);
+    // this.contentHolder.src = `<p>This is ${this.element.id} test content</p>`;
+    this.moveTo(
+      this.revealX + containerRect.x,
+      this.revealY + containerRect.y,
+      1,
+      this.myDuration
+    ); // Move to the top left corner
     const timeout = setTimeout(() => {
-      //   this.element.style.position = 'relative';
+      this.rotateTowardsTarget(0, 0);
+      this.contentHolder.style.visibility = 'visible'; // Show the content holder
       clearTimeout(timeout);
     }, this.myDuration - 10);
   }
