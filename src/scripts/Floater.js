@@ -39,35 +39,36 @@ class Floater {
     //This was for calculating their starting positions when using relative positioning - now moved on to absolute positioning with a display position passed through as revealX and revealY
     this.startX = this.element.getBoundingClientRect().x;
     this.startY = this.element.getBoundingClientRect().y;
-    console.log(this.startX, this.startY);
+    // console.log(this.startX, this.startY);
     const { x, y, z } = this.createRandomPosition();
     this.moveTo(x, y, z, this.myDuration); // move to initial position
   }
 
   createFloaterDiv(layoutNumber) {
     //create our moving div
+    const colourRandomiser = Math.floor(
+      Math.random() * World.FLOATER_COLOURS.length
+    );
     this.element = document.createElement('div');
     this.element.style.position = 'absolute';
     this.element.setAttribute('data-layout-number', layoutNumber);
     this.element.setAttribute('data-floating', this.isFloating);
     this.element.className = 'floater'; // Add a class for styling
+    this.element.style.backgroundColor =
+      World.FLOATER_COLOURS[colourRandomiser];
+    this.element.style.borderColor =
+      World.FLOATER_COLOURS[World.FLOATER_COLOURS.length - colourRandomiser];
   }
 
   float() {
     let counter = 0;
     if (this.resizeListener) {
-      window.removeEventListener('resize', this.resizeListener); // Remove the previous resize listener if it exists
+      window.removeEventListener('resize', this.resizeListener);
+      this.hasHeardResize = false;
     }
     this.contentHolder.style.visibility = 'hidden'; // Hide the content holder initially
     // const myDuration = World.DURATION * this.speed;
-    const interval = setInterval(() => {
-      if (!this.isFloating || counter > 2) {
-        // this.isFloating = false; // Stop floating after 25 iterations
-        // this.element.setAttribute('data-floating', this.isFloating);
-        clearInterval(interval);
-        this.reveal();
-        return;
-      }
+    this.floatInterval = setInterval(() => {
       const { x, y, z } = this.createRandomPosition();
       counter++;
       this.moveTo(x, y, z, this.myDuration); // Move to new position
@@ -78,12 +79,11 @@ class Floater {
   createRandomPosition() {
     const actualSize = this.element.getBoundingClientRect();
     const containerRect = this.container.getBoundingClientRect();
-    const x =
-      Math.random() * (containerRect.right - actualSize.width - this.startX); // - this.startX; // Random x position
+    const x = Math.random() * containerRect.right - actualSize.width;
     const y =
-      Math.random() *
-      (window.innerHeight - actualSize.height - this.startY - containerRect.y); // - this.startY; // Random y position
-    const z = Math.floor(Math.random() * World.DEPTH + 1) * -1; // Random z-index between -1 and -100
+      Math.random() * (containerRect.height - actualSize.height) -
+      containerRect.top;
+    const z = Math.floor(Math.random() * World.DEPTH + 1) * -1;
     return { x, y, z };
   }
 
@@ -97,9 +97,10 @@ class Floater {
     }
     this.element.style.left = `${x}px`;
     this.element.style.top = `${y}px`;
-    this.element.style.zIndex = z; // Set z-index for stacking order
-    this.setZBasedScale(z); // Adjust scale based on z-index
-    this.rotateTowardsTarget(x, y); // Rotate towards the target position
+    this.element.style.zIndex = z;
+    this.setZBasedScale(z);
+    //this must be called AFTER the setZBasedScale function to avoid overwriting the transform property
+    this.rotateTowardsTarget(x, y);
   }
 
   // Due to the += operator this needs to be called AFTER the setZBasedScale function to avoid overwriting the transform property
@@ -117,7 +118,9 @@ class Floater {
     if (typeof z !== 'number') {
       throw new Error('Z coordinate must be a number.');
     }
-    this.element.style.transform = `scale(${10 + 90 / Math.abs(z)}%)`;
+    this.element.style.transform = `scale(${
+      (95 / World.DEPTH) * (World.DEPTH / Math.abs(z)) + 5
+    }%)`;
   }
 
   moveTo(x, y, z, duration = 500) {
@@ -133,10 +136,7 @@ class Floater {
   }
 
   reveal() {
-    // this.element.style.position = 'relative'; // Change position to relative for content display
-    // const containerRect = this.container.getBoundingClientRect();
-    console.table(this.containerRect);
-    console.log(this.element.style.width);
+    clearInterval(this.floatInterval); // Stop floating
     this.contentHolder.srcdoc = `<html><body><p>This is ${this.element.getAttribute(
       'data-layout-number'
     )} test content</p></body></html>`;
@@ -151,22 +151,25 @@ class Floater {
       this.element.setAttribute('data-floating', this.isFloating);
       this.resizeContainerRect();
       this.resizeListener = window.addEventListener('resize', () => {
-        setTimeout(() => {
-          console.log('Resizing container...');
-          this.resizeContainerRect();
-        }, 1000); // Delay to allow for resizing
+        if (!this.hasHeardResize) {
+          this.hasHeardResize = true;
+          setTimeout(() => {
+            console.log('Resizing container...');
+            this.resizeContainerRect();
+            this.hasHeardResize = false;
+          }, 1000); // Delay to allow for resizing}
+        }
       });
       clearTimeout(timeout);
     }, World.DURATION - 10);
   }
   // Set the container height to fit content
   resizeContainerRect() {
-    if (
-      parseFloat(this.container.getBoundingClientRect().bottom) <
-      this.element.getBoundingClientRect().bottom
-    ) {
+    const containerRect = this.container.getBoundingClientRect();
+    const elementRect = this.element.getBoundingClientRect();
+    if (parseFloat(containerRect.bottom) < elementRect.bottom) {
       this.container.style.height =
-        this.element.getBoundingClientRect().bottom + 'px';
+        elementRect.bottom - containerRect.top + World.CONTENT_PADDING + 'px';
     }
     // console.log(this.container.style.height);
   }
