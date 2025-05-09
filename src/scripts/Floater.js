@@ -48,22 +48,22 @@ class Floater {
     //create our moving div
     this.element = document.createElement('div');
     this.element.style.position = 'absolute';
-    //this.element.style.position = 'relative'; // relative or absolute, I'm struggling to get it to allow scrolling for elements that are positioned absolute so going to try to use the flexbox layout of the container again instead
-    this.element.setAttribute('data-layout-number', layoutNumber); //id = id;
+    this.element.setAttribute('data-layout-number', layoutNumber);
+    this.element.setAttribute('data-floating', this.isFloating);
     this.element.className = 'floater'; // Add a class for styling
-    //This was for calculating their starting positions when using relative positioning - now moved on to absolute positioning with a display position passed through as revealX and revealY
-    // this.startX = this.element.getBoundingClientRect().x;
-    // this.startY = this.element.getBoundingClientRect().y;
-    // console.log(this.startX, this.startY);
   }
 
   float() {
     let counter = 0;
+    if (this.resizeListener) {
+      window.removeEventListener('resize', this.resizeListener); // Remove the previous resize listener if it exists
+    }
     this.contentHolder.style.visibility = 'hidden'; // Hide the content holder initially
     // const myDuration = World.DURATION * this.speed;
     const interval = setInterval(() => {
       if (!this.isFloating || counter > 2) {
-        this.isFloating = false; // Stop floating after 25 iterations
+        // this.isFloating = false; // Stop floating after 25 iterations
+        // this.element.setAttribute('data-floating', this.isFloating);
         clearInterval(interval);
         this.reveal();
         return;
@@ -140,31 +140,24 @@ class Floater {
     this.contentHolder.srcdoc = `<html><body><p>This is ${this.element.getAttribute(
       'data-layout-number'
     )} test content</p></body></html>`;
-    // this.moveTo(
-    //   this.revealX + containerRect.x,
-    //   this.revealY,
-    //   //   this.revealY + containerRect.y,
-    //   1,
-    //   this.myDuration
-    // ); // When using absolute positioning this was the move function call
-    this.moveTo(
-      //   this.startX - containerRect.x,
-      //   this.startY - containerRect.y,
-      this.revealX,
-      this.revealY,
-      1,
-      1000
-      //   this.myDuration
-    ); // When using relative positioning this was the move function call
+    this.moveTo(this.revealX, this.revealY, 1, World.DURATION); // When using relative positioning this was the move function call
     const timeout = setTimeout(() => {
       //   this.rotateTowardsTarget(0, 0);
       this.element.style.zIndex = parseInt(
         this.element.getAttribute('data-layout-number')
-      ); // Set z-index to 1 for the content holder
-      this.contentHolder.style.visibility = 'visible'; // Show the content holder
+      ); // Set z-index so higher layoutNumber will be above
+      this.contentHolder.style.visibility = 'visible';
+      this.isFloating = false;
+      this.element.setAttribute('data-floating', this.isFloating);
       this.resizeContainerRect();
+      this.resizeListener = window.addEventListener('resize', () => {
+        setTimeout(() => {
+          console.log('Resizing container...');
+          this.resizeContainerRect();
+        }, 1000); // Delay to allow for resizing
+      });
       clearTimeout(timeout);
-    }, this.myDuration - 10);
+    }, World.DURATION - 10);
   }
   // Set the container height to fit content
   resizeContainerRect() {

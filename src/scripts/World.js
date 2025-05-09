@@ -11,13 +11,13 @@ const World = {
   },
 };
 
-window.addEventListener('resize', () => {
-  setTimeout(() => {
-    const elements = document.querySelectorAll('.floater');
-    elements.forEach((element) => {
-      const layoutNumber = element.getAttribute('data-layout-number');
-    });
-  }, 1000); // Delay to allow for resizing
-});
+// window.addEventListener('resize', () => {
+//   setTimeout(() => {
+//     const elements = document.querySelectorAll('.floater');
+//     for (const element of elements) {
+//       const layoutNumber = element.getAttribute('data-layout-number');
+//     }
+//   }, 1000); // Delay to allow for resizing
+// });
 
 export default World;
