@@ -1,27 +1,23 @@
 import World from './World';
 
 class Floater {
-  constructor(container, id = crypto.randomUUID(), revealX = 0, revealY = 0) {
+  constructor(container, layoutNumber, revealX = 0, revealY = 0) {
     if (!container || !(container instanceof HTMLElement)) {
       throw new Error('A valid container element must be provided.');
     }
-    //create our moving div
-    this.element = document.createElement('div');
+
+    this.createFloaterDiv(layoutNumber);
     //Add an element to hold the content so it can have it's visibilty toggled
     this.contentHolder = document.createElement('iframe');
     this.contentHolder.className = 'content-holder'; // Add a class for styling
     this.contentHolder.style.border = 'none'; // Remove border for the content holder
-    this.contentHolder.style.width = '100%'; // Set width to 100% of the parent element
-    this.element.appendChild(this.contentHolder); // Append content holder to the element
+    this.contentHolder.style.width = '100%';
+    this.element.appendChild(this.contentHolder);
 
     this.container = container;
-    this.container.style.zIndex = World.DEPTH * -1; // Set z-index for the container
-    this.container.style.position = 'fixed'; // Set position to relative for absolute positioning of children
+    this.container.style.zIndex = World.DEPTH * -1;
+    this.container.style.position = 'relative';
     this.containerRect = this.container.getBoundingClientRect(); // Get the bounding rectangle of the container
-
-    this.element.style.position = 'absolute'; // Set position to absolute for the floater
-    this.element.id = id;
-    this.element.className = 'floater'; // Add a class for styling
     this.setPosition(
       World.BIRTH_POSITION.x,
       World.BIRTH_POSITION.y,
@@ -41,11 +37,23 @@ class Floater {
     this.container.appendChild(this.element);
 
     //This was for calculating their starting positions when using relative positioning - now moved on to absolute positioning with a display position passed through as revealX and revealY
+    this.startX = this.element.getBoundingClientRect().x;
+    this.startY = this.element.getBoundingClientRect().y;
+    console.log(this.startX, this.startY);
+    const { x, y, z } = this.createRandomPosition();
+    this.moveTo(x, y, z, this.myDuration); // move to initial position
+  }
+
+  createFloaterDiv(layoutNumber) {
+    //create our moving div
+    this.element = document.createElement('div');
+    this.element.style.position = 'relative'; // relative or absolute, I'm struggling to get it to allow scrolling for elements that are positioned absolute so going to try to use the flexbox layout of the container again instead
+    this.element.setAttribute('data-layout-number', layoutNumber); //id = id;
+    this.element.className = 'floater'; // Add a class for styling
+    //This was for calculating their starting positions when using relative positioning - now moved on to absolute positioning with a display position passed through as revealX and revealY
     // this.startX = this.element.getBoundingClientRect().x;
     // this.startY = this.element.getBoundingClientRect().y;
     // console.log(this.startX, this.startY);
-    const { x, y, z } = this.createRandomPosition();
-    this.moveTo(x, y, z, this.myDuration); // move to initial position
   }
 
   float() {
@@ -53,7 +61,7 @@ class Floater {
     this.contentHolder.style.visibility = 'hidden'; // Hide the content holder initially
     // const myDuration = World.DURATION * this.speed;
     const interval = setInterval(() => {
-      if (!this.isFloating || counter > 5) {
+      if (!this.isFloating || counter > 2) {
         this.isFloating = false; // Stop floating after 25 iterations
         clearInterval(interval);
         this.reveal();
@@ -69,8 +77,15 @@ class Floater {
   createRandomPosition() {
     const actualSize = this.element.getBoundingClientRect();
     // const containerSize = this.container.getBoundingClientRect();
-    const x = Math.random() * (this.containerRect.right - actualSize.width); // - this.startX; // Random x position
-    const y = Math.random() * (window.innerHeight - actualSize.height); // - this.startY; // Random y position
+    const x =
+      Math.random() *
+      (this.containerRect.right - actualSize.width - this.startX); // - this.startX; // Random x position
+    const y =
+      Math.random() *
+      (window.innerHeight -
+        actualSize.height -
+        this.startY -
+        this.containerRect.y); // - this.startY; // Random y position
     const z = Math.floor(Math.random() * World.DEPTH + 1) * -1; // Random z-index between -1 and -100
     return { x, y, z };
   }
@@ -122,19 +137,39 @@ class Floater {
 
   reveal() {
     // this.element.style.position = 'relative'; // Change position to relative for content display
-    const containerRect = this.container.getBoundingClientRect();
-    console.table(containerRect);
+    // const containerRect = this.container.getBoundingClientRect();
+    console.table(this.containerRect);
     console.log(this.element.style.width);
-    // this.contentHolder.src = `<p>This is ${this.element.id} test content</p>`;
+    this.contentHolder.srcdoc = `<html><body><p>This is ${this.element.getAttribute(
+      'data-layout-number'
+    )} test content</p></body></html>`;
+    // this.moveTo(
+    //   this.revealX + containerRect.x,
+    //   this.revealY,
+    //   //   this.revealY + containerRect.y,
+    //   1,
+    //   this.myDuration
+    // ); // When using absolute positioning this was the move function call
     this.moveTo(
-      this.revealX + containerRect.x,
-      this.revealY + containerRect.y,
+      //   this.startX - containerRect.x,
+      //   this.startY - containerRect.y,
+      this.revealX,
+      this.revealY,
       1,
-      this.myDuration
-    ); // Move to the top left corner
+      1000
+      //   this.myDuration
+    ); // When using relative positioning this was the move function call
     const timeout = setTimeout(() => {
-      this.rotateTowardsTarget(0, 0);
+      //   this.rotateTowardsTarget(0, 0);
+      this.element.style.zIndex = parseInt(
+        this.element.getAttribute('data-layout-number')
+      ); // Set z-index to 1 for the content holder
       this.contentHolder.style.visibility = 'visible'; // Show the content holder
+      //   this.container.style.height =
+      //     parseFloat(this.container.style.height) +
+      //     this.element.getBoundingClientRect().height +
+      //     'px'; // Set the container height to fit content
+      console.log(this.container.style.height);
       clearTimeout(timeout);
     }, this.myDuration - 10);
   }
