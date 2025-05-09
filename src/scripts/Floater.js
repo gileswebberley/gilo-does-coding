@@ -17,7 +17,7 @@ class Floater {
     this.container = container;
     this.container.style.zIndex = World.DEPTH * -1;
     this.container.style.position = 'relative';
-    this.containerRect = this.container.getBoundingClientRect(); // Get the bounding rectangle of the container
+    // this.containerRect = this.container.getBoundingClientRect(); // Get the bounding rectangle of the container
     this.setPosition(
       World.BIRTH_POSITION.x,
       World.BIRTH_POSITION.y,
@@ -47,7 +47,8 @@ class Floater {
   createFloaterDiv(layoutNumber) {
     //create our moving div
     this.element = document.createElement('div');
-    this.element.style.position = 'relative'; // relative or absolute, I'm struggling to get it to allow scrolling for elements that are positioned absolute so going to try to use the flexbox layout of the container again instead
+    this.element.style.position = 'absolute';
+    //this.element.style.position = 'relative'; // relative or absolute, I'm struggling to get it to allow scrolling for elements that are positioned absolute so going to try to use the flexbox layout of the container again instead
     this.element.setAttribute('data-layout-number', layoutNumber); //id = id;
     this.element.className = 'floater'; // Add a class for styling
     //This was for calculating their starting positions when using relative positioning - now moved on to absolute positioning with a display position passed through as revealX and revealY
@@ -76,16 +77,12 @@ class Floater {
 
   createRandomPosition() {
     const actualSize = this.element.getBoundingClientRect();
-    // const containerSize = this.container.getBoundingClientRect();
+    const containerRect = this.container.getBoundingClientRect();
     const x =
-      Math.random() *
-      (this.containerRect.right - actualSize.width - this.startX); // - this.startX; // Random x position
+      Math.random() * (containerRect.right - actualSize.width - this.startX); // - this.startX; // Random x position
     const y =
       Math.random() *
-      (window.innerHeight -
-        actualSize.height -
-        this.startY -
-        this.containerRect.y); // - this.startY; // Random y position
+      (window.innerHeight - actualSize.height - this.startY - containerRect.y); // - this.startY; // Random y position
     const z = Math.floor(Math.random() * World.DEPTH + 1) * -1; // Random z-index between -1 and -100
     return { x, y, z };
   }
@@ -165,13 +162,20 @@ class Floater {
         this.element.getAttribute('data-layout-number')
       ); // Set z-index to 1 for the content holder
       this.contentHolder.style.visibility = 'visible'; // Show the content holder
-      //   this.container.style.height =
-      //     parseFloat(this.container.style.height) +
-      //     this.element.getBoundingClientRect().height +
-      //     'px'; // Set the container height to fit content
-      console.log(this.container.style.height);
+      this.resizeContainerRect();
       clearTimeout(timeout);
     }, this.myDuration - 10);
+  }
+  // Set the container height to fit content
+  resizeContainerRect() {
+    if (
+      parseFloat(this.container.getBoundingClientRect().bottom) <
+      this.element.getBoundingClientRect().bottom
+    ) {
+      this.container.style.height =
+        this.element.getBoundingClientRect().bottom + 'px';
+    }
+    // console.log(this.container.style.height);
   }
 }
 
