@@ -1,15 +1,17 @@
 import './style.css';
 import Floater from './scripts/Floater.js';
+import FloaterIframe from './scripts/FloaterIframe.js';
+import FloaterInner from './scripts/FloaterInner.js';
 
 const container = document.querySelector('#container');
 
-const floater = new Floater(container, 1, 10, 0);
+const floater = new FloaterInner(0, container, 1, 10, 0);
 floater.float();
-const floater2 = new Floater(container, 2, 210, 140);
+const floater2 = new FloaterInner(0, container, 2, 210, 140);
 floater2.float();
-const floater3 = new Floater(container, 3, 10, 270);
+const floater3 = new FloaterInner(0, container, 3, 10, 270);
 floater3.float();
-const floater4 = new Floater(container, 4, 200, 340);
+const floater4 = new FloaterIframe('../TestPage.html', container, 4, 200, 340);
 floater4.float();
 
 const page1 = [floater, floater2, floater3, floater4];
@@ -18,4 +20,4 @@ setTimeout(() => {
   page1.forEach((floater) => {
     floater.reveal();
   });
-}, 50000); // Change the interval as needed
+}, 5000); // Change the interval as needed

@@ -7,15 +7,9 @@ class Floater {
     }
 
     this.createFloaterDiv(layoutNumber);
-    //Add an element to hold the content so it can have it's visibilty toggled
-    this.contentHolder = document.createElement('iframe');
-    this.contentHolder.className = 'content-holder'; // Add a class for styling
-    this.contentHolder.style.border = 'none'; // Remove border for the content holder
-    this.contentHolder.style.width = '100%';
-    this.element.appendChild(this.contentHolder);
 
     this.container = container;
-    this.container.style.zIndex = World.DEPTH * -1;
+    // this.container.style.zIndex = World.DEPTH * -1;// This is what was causing the lack of pointer events reaching the floaters
     this.container.style.position = 'relative';
     // this.containerRect = this.container.getBoundingClientRect(); // Get the bounding rectangle of the container
     this.setPosition(
@@ -37,8 +31,8 @@ class Floater {
     this.container.appendChild(this.element);
 
     //This was for calculating their starting positions when using relative positioning - now moved on to absolute positioning with a display position passed through as revealX and revealY
-    this.startX = this.element.getBoundingClientRect().x;
-    this.startY = this.element.getBoundingClientRect().y;
+    // this.startX = this.element.getBoundingClientRect().x;
+    // this.startY = this.element.getBoundingClientRect().y;
     // console.log(this.startX, this.startY);
     const { x, y, z } = this.createRandomPosition();
     this.moveTo(x, y, z, this.myDuration); // move to initial position
@@ -52,7 +46,7 @@ class Floater {
     this.element = document.createElement('div');
     this.element.style.position = 'absolute';
     this.element.setAttribute('data-layout-number', layoutNumber);
-    this.element.setAttribute('data-floating', this.isFloating);
+    // this.element.setAttribute('data-floating', this.isFloating);
     this.element.className = 'floater'; // Add a class for styling
     this.element.style.backgroundColor =
       World.FLOATER_COLOURS[colourRandomiser];
@@ -136,34 +130,33 @@ class Floater {
   }
 
   reveal() {
-    clearInterval(this.floatInterval); // Stop floating
-    this.contentHolder.srcdoc = `<html><body><p>This is ${this.element.getAttribute(
-      'data-layout-number'
-    )} test content</p></body></html>`;
-    this.moveTo(this.revealX, this.revealY, 1, World.DURATION); // When using relative positioning this was the move function call
+    //stop the floating cycle cos now we want to take control of the floater
+    clearInterval(this.floatInterval);
+    // z-index of 1 passed in as we don't want any scaling
+    this.moveTo(this.revealX, this.revealY, 1, World.DURATION);
+    // now that we are going to be making up a page layout we want to debounce any window resizes so we can look after the container height
+    this.resizeListener = window.addEventListener('resize', () => {
+      if (!this.hasHeardResize) {
+        this.hasHeardResize = true;
+        //add a little 'debounce' (I think it's called) so that we don't react to 100s of resize events that are triggered by the browser being resized
+        setTimeout(() => {
+          console.log('Resizing container...');
+          this.resizeContainerRect();
+          this.hasHeardResize = false;
+        }, 1000); // Delay of 1 sec to allow for resizing
+      }
+    });
+    // This is what we want to happen at the end of the reveal hence it's a timeout with the same duration as the moveTo function is using (I've made it fractionally longer so that the call to resizeContainerRect works as hoped)
     const timeout = setTimeout(() => {
-      //   this.rotateTowardsTarget(0, 0);
-      this.element.style.zIndex = parseInt(
-        this.element.getAttribute('data-layout-number')
-      ); // Set z-index so higher layoutNumber will be above
       this.contentHolder.style.visibility = 'visible';
       this.isFloating = false;
       this.element.setAttribute('data-floating', this.isFloating);
-      this.resizeContainerRect();
-      this.resizeListener = window.addEventListener('resize', () => {
-        if (!this.hasHeardResize) {
-          this.hasHeardResize = true;
-          setTimeout(() => {
-            console.log('Resizing container...');
-            this.resizeContainerRect();
-            this.hasHeardResize = false;
-          }, 1000); // Delay to allow for resizing}
-        }
-      });
       clearTimeout(timeout);
-    }, World.DURATION - 10);
+      this.resizeContainerRect();
+    }, World.DURATION + 100);
   }
-  // Set the container height to fit content
+
+  // Set the container height to fit content so it will scroll when the floaters overflow the height of the container
   resizeContainerRect() {
     const containerRect = this.container.getBoundingClientRect();
     const elementRect = this.element.getBoundingClientRect();
@@ -171,7 +164,6 @@ class Floater {
       this.container.style.height =
         elementRect.bottom - containerRect.top + World.CONTENT_PADDING + 'px';
     }
-    // console.log(this.container.style.height);
   }
 }
 

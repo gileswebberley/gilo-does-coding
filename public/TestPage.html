@@ -1,14 +1,18 @@
-const Page_Test = {
-  title: 'Test',
-  description: 'Test page',
-  content: [
-    {
-      position: 1,
-      type: 'text',
-      text: 'This is a test page.',
-      html: `<button
-        onclick="alert('Hello, world!')"
-        >Gilo Does Coding</button
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Test Page</title>
+    <link rel="stylesheet" href="../../src/style.css" />
+  </head>
+  <body>
+    <div class="scrollableMain">
+      <!-- <div id="container"> -->
+      <a
+        href="https://gileswebberley.wixsite.com/giles-does-coding"
+        target="_top"
+        >Gilo Does Coding</a
       >
       <h2>Welcome to the Test Page</h2>
       <p>This is a simple HTML page with an external CSS file.</p>
@@ -20,21 +24,8 @@ const Page_Test = {
         or an experienced developer trying out new ideas, this page provides a
         flexible and straightforward platform to explore and refine your skills.
         Feel free to explore and modify the content as needed!
-      </p>`,
-    },
-    {
-      position: 2,
-      type: 'image',
-      src: 'https://example.com/image.jpg',
-      alt: 'Example Image',
-    },
-    {
-      position: 3,
-      type: 'video',
-      src: 'https://example.com/video.mp4',
-      alt: 'Example Video',
-    },
-  ],
-};
-
-export default Page_Test;
+      </p>
+      <!-- </div> -->
+    </div>
+  </body>
+</html>
