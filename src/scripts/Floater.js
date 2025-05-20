@@ -184,11 +184,13 @@ class Floater {
     if (this.isFloating) {
       return;
     }
-    const containerRect = this.container.getBoundingClientRect();
-    const elementRect = this.element.getBoundingClientRect();
-    // if (parseFloat(containerRect.bottom) < elementRect.bottom) {
-    this.container.style.height =
-      elementRect.bottom - containerRect.top + World.CONTENT_PADDING + 'px';
+    setTimeout(() => {
+      const containerRect = this.container.getBoundingClientRect();
+      const elementRect = this.element.getBoundingClientRect();
+      // if (parseFloat(containerRect.bottom) < elementRect.bottom) {
+      this.container.style.height =
+        elementRect.bottom - containerRect.top + World.CONTENT_PADDING + 'px';
+    }, this.duration + 100);
     // }
   }
 }
