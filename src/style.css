@@ -1,7 +1,7 @@
 :root {
-  --content_max_width: 40vw;
-  --content_min_width: 20vw;
-  --content_viewport_height: 20vh;
+  --content_max_width: 60vw;
+  --content_min_width: 40vw;
+  --content_viewport_height: 30vh;
 
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -74,6 +74,7 @@ h1 {
   width: 100%;
   margin: 0 auto;
   min-height: 100%;
+  height: fit-content;
   overflow: hidden; /* So it ignores the Floaters going out of the browser window*/
   transition: all 500ms ease; /* This is to smooth out changes to it's height*/
 }
@@ -83,10 +84,13 @@ h1 {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-width: 100px;
-  width: fit-content;
+  /* min-width: 100px; */
+  /* width: fit-content; */
+  min-width: var(--content_min_width);
+  width: var(--content_max_width);
   min-height: 100px;
-  height: fit-content;
+  /* height: fit-content; */
+  height: var(--content_viewport_height);
   /* background-color: rgb(238, 142, 9); set in the Floater script */
   border: 3px solid;
   color: #ca5811;
@@ -98,8 +102,9 @@ header,
 footer {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
   padding-left: 10px;
+  padding-right: 10px;
   /* This is how you can set the dark mode colour scheme if it's selected on the user's system (see the @media query at the bottom for how this is used) */
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
@@ -107,19 +112,30 @@ footer {
   /* font-size: 2rem; */
 }
 
+#main-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+  width: fit-content;
+}
+
 iframe {
   border: none;
   top: 0;
   left: 0;
-  height: var(--content_viewport_height);
+  height: 100%;
+  width: 100%;
+  /* height: var(--content_viewport_height);
   max-width: var(--content_max_width);
-  min-width: var(--content_min_width);
+  min-width: var(--content_min_width); */
   overflow-y: auto !important;
 }
 
 .content-viewport {
   width: fit-content;
-  height: var(--content_viewport_height);
+  /* height: var(--content_viewport_height); */
+  height: 100%;
   overflow-y: auto;
   pointer-events: all !important;
 }
@@ -127,8 +143,9 @@ iframe {
 .content-holder {
   border: none;
   height: fit-content;
-  width: var(--content_max_width);
-  min-width: var(--content_min_width);
+  /* width: var(--content_max_width);
+  min-width: var(--content_min_width); */
+  width: 100%;
   pointer-events: inherit;
 }
 

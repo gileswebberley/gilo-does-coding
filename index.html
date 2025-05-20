@@ -4,6 +4,11 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- <script type="module">
+      //This is how I set up SiteManger as a globally available static class
+      import SiteManager from '/src/scripts/SiteManager.js';
+      window.SiteManager = SiteManager;
+    </script> -->
     <title>gilo_does_coding</title>
   </head>
   <body>
@@ -11,6 +16,11 @@
       <header>
         <!-- <div style="height: 145px; width: 100px; background-color: red"></div> -->
         <h2>gilo_does_coding</h2>
+        <nav id="main-nav">
+          <button onpointerup="console.log(typeof SiteManager.getInstance())">
+            test nav
+          </button>
+        </nav>
         <!-- <p>Welcome to gilo-does-coding!</p> -->
       </header>
       <div class="scrollableMain">

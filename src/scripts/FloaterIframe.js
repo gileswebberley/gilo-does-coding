@@ -14,9 +14,7 @@ class FloaterIframe extends Floater {
   }
 
   reveal() {
-    // this.iframer.setAttribute('src', this.iframeUrl);
     this.contentHolder.setAttribute('src', this.iframeUrl);
-    // this.iframer.setAttribute('scrolling', 'yes');
     super.reveal();
   }
 }
