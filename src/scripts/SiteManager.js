@@ -19,6 +19,15 @@ class SiteManager {
     console.log('SiteManager initialized');
   }
 
+  static addPage(pageName, pageManager) {
+    if (this.#pages.has(pageName)) {
+      console.error(`Page ${pageName} already exists.`);
+      return;
+    }
+    this.#pages.set(pageName, pageManager); // Add the page manager to the map
+    console.log(`Page ${pageName} added.`);
+  }
+
   static getInstance() {
     if (!SiteManager.instance) {
       SiteManager.instance = new SiteManager();
