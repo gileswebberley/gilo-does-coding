@@ -3,10 +3,12 @@ const Page_Test = {
   description: 'Test page',
   content: [
     {
-      position: 1,
-      type: 'text',
-      text: 'This is a test page.',
-      html: `<button
+      // let's do the row and column thing here {row, column}
+      position: { row: 1, column: 1 },
+      width: 'auto',
+      height: 'auto',
+      type: 'html',
+      src: `<button
         onclick="alert('Hello, world!')"
         >Gilo Does Coding</button
       >

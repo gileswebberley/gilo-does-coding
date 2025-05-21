@@ -4,7 +4,7 @@ import Floater from './Floater';
 class FloaterInner extends Floater {
   constructor(src, ...rest) {
     super(...rest);
-    this.src = Page_Test.content[src].html;
+    this.src = Page_Test.content[src].src;
     // console.log(this.src);
     //Add an element to hold the content so it can have it's visibilty toggled in super.float() and super.reveal()
     this.contentHolder = document.createElement('div');

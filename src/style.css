@@ -74,8 +74,8 @@ h1 {
   width: 100%;
   margin: 0 auto;
   min-height: 100%;
-  padding: 10px;
-  height: fit-content;
+  /* padding: 10px;
+  height: fit-content; No! the floaters are not content because they are absolutely positioned so this will not work!!*/
   overflow: hidden; /* So it ignores the Floaters going out of the browser window*/
   transition: all 500ms ease; /* This is to smooth out changes to it's height*/
 }

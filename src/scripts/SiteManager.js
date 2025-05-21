@@ -13,8 +13,8 @@ class SiteManager {
     return this;
   }
 
-  // I think I want to use this to set the navigation element and the pages data
-  static init() {
+  // I think I want to use this to set the navigation element
+  static init(navElement) {
     // Initialization logic here
     console.log('SiteManager initialized');
   }
