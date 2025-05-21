@@ -50,14 +50,14 @@ class Floater {
 
   createFloaterDiv(layoutNumber) {
     //create our moving div
-    const colourRandomiser = Math.floor(
-      Math.random() * World.FLOATER_COLOURS.length
-    );
     this.element = document.createElement('div');
     this.element.style.position = 'absolute';
     this.element.setAttribute('data-layout-number', layoutNumber);
     // this.element.setAttribute('data-floating', this.isFloating);
     this.element.className = 'floater'; // Add a class for styling
+    const colourRandomiser = 0; //Math.floor(
+    //   Math.random() * World.FLOATER_COLOURS.length
+    // );
     this.element.style.backgroundColor =
       World.FLOATER_COLOURS[colourRandomiser];
     this.element.style.borderColor =
@@ -86,7 +86,9 @@ class Floater {
   createRandomPosition() {
     const actualSize = this.element.getBoundingClientRect();
     const containerRect = this.container.getBoundingClientRect();
-    const x = Math.random() * containerRect.right - actualSize.width;
+    const x =
+      Math.random() * (containerRect.right - actualSize.width) -
+      containerRect.left;
     const y =
       Math.random() * (containerRect.height - actualSize.height) -
       containerRect.top;

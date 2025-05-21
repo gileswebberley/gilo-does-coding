@@ -1,12 +1,15 @@
 const Page_Test = {
-  title: 'Test',
-  description: 'Test page',
+  pageId: 'Test',
+  buttonText: 'Test page',
   content: [
     {
       // let's do the row and column thing here {row, column}
       position: { row: 1, column: 1 },
-      width: 'auto',
-      height: 'auto',
+      // amount to shift layout in pixels
+      offset: { x: 0, y: 0 },
+      // percentage of available size? no let's work out a way where you can set either a percentage or a max size in pixels (auto or fixed)
+      size: { width: 100, height: 100 },
+      sizeType: { width: 'auto', height: 'fixed' },
       type: 'html',
       src: `<button
         onclick="alert('Hello, world!')"
@@ -25,13 +28,19 @@ const Page_Test = {
       </p>`,
     },
     {
-      position: 2,
+      position: { row: 1, column: 2 },
+      offset: { x: 0, y: 0 },
+      size: { width: 100, height: 100 },
+      sizeType: { width: 'auto', height: 'fixed' },
       type: 'image',
       src: 'https://example.com/image.jpg',
       alt: 'Example Image',
     },
     {
-      position: 3,
+      position: { row: 2, column: 2 },
+      offset: { x: 0, y: 0 },
+      size: { width: 100, height: 100 },
+      sizeType: { width: 'auto', height: 'fixed' },
       type: 'video',
       src: 'https://example.com/video.mp4',
       alt: 'Example Video',

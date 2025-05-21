@@ -3,11 +3,21 @@
   --content_min_width: 40vw;
   --content_viewport_height: 30vh;
 
+  --colour-orange: #ee8e09;
+  --colour-orange-900: #341f02;
+  --colour-blue: rgb(110, 192, 219);
+  --colour-blue-100: rgb(249, 250, 251);
+  --colour-blue-900: #142429;
+  --colour-dark-bg: #242424;
+  --colour-light-bg: #eef1f2;
+  --colour-dark-text: #ede1e1;
+  --colour-light-text: #242424;
+
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
-  background-color: rgb(110, 192, 219);
+  background-color: var(--colour-blue);
 
   /* color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
@@ -31,6 +41,10 @@
   scrollbar-width: none; /* Firefox */
 }
 
+html {
+  font-size: 62.5%;
+}
+
 body {
   margin: 0;
   padding: 0;
@@ -41,6 +55,8 @@ body {
   -moz-hyphens: none;
   -ms-hyphens: none;
   hyphens: none;
+  line-height: 1.5;
+  font-size: 1.6rem;
 }
 
 /* Main grid layout with header, main, and footer possible */
@@ -80,6 +96,40 @@ h1 {
   transition: all 500ms ease; /* This is to smooth out changes to it's height*/
 }
 
+#main-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+  width: fit-content;
+}
+
+.nav-button {
+  border: 1px solid;
+  border-radius: 7px;
+  padding: 0.4rem 0.8rem;
+  font-size: 1.4rem;
+  font-weight: 600;
+  cursor: pointer;
+  color-scheme: light dark;
+  color: var(--colour-orange-900);
+  background-color: var(--colour-blue);
+  border-color: var(--colour-blue-100);
+}
+
+.nav-button:active,
+.nav-button:focus {
+  outline: none;
+  background-color: var(--colour-blue-100);
+}
+
+@media (prefers-color-scheme: light) {
+  .nav-button {
+    /* color: var(--colour-blue-100); */
+    border-color: var(--colour-blue-900);
+  }
+}
+
 /* Class which is attached to new floater instances' div */
 .floater {
   display: flex;
@@ -99,28 +149,7 @@ h1 {
   padding: 40px;
 }
 
-header,
-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-left: 10px;
-  padding-right: 10px;
-  /* This is how you can set the dark mode colour scheme if it's selected on the user's system (see the @media query at the bottom for how this is used) */
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-  /* font-size: 2rem; */
-}
-
-#main-nav {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 2rem;
-  width: fit-content;
-}
-
+/* For the iFrame that is attached to a FloaterIframe */
 iframe {
   border: none;
   top: 0;
@@ -133,6 +162,7 @@ iframe {
   overflow-y: auto !important;
 }
 
+/* For the content-holder of a FloaterInner as a little window */
 .content-viewport {
   width: fit-content;
   /* height: var(--content_viewport_height); */
@@ -150,12 +180,26 @@ iframe {
   pointer-events: inherit;
 }
 
+header,
+footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-left: 10px;
+  padding-right: 10px;
+  /* This is how you can set the dark mode colour scheme if it's selected on the user's system (see the @media query at the bottom for how this is used) */
+  color-scheme: light dark;
+  color: var(--colour-dark-text);
+  background-color: var(--colour-dark-bg);
+  /* font-size: 2rem; */
+}
+
 @media (prefers-color-scheme: light) {
   /* :root { */
   header,
   footer {
-    color: #213547;
-    background-color: #ffffff;
+    color: var(--colour-light-text);
+    background-color: var(--colour-light-bg);
   }
   a:hover {
     color: #747bff;

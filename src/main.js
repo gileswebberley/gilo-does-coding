@@ -3,10 +3,13 @@ import Floater from './scripts/Floater.js';
 import FloaterIframe from './scripts/FloaterIframe.js';
 import FloaterInner from './scripts/FloaterInner.js';
 import SiteManager from './scripts/SiteManager.js';
+import Page_Test from './contents/TestContent.js';
 
-window.SiteManager = SiteManager;
+// window.SiteManager = SiteManager;
 const container = document.querySelector('#container');
-// console.log(SiteManager.hideAllPages());
+const navElement = document.querySelector('#main-nav');
+SiteManager.init(navElement, container);
+SiteManager.buildPage(Page_Test); // console.log(SiteManager.hideAllPages());
 
 const floater = new FloaterInner(0, container, 1, 10, 0);
 floater.float();
@@ -23,4 +26,4 @@ setTimeout(() => {
   page1.forEach((floater) => {
     floater.reveal();
   });
-}, 5000); // Change the interval as needed
+}, 10000); // Change the interval as needed
