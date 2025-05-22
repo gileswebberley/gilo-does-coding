@@ -5,6 +5,8 @@ class LayoutManager {
   static #AUTO_FLOATER_HEIGHT = 320;
   //   static #MIN_HEIGHT = 320;
   static #PAGE_PADDING = 20;
+  //an instance property so it can be adjusted for small screens
+  #pagePadding = LayoutManager.#PAGE_PADDING;
   static #FLOATER_GAP = 10;
 
   /* Wireframe entries format
@@ -26,6 +28,7 @@ class LayoutManager {
     this.screenHeight = window.innerHeight - this.pageContainerBoundingRect.top; // Set initial screen height shifted down by container y position
     this.#setPageWidth();
     this.#findMaxRowAndColumn();
+    this.#createLayoutMarkers();
   }
 
   #startListeningForResize() {
@@ -40,6 +43,31 @@ class LayoutManager {
         }, 1000);
       }
     });
+  }
+
+  #buildLayout() {
+    let currentX = 0;
+    let nextX = 0;
+    let currentY = 0;
+    let nextY = 0;
+  }
+
+  #getRowElements(rowNumber) {
+    if (!this.smallScreenWidth) {
+      return this.wireframe.filter((floater) => {
+        return floater.position.row === rowNumber;
+      });
+    } else {
+      //when smallScreen is true then we are putting all columns as extra rows
+      return this.wireframe.filter((floater) => {
+        //ooh maths :/ so row 1 col 2 is actually row 2, row 1 col 3 is row 3, row 2 col 1 is row 4
+        return (
+          (floater.position.row - 1) * this.columnCount +
+            floater.position.column ===
+          rowNumber
+        );
+      });
+    }
   }
 
   #setPageWidth() {
@@ -66,14 +94,31 @@ class LayoutManager {
     else if (this.screenWidth > this.pageWidth) {
       console.log(`Large screen detected, setting centreLine...`);
       this.largeScreenWidth = true;
-      this.centreLine =
-        this.pageContainerBoundingRect.left + this.screenWidth / 2;
     }
     //this is just to vertically centre if the screen size is bigger than the page size
     // this.pageHeight = Math.max(
     //   LayoutManager.#MIN_HEIGHT - this.pageContainerBoundingRect.top,
     //   Math.min(LayoutManager.#MAX_HEIGHT, this.screenHeight)
     // );
+  }
+
+  #createLayoutMarkers() {
+    this.#pagePadding = LayoutManager.#PAGE_PADDING;
+    this.originX = this.pageContainerBoundingRect.left;
+    //because I want to keep the columns as counted from the wireframe (for use in getRowElements) but still want the columnWidth sum to be calculated for small windows...
+    let tmpColumnCount = this.columnCount;
+    if (this.smallScreenWidth) {
+      this.#pagePadding = LayoutManager.#PAGE_PADDING / 2;
+      tmpColumnCount = 1;
+    } else if (this.largeScreenWidth) {
+      this.originX += (this.screenWidth - this.pageWidth) / 2;
+    } else {
+      //   this.centreLine =
+      //     this.pageContainerBoundingRect.left + this.pageWidth / 2;
+    }
+    this.originX += this.#pagePadding;
+    this.columnWidth =
+      (this.pageWidth - 2 * this.#pagePadding) / tmpColumnCount;
   }
 
   #findMaxRowAndColumn() {
@@ -91,7 +136,7 @@ class LayoutManager {
     if (this.smallScreenWidth) {
       // if we're on a small screen then we want to make columns into extra rows
       this.rowCount *= this.columnCount;
-      this.columnCount = 1;
+      //   this.columnCount = 1;//I think this should remain as discovered so that we can use it in the getRowElements sums...
     }
     console.log(`Rows: ${this.rowCount}, Columns: ${this.columnCount}`);
   }
