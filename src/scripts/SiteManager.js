@@ -8,7 +8,7 @@ class SiteManager {
   static #pages = new Map(); // key: pageName, value: PageManager instance
   static #pageContainer = null; // container element that the Floaters are attached to - set in init()
 
-  // basically this is a static class so we want any instance to be the same
+  // basically this is a static class so we want any instance to be the same, we use the instance for sending the callback to NavManager
   constructor() {
     if (SiteManager.#instance) {
       return SiteManager.#instance;

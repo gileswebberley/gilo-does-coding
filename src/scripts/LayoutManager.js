@@ -10,10 +10,11 @@ class LayoutManager {
   static #FLOATER_GAP = 10;
 
   /* Wireframe entries format
+    layoutNumber: 1 - this is what we will use to get the information from the wireframe map when building our floaters
     offset: {x: 0, y: 0}
     position: {row: 1, column: 1}
     size: {width: 100, height: 100}
-    sizeType: {width: 'auto', height: 'fixed'}
+    sizeType: {width: 'auto', height: 'fixed'} which means width is a percentage and height is in pixels
  */
 
   constructor(wireframe, pageContainerBoundingRect) {
@@ -46,9 +47,9 @@ class LayoutManager {
   }
 
   #buildLayout() {
-    let currentX = 0;
+    let currentX = this.originX;
     let nextX = 0;
-    let currentY = 0;
+    let currentY = this.originY;
     let nextY = 0;
   }
 
@@ -95,30 +96,32 @@ class LayoutManager {
       console.log(`Large screen detected, setting centreLine...`);
       this.largeScreenWidth = true;
     }
-    //this is just to vertically centre if the screen size is bigger than the page size
-    // this.pageHeight = Math.max(
-    //   LayoutManager.#MIN_HEIGHT - this.pageContainerBoundingRect.top,
-    //   Math.min(LayoutManager.#MAX_HEIGHT, this.screenHeight)
-    // );
   }
 
   #createLayoutMarkers() {
     this.#pagePadding = LayoutManager.#PAGE_PADDING;
     this.originX = this.pageContainerBoundingRect.left;
+    this.originY = this.pageContainerBoundingRect.top;
     //because I want to keep the columns as counted from the wireframe (for use in getRowElements) but still want the columnWidth sum to be calculated for small windows...
     let tmpColumnCount = this.columnCount;
     if (this.smallScreenWidth) {
+      //page size is less than MIN width
       this.#pagePadding = LayoutManager.#PAGE_PADDING / 2;
       tmpColumnCount = 1;
     } else if (this.largeScreenWidth) {
+      //page size is locked to MAX width
       this.originX += (this.screenWidth - this.pageWidth) / 2;
     } else {
-      //   this.centreLine =
-      //     this.pageContainerBoundingRect.left + this.pageWidth / 2;
+      // page size is in between MIN and MAX width
     }
     this.originX += this.#pagePadding;
+    this.originY += this.#pagePadding;
     this.columnWidth =
       (this.pageWidth - 2 * this.#pagePadding) / tmpColumnCount;
+
+    console.log(`originX: ${this.originX}`);
+    console.log(`originY: ${this.originY}`);
+    console.log(`columnWidth: ${this.columnWidth}`);
   }
 
   #findMaxRowAndColumn() {

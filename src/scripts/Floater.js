@@ -60,7 +60,7 @@ class Floater {
     // );
     this.element.style.backgroundColor =
       World.FLOATER_COLOURS[colourRandomiser];
-    this.element.style.borderColor =
+    this.element.style.color =
       World.FLOATER_COLOURS[World.FLOATER_COLOURS.length - colourRandomiser];
   }
 

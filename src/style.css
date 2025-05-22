@@ -4,9 +4,26 @@
   --content_viewport_height: 30vh;
 
   --colour-orange: #ee8e09;
+  --colour-orange-50: #ffefde;
+  --colour-orange-100: #ffdebe;
+  --colour-orange-200: #ffce9e;
+  --colour-orange-300: #febe7e;
+  --colour-orange-400: #f49e3c;
+  --colour-orange-500: #c97810;
+  --colour-orange-600: #a56413;
+  --colour-orange-700: #825014;
+  --colour-orange-800: #412a11;
   --colour-orange-900: #341f02;
-  --colour-blue: rgb(110, 192, 219);
-  --colour-blue-100: rgb(249, 250, 251);
+  --colour-blue: #b4d7e5;
+  --colour-blue-50: #f4f9fb;
+  --colour-blue-100: #eaf3f8;
+  --colour-blue-200: #d4e8f0;
+  --colour-blue-300: #cae2ec;
+  --colour-blue-400: #bfdde9;
+  --colour-blue-500: #98b5c1;
+  --colour-blue-600: #7d949e;
+  --colour-blue-700: #63757c;
+  --colour-blue-800: #333a3e;
   --colour-blue-900: #142429;
   --colour-dark-bg: #242424;
   --colour-light-bg: #eef1f2;
