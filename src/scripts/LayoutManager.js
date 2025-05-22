@@ -2,13 +2,10 @@
 class LayoutManager {
   static #MAX_WIDTH = 1024;
   static #MIN_WIDTH = 480;
-  static #MAX_HEIGHT = 768;
-  static #MIN_HEIGHT = 320;
+  static #AUTO_FLOATER_HEIGHT = 320;
+  //   static #MIN_HEIGHT = 320;
   static #PAGE_PADDING = 20;
   static #FLOATER_GAP = 10;
-
-  screenWidth = window.innerWidth; // Set initial screen width
-  screenHeight = window.innerHeight; // Set initial screen height
 
   /* Wireframe entries format
     offset: {x: 0, y: 0}
@@ -19,14 +16,16 @@ class LayoutManager {
 
   constructor(wireframe, pageContainerBoundingRect) {
     this.wireframe = wireframe;
-    this.pageContainerBoundingRect = pageContainerBoundingRect; // This is the bounding rect of the page container element
-    this.rowCount = 0;
-    this.columnCount = 0;
-
-    this.#findMaxRowAndColumn(); // Find the maximum row and column numbers in the wireframe
-    this.#setPageDimensions();
-    this.hasHeardResize = false; // Flag to prevent multiple resize events
+    this.pageContainerBoundingRect = pageContainerBoundingRect; // This is the bounding rect of the page container element to check top and left properties
+    this.#inspectScreenForLayout();
     this.#startListeningForResize();
+  }
+
+  #inspectScreenForLayout() {
+    this.screenWidth = window.innerWidth - this.pageContainerBoundingRect.left; // Set initial screen width shifted across by container x position
+    this.screenHeight = window.innerHeight - this.pageContainerBoundingRect.top; // Set initial screen height shifted down by container y position
+    this.#setPageWidth();
+    this.#findMaxRowAndColumn();
   }
 
   #startListeningForResize() {
@@ -35,34 +34,51 @@ class LayoutManager {
         this.hasHeardResize = true;
         //add a little 'debounce' so that we don't react to 100s of resize events that are triggered by the browser being resized
         setTimeout(() => {
-          this.screenWidth = window.innerWidth; // Set initial screen width
-          this.screenHeight = window.innerHeight; // Set initial screen height
-          this.#setPageDimensions();
+          this.#inspectScreenForLayout();
           console.log('Layout shifting from resize...');
-          console.log(
-            `Screen Width: ${this.screenWidth}, Screen Height: ${this.screenHeight}`
-          );
           this.hasHeardResize = false;
         }, 1000);
       }
     });
   }
 
-  #setPageDimensions() {
+  #setPageWidth() {
+    this.smallScreenWidth = false;
+    this.largeScreenWidth = false;
+    // so...we're trying to make page width in between MIN and MAX width, taking into account that our space is effected by where the page container starts on the left
     this.pageWidth = Math.max(
-      LayoutManager.#MIN_WIDTH,
-      Math.min(LayoutManager.#MAX_WIDTH, this.screenWidth) //so if the screen is larger than max width it will be set to max width, if it's smaller than min width though it will be set to min width
+      LayoutManager.#MIN_WIDTH - this.pageContainerBoundingRect.left,
+      Math.min(
+        LayoutManager.#MAX_WIDTH - this.pageContainerBoundingRect.left,
+        this.screenWidth
+      ) //so if the screen is larger than max width it will be set to max width, if it's smaller than min width though it will be set to min width
     );
+    console.log(`Page Width: ${this.pageWidth}`);
+    // now check whether the screen is smaller than the MIN width and if so we're on a small screen which effects the rows and columns, we want the columns to become rows
     if (this.screenWidth < this.pageWidth) {
-      this.smallScreen = true;
+      console.log(
+        `Small screen width detected: set pageWidth to ${this.screenWidth}...`
+      );
+      this.smallScreenWidth = true;
+      this.pageWidth = this.screenWidth;
     }
-    this.pageHeight = Math.max(
-      LayoutManager.#MIN_HEIGHT - this.pageContainerBoundingRect.top,
-      Math.min(LayoutManager.#MAX_HEIGHT, this.screenHeight)
-    );
+    // else is the screen bigger than the MAX width and if so we'll want to work out our centre line differently
+    else if (this.screenWidth > this.pageWidth) {
+      console.log(`Large screen detected, setting centreLine...`);
+      this.largeScreenWidth = true;
+      this.centreLine =
+        this.pageContainerBoundingRect.left + this.screenWidth / 2;
+    }
+    //this is just to vertically centre if the screen size is bigger than the page size
+    // this.pageHeight = Math.max(
+    //   LayoutManager.#MIN_HEIGHT - this.pageContainerBoundingRect.top,
+    //   Math.min(LayoutManager.#MAX_HEIGHT, this.screenHeight)
+    // );
   }
 
   #findMaxRowAndColumn() {
+    this.rowCount = 0;
+    this.columnCount = 0;
     this.wireframe.forEach((content) => {
       if (content.position.row > this.rowCount) {
         this.rowCount = content.position.row;
@@ -71,7 +87,13 @@ class LayoutManager {
         this.columnCount = content.position.column;
       }
     });
-    console.log(`Max Rows: ${this.rowCount}, Max Columns: ${this.columnCount}`);
+
+    if (this.smallScreenWidth) {
+      // if we're on a small screen then we want to make columns into extra rows
+      this.rowCount *= this.columnCount;
+      this.columnCount = 1;
+    }
+    console.log(`Rows: ${this.rowCount}, Columns: ${this.columnCount}`);
   }
 }
 
