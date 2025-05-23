@@ -1,5 +1,5 @@
 const World = {
-  DEPTH: 600,
+  DEPTH: 200,
   DURATION: 1000,
   MAX_SPEED: 4,
   MIN_SPEED: 1,

@@ -11,7 +11,7 @@ class PageManger {
     this.pageObject = pageObject;
     this.pageContainer = pageContainer;
     this.layoutManager = null; // Placeholder for LayoutManager instance
-    this.floaterArray = []; // Array to hold Floater instances
+    this.floaterMap = new Map(); // Array to hold Floater instances
     this.isOpen = false;
   }
 
@@ -58,13 +58,13 @@ class PageManger {
     console.table(this.pageObject);
     this.pageContainer.style.height = this.layoutManager.getPageHeight();
     // this.layoutManager.updateLayout(); // Update layout when showing the page
-    this.floaterArray.forEach((floater) => floater.reveal());
+    this.floaterMap.forEach((floater) => floater.reveal());
   }
 
   hide() {
     this.isOpen = false;
     this.pageContainer.style.height = '100%';
-    this.floaterArray.forEach((floater) => floater.float());
+    this.floaterMap.forEach((floater) => floater.float());
   }
 }
 

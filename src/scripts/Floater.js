@@ -6,6 +6,8 @@ class Floater {
     if (!container || !(container instanceof HTMLElement)) {
       throw new Error('A valid container element must be provided.');
     }
+    // it's a 'floater' so let's get it floating! This has to be declared first so it can be checked in the setRevealPosition method
+    this.isFloating = true;
     this.setRevealPosition(revealX, revealY);
     this.createPersonality();
     this.createFloaterDiv(layoutNumber);
@@ -18,7 +20,6 @@ class Floater {
       World.BIRTH_POSITION.y,
       World.BIRTH_POSITION.z
     );
-    this.isFloating = true;
 
     const { x, y, z } = this.createRandomPosition();
     this.moveTo(x, y, z, this.myDuration); // move to initial position
@@ -34,16 +35,24 @@ class Floater {
   }
 
   setRevealPosition(x, y) {
+    typeof x !== 'number' && (x = parseInt(x));
+    typeof y !== 'number' && (y = parseInt(y));
     if (typeof x !== 'number' || typeof y !== 'number') {
-      throw new Error('Reveal position coordinates must be numbers.');
+      throw new Error('Reveal position coordinates: unable to parseInt');
     }
     this.revealX = x;
     this.revealY = y;
+    //if this is changed by PageManager whilst open then let's move the floaters
+    if (!this.isFloating) {
+      this.moveTo(x, y, 1, this.myDuration);
+    }
   }
 
   setDimensions(width, height) {
+    typeof width !== 'number' && (width = parseInt(width));
+    typeof height !== 'number' && (height = parseInt(height));
     if (typeof width !== 'number' || typeof height !== 'number') {
-      throw new Error('Width and height must be numbers.');
+      throw new Error('Width and height: unable to parseInt');
     }
     this.element.style.width = `${width}px`;
     this.element.style.height = `${height}px`;
@@ -56,6 +65,8 @@ class Floater {
     this.element.setAttribute('data-layout-number', layoutNumber);
     // this.element.setAttribute('data-floating', this.isFloating);
     this.element.className = 'floater'; // Add a class for styling
+    //set up an initial transition (this is over-written by moveTo()) but now we're setting dimensions from the PageManager we want this here as we won't be setting it in the css
+    this.element.style.transition = `all ${this.myDuration}ms ${this.easingStyle}`;
     const colourRandomiser = 0; //Math.floor(
     //   Math.random() * World.FLOATER_COLOURS.length
     // );
@@ -70,10 +81,10 @@ class Floater {
     // this was when I was playing with the divs being self aware as it were
     this.element.setAttribute('data-floating', this.isFloating);
     // remove the resize listener as it's not needed whilst we're floating
-    if (this.resizeListener) {
-      window.removeEventListener('resize', this.resizeListener);
-      this.hasHeardResize = false;
-    }
+    // if (this.resizeListener) {
+    //   window.removeEventListener('resize', this.resizeListener);
+    //   this.hasHeardResize = false;
+    // }
     if (this.revealTimeout) {
       clearTimeout(this.revealTimeout);
     }
@@ -165,43 +176,44 @@ class Floater {
     // z-index of 1 passed in as we don't want any scaling
     this.moveTo(this.revealX, this.revealY, 1, World.DURATION);
     // add a resize listener so we can look after the container height
-    this.resizeListener = window.addEventListener('resize', () => {
-      if (!this.hasHeardResize) {
-        this.hasHeardResize = true;
-        //add a little 'debounce' so that we don't react to 100s of resize events that are triggered by the browser being resized
-        setTimeout(() => {
-          console.log('Resizing container...');
-          this.resizeContainerRect();
-          this.hasHeardResize = false;
-        }, 1000);
-      }
-    });
+    // this.resizeListener = window.addEventListener('resize', () => {
+    //   if (!this.hasHeardResize) {
+    //     this.hasHeardResize = true;
+    //     //add a little 'debounce' so that we don't react to 100s of resize events that are triggered by the browser being resized
+    //     setTimeout(() => {
+    //       console.log('Resizing container...');
+    //       this.resizeContainerRect();
+    //       this.hasHeardResize = false;
+    //     }, 1000);
+    //   }
+    // });
     // This is what we want to happen at the end of the reveal hence it's a timeout with the same duration as the moveTo function is using (I've made it fractionally longer so that the call to resizeContainerRect works as hoped)
     this.revealTimeout = setTimeout(() => {
       this.contentHolder.style.visibility = 'visible';
       this.isFloating = false;
       this.element.setAttribute('data-floating', this.isFloating);
       // clearTimeout(timeout);//no need I reckon as it clears once it's finished - I'll clear it in float() for the case where it's revealed and then quickly set to float again
-      this.resizeContainerRect();
+      // this.resizeContainerRect();
       this.revealTimeout = null;
     }, World.DURATION + 100);
   }
 
   // Set the container height to fit content so it will scroll when the floaters overflow the height of the container
-  resizeContainerRect() {
-    if (this.isFloating) {
-      return;
-    }
-    setTimeout(() => {
-      const containerRect = this.container.getBoundingClientRect();
-      const elementRect = this.element.getBoundingClientRect();
-      this.container.style.height =
-        Math.max(
-          parseInt(this.container.style.height),
-          elementRect.bottom - containerRect.top + World.CONTENT_PADDING
-        ) + 'px';
-    }, this.myDuration + 100);
-  }
+  // I'm moving this functionality to the PageManager
+  // resizeContainerRect() {
+  //   if (this.isFloating) {
+  //     return;
+  //   }
+  //   setTimeout(() => {
+  //     const containerRect = this.container.getBoundingClientRect();
+  //     const elementRect = this.element.getBoundingClientRect();
+  //     this.container.style.height =
+  //       Math.max(
+  //         parseInt(this.container.style.height),
+  //         elementRect.bottom - containerRect.top + World.CONTENT_PADDING
+  //       ) + 'px';
+  //   }, this.myDuration + 100);
+  // }
 }
 
 export default Floater;
