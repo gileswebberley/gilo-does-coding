@@ -1,7 +1,7 @@
 /* Ok, so this will be sent the wireframe from it's page manager and work out the postions and sizes for all of the floaters (by index) and also keep an eye on page resizing. I will want to be able to call, say, getLayout(floaterIndex) and it will return {x,y,w,h} */
 class LayoutManager {
   static #MAX_WIDTH = 1024;
-  static #MIN_WIDTH = 480;
+  static #MIN_WIDTH = 512;
   static #AUTO_FLOATER_HEIGHT = 320;
   //   static #MIN_HEIGHT = 320;
   static #PAGE_PADDING = 20;
@@ -20,6 +20,7 @@ class LayoutManager {
   constructor(wireframe, pageContainerBoundingRect) {
     this.wireframe = wireframe;
     this.pageContainerBoundingRect = pageContainerBoundingRect; // This is the bounding rect of the page container element to check top and left properties
+    this.layoutArray = [];
     this.#inspectScreenForLayout();
     this.#startListeningForResize();
   }
@@ -30,6 +31,7 @@ class LayoutManager {
     this.#setPageWidth();
     this.#findMaxRowAndColumn();
     this.#createLayoutMarkers();
+    this.#buildLayout();
   }
 
   #startListeningForResize() {
@@ -51,6 +53,43 @@ class LayoutManager {
     let nextX = 0;
     let currentY = this.originY;
     let nextY = 0;
+
+    for (let i = 1; i <= this.rowCount; i++) {
+      const row = this.#getRowElements(i);
+      row.forEach((element) => {
+        //ok, so, I decided it would be more readable by having the various logic inside self contained functions but I wanted them to be able to share this method's variables (eg currentX) but also refer to this class instance's variables (eg this.smallScreenWidth). I realised that this is the perfect time to use the Function.prototype.call() method to bind it to 'this'
+        const { x, w } = calculateX.call(this, element);
+        console.log(`calculateX: x:${x} w:${w}`);
+      });
+    }
+    //No :( this doesn't have this in scope...but ahhh, this is where the Function.call() comes into play :)
+    function calculateX(element) {
+      currentX = this.smallScreenWidth
+        ? this.originX
+        : this.originX + this.columnWidth * (element.position.column - 1);
+      if (currentX < nextX) {
+        //we're dealing with multiple elements inside a single grid square
+        currentX = nextX;
+        nextX = 0;
+      }
+      let x = currentX + element.offset.x;
+      // let y = currentY + element.offset.y;
+      let w =
+        element.sizeType.width === 'auto'
+          ? (this.columnWidth / 100) * element.size.width
+          : element.size.width;
+      nextX = currentX + w;
+      //using this to round to full pixels and parseInt is apparently slightly more efficient than Math.floor
+      w = parseInt(w);
+      console.log(`currentX: ${currentX}, nextX: ${nextX}`);
+      //to implement the gap between floaters I'll just adjust the final settings now that the numbers have been used to create their 'placeholders' as it were. This is a simplified bit of logic that will create slightly bigger padding on either side but it's all I can think of at the moment without having to loop through again checking whether they are at the beginning of a column and so on - ROOM FOR IMPROVEMENT TO THIS
+      x += LayoutManager.#FLOATER_GAP / 2;
+      w -= LayoutManager.#FLOATER_GAP;
+      //then create a string which can be set as the floater's style.width and style.left
+      x += 'px';
+      w += 'px';
+      return { x, w };
+    }
   }
 
   #getRowElements(rowNumber) {

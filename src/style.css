@@ -97,6 +97,7 @@ h1 {
 .scrollableMain {
   overflow-y: auto;
   height: 100%;
+  width: 100%;
   pointer-events: all; /* this was needed to get the contents of the floaters scrolling as well as the main container (that's inside this!) */
 }
 

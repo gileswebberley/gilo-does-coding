@@ -87,12 +87,13 @@ class Floater {
     const actualSize = this.element.getBoundingClientRect();
     const containerRect = this.container.getBoundingClientRect();
     const x =
-      Math.random() * (containerRect.right - actualSize.width) -
-      containerRect.left;
+      containerRect.left +
+      Math.random() * (containerRect.width - actualSize.width);
     const y =
-      Math.random() * (containerRect.height - actualSize.height) -
-      containerRect.top;
-    const z = Math.floor(Math.random() * World.DEPTH + 1) * -1;
+      containerRect.top +
+      Math.random() * (containerRect.height - actualSize.height);
+    const z = Math.floor(Math.random() * World.DEPTH) * -1; //removed +1 from World.DEPTH as I don't think it's needed any more
+    // console.log(`RANDOM POSITION: ${x} ${y} ${z}`);
     return { x, y, z };
   }
 

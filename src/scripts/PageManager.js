@@ -22,6 +22,7 @@ class PageManger {
     // create an array of {position:{row, column}, size:{width, height}, offset:{Xpx,Ypx}} objects from the pageObject
     const wireframe = this.pageObject.map((content) => {
       return {
+        layoutNumer: content.layoutNumber,
         position: content.position,
         offset: content.offset,
         size: content.size,
