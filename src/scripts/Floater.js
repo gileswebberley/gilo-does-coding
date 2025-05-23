@@ -22,7 +22,8 @@ class Floater {
     );
 
     const { x, y, z } = this.createRandomPosition();
-    this.moveTo(x, y, z, this.myDuration); // move to initial position
+    this.moveTo(x, y, z, this.myDuration); // move to initial position whilst waiting for float loop
+    // this.float();
   }
 
   createPersonality() {

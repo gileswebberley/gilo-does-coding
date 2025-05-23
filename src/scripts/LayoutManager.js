@@ -41,6 +41,8 @@ class LayoutManager {
   }
 
   getFloaterLayoutObject(layoutNumber) {
+    console.log(`get layout for #${layoutNumber}`);
+    console.table(this.layoutMap);
     return this.layoutMap.get(layoutNumber);
   }
 
@@ -92,7 +94,9 @@ class LayoutManager {
         console.log(`calculateY: y:${y} h:${h}`);
         // this.layoutArray.push({ id: element.layoutNumber, x, y, w, h });
         // if the layout has already been calculated this will simply update the values for each layoutNumber
-        this.layoutMap.set(element.layoutNumber, { x, y, w, h });
+        console.log(`Making map entry for #${element.layoutNumber}`);
+        console.table(element);
+        this.layoutMap.set(Number(element.layoutNumber), { x, y, w, h });
       });
     }
     nextY += this.#pagePadding;
@@ -102,11 +106,11 @@ class LayoutManager {
       //loop through the map and add to y property
       const yShift = (this.veiwportHeight - layoutHeight) / 2;
       this.layoutMap.forEach((layoutObject) => {
-        layoutObject.y += yShift;
+        layoutObject.y = parseInt(layoutObject.y) + yShift + 'px';
       });
-      this.pageHeight = this.veiwportHeight;
+      this.pageHeight = this.veiwportHeight + 'px';
     } else {
-      this.pageHeight = nextY - this.topMargin;
+      this.pageHeight = nextY - this.topMargin + 'px';
     }
     //No :( this doesn't have this in scope...but ahhh, this is where the Function.call() comes into play :)
     function calculateX(element) {

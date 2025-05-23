@@ -36,8 +36,7 @@ const Page_Test = {
       size: { width: 50, height: 100 },
       sizeType: { width: 'auto', height: 'fixed' },
       type: 'image',
-      src: 'https://example.com/image.jpg',
-      alt: 'Example Image',
+      src: { src: 'https://example.com/image.jpg', alt: 'Example Image' },
     },
     {
       layoutNumber: 3,
@@ -45,9 +44,8 @@ const Page_Test = {
       offset: { x: 0, y: 0 },
       size: { width: 50, height: 100 },
       sizeType: { width: 'auto', height: 'fixed' },
-      type: 'video',
-      src: 'https://example.com/video.mp4',
-      alt: 'Example Video',
+      type: 'iframe',
+      src: '../TestPage.html',
     },
   ],
 };
