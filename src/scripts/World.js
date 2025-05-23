@@ -11,6 +11,7 @@ const World = {
     y: 0,
     z: 1,
   },
+  RESIZE_TIMEOUT: 1000,
 };
 
 export default World;

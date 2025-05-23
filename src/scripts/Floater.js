@@ -1,5 +1,6 @@
 import World from './World';
 
+//I think pass these a reference to their LayoutManager and perhaps let their PageManager take care of sizing the container??
 class Floater {
   constructor(container, layoutNumber, revealX = 0, revealY = 0) {
     if (!container || !(container instanceof HTMLElement)) {
@@ -72,6 +73,9 @@ class Floater {
     if (this.resizeListener) {
       window.removeEventListener('resize', this.resizeListener);
       this.hasHeardResize = false;
+    }
+    if (this.revealTimeout) {
+      clearTimeout(this.revealTimeout);
     }
     // just unneccesarily processor intensive to show the contents whilst floating (and the reason for the name 'reveal')
     this.contentHolder.style.visibility = 'hidden';
@@ -173,12 +177,13 @@ class Floater {
       }
     });
     // This is what we want to happen at the end of the reveal hence it's a timeout with the same duration as the moveTo function is using (I've made it fractionally longer so that the call to resizeContainerRect works as hoped)
-    const timeout = setTimeout(() => {
+    this.revealTimeout = setTimeout(() => {
       this.contentHolder.style.visibility = 'visible';
       this.isFloating = false;
       this.element.setAttribute('data-floating', this.isFloating);
-      clearTimeout(timeout);
+      // clearTimeout(timeout);//no need I reckon as it clears once it's finished - I'll clear it in float() for the case where it's revealed and then quickly set to float again
       this.resizeContainerRect();
+      this.revealTimeout = null;
     }, World.DURATION + 100);
   }
 
@@ -190,11 +195,12 @@ class Floater {
     setTimeout(() => {
       const containerRect = this.container.getBoundingClientRect();
       const elementRect = this.element.getBoundingClientRect();
-      // if (parseFloat(containerRect.bottom) < elementRect.bottom) {
       this.container.style.height =
-        elementRect.bottom - containerRect.top + World.CONTENT_PADDING + 'px';
-    }, this.duration + 100);
-    // }
+        Math.max(
+          parseInt(this.container.style.height),
+          elementRect.bottom - containerRect.top + World.CONTENT_PADDING
+        ) + 'px';
+    }, this.myDuration + 100);
   }
 }
 

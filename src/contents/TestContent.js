@@ -3,7 +3,7 @@ const Page_Test = {
   buttonText: 'Test page',
   content: [
     {
-      //This is to reference when getting info from the LayoutManger
+      //This is to reference when getting info from the LayoutManger - MUST BE UNIQUE
       layoutNumber: 1,
       // let's do the row and column thing here {row, column}
       position: { row: 1, column: 1 },
@@ -41,7 +41,7 @@ const Page_Test = {
     },
     {
       layoutNumber: 3,
-      position: { row: 2, column: 2 },
+      position: { row: 1, column: 2 },
       offset: { x: 0, y: 0 },
       size: { width: 50, height: 100 },
       sizeType: { width: 'auto', height: 'fixed' },

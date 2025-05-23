@@ -2,8 +2,8 @@
 class LayoutManager {
   static #MAX_WIDTH = 1024;
   static #MIN_WIDTH = 512;
+  //this is for the height of a row element if sizeType is set to 'auto', kinda like the equivalent of columnWidth
   static #AUTO_FLOATER_HEIGHT = 320;
-  //   static #MIN_HEIGHT = 320;
   static #PAGE_PADDING = 20;
   //an instance property so it can be adjusted for small screens
   #pagePadding = LayoutManager.#PAGE_PADDING;
@@ -20,39 +20,67 @@ class LayoutManager {
   constructor(wireframe, pageContainerBoundingRect) {
     this.wireframe = wireframe;
     this.pageContainerBoundingRect = pageContainerBoundingRect; // This is the bounding rect of the page container element to check top and left properties
-    this.layoutArray = [];
-    this.#inspectScreenForLayout();
-    this.#startListeningForResize();
+    //This is for the vertical centre alignment in buildLayout - no cos if another page is revealed then it might have changed the height of the viewport so we can't know on resize. We'll have to assume that when these are created there won't be one open...
+    this.topMargin = pageContainerBoundingRect.top;
+    this.bottomMargin = window.innerHeight - pageContainerBoundingRect.bottom;
+    // this.veiwportHeight =
+    //   pageContainerBoundingRect.bottom - pageContainerBoundingRect.top;
+    console.log(
+      `viewportHeight: ${this.veiwportHeight} screenHeight: ${window.innerHeight}`
+    );
+    // this.layoutArray = [];//let's use the map as it is indexed by their layoutNumber
+    this.layoutMap = new Map();
+    this.inspectScreenForLayout();
+    //think I'm going to move this to the PageManager and remove it from LayoutManager and Floater
+    // this.#startListeningForResize();
   }
 
-  #inspectScreenForLayout() {
-    this.screenWidth = window.innerWidth - this.pageContainerBoundingRect.left; // Set initial screen width shifted across by container x position
-    this.screenHeight = window.innerHeight - this.pageContainerBoundingRect.top; // Set initial screen height shifted down by container y position
+  getPageHeight() {
+    console.log(`PAGE HEIGHT REQUESTED: ${this.pageHeight}`);
+    return this.pageHeight;
+  }
+
+  getFloaterLayoutObject(layoutNumber) {
+    return this.layoutMap.get(layoutNumber);
+  }
+
+  inspectScreenForLayout() {
+    //Not sure if I need to put some kind of lock flag in here so PageManager can't execute the get functions whilst this is doing it's work??
+    this.leftMargin = this.pageContainerBoundingRect.left;
+    this.rightMargin = window.innerWidth - this.pageContainerBoundingRect.right;
+    this.screenWidth = window.innerWidth - (this.leftMargin + this.rightMargin); // Set initial screen width shifted across by container x position
+    this.veiwportHeight =
+      window.innerHeight - (this.topMargin + this.bottomMargin);
+    console.log(
+      `leftMargin: ${this.leftMargin} rightMargin: ${this.rightMargin} screenWidth: ${this.screenWidth}`
+    );
+    // this.screenHeight = window.innerHeight - this.topMargin; // Set initial screen height shifted down by container y position
     this.#setPageWidth();
     this.#findMaxRowAndColumn();
     this.#createLayoutMarkers();
     this.#buildLayout();
   }
 
-  #startListeningForResize() {
-    this.resizeListener = window.addEventListener('resize', () => {
-      if (!this.hasHeardResize) {
-        this.hasHeardResize = true;
-        //add a little 'debounce' so that we don't react to 100s of resize events that are triggered by the browser being resized
-        setTimeout(() => {
-          this.#inspectScreenForLayout();
-          console.log('Layout shifting from resize...');
-          this.hasHeardResize = false;
-        }, 1000);
-      }
-    });
-  }
+  //   #startListeningForResize() {
+  //     this.resizeListener = window.addEventListener('resize', () => {
+  //       if (!this.hasHeardResize) {
+  //         this.hasHeardResize = true;
+  //         //add a little 'debounce' so that we don't react to 100s of resize events that are triggered by the browser being resized
+  //         setTimeout(() => {
+  //           console.log('Layout shifting from resize...');
+  //           this.inspectScreenForLayout();
+  //           this.hasHeardResize = false;
+  //         }, 1000);
+  //       }
+  //     });
+  //   }
 
   #buildLayout() {
     let currentX = this.originX;
     let nextX = 0;
     let currentY = this.originY;
     let nextY = 0;
+    let currentRow = 1;
 
     for (let i = 1; i <= this.rowCount; i++) {
       const row = this.#getRowElements(i);
@@ -60,7 +88,25 @@ class LayoutManager {
         //ok, so, I decided it would be more readable by having the various logic inside self contained functions but I wanted them to be able to share this method's variables (eg currentX) but also refer to this class instance's variables (eg this.smallScreenWidth). I realised that this is the perfect time to use the Function.prototype.call() method to bind it to 'this'
         const { x, w } = calculateX.call(this, element);
         console.log(`calculateX: x:${x} w:${w}`);
+        const { y, h } = calculateY.call(this, element, i);
+        console.log(`calculateY: y:${y} h:${h}`);
+        // this.layoutArray.push({ id: element.layoutNumber, x, y, w, h });
+        // if the layout has already been calculated this will simply update the values for each layoutNumber
+        this.layoutMap.set(element.layoutNumber, { x, y, w, h });
       });
+    }
+    nextY += this.#pagePadding;
+    const layoutHeight = nextY - this.topMargin;
+    //We need to check whether the available screen height is greater than the height of all of the layout and adjust the y values for each to shift it to vertically centre align. nextY will have been left as the height of all elements but the height of the container may have been changed by the floaters on reveal() :/ hmm, maybe grab the bottom property in the constructor?
+    if (layoutHeight < this.veiwportHeight) {
+      //loop through the map and add to y property
+      const yShift = (this.veiwportHeight - layoutHeight) / 2;
+      this.layoutMap.forEach((layoutObject) => {
+        layoutObject.y += yShift;
+      });
+      this.pageHeight = this.veiwportHeight;
+    } else {
+      this.pageHeight = nextY - this.topMargin;
     }
     //No :( this doesn't have this in scope...but ahhh, this is where the Function.call() comes into play :)
     function calculateX(element) {
@@ -90,6 +136,31 @@ class LayoutManager {
       w += 'px';
       return { x, w };
     }
+
+    function calculateY(element, rowNumber) {
+      if (rowNumber > currentRow) {
+        //we've moved onto the 'next row' in the layout
+        currentRow = rowNumber;
+        currentY = nextY;
+      }
+      let y = currentY + element.offset.y;
+      let h =
+        element.sizeType.width === 'auto'
+          ? (LayoutManager.#AUTO_FLOATER_HEIGHT / 100) * element.size.height
+          : element.size.width;
+      // if this is another element in the same row check whether it's taller than any other element in the row to set the beginning Y for the next row
+      if (currentY + h > nextY) {
+        nextY = currentY + h;
+      }
+      // nextX = currentX + w;
+      h = parseInt(h);
+      console.log(`currentY: ${currentY}, nextY: ${nextY}`);
+      y += LayoutManager.#FLOATER_GAP / 2;
+      h -= LayoutManager.#FLOATER_GAP;
+      y += 'px';
+      h += 'px';
+      return { y, h };
+    }
   }
 
   #getRowElements(rowNumber) {
@@ -115,9 +186,9 @@ class LayoutManager {
     this.largeScreenWidth = false;
     // so...we're trying to make page width in between MIN and MAX width, taking into account that our space is effected by where the page container starts on the left
     this.pageWidth = Math.max(
-      LayoutManager.#MIN_WIDTH - this.pageContainerBoundingRect.left,
+      LayoutManager.#MIN_WIDTH - (this.leftMargin + this.rightMargin),
       Math.min(
-        LayoutManager.#MAX_WIDTH - this.pageContainerBoundingRect.left,
+        LayoutManager.#MAX_WIDTH - (this.leftMargin + this.rightMargin),
         this.screenWidth
       ) //so if the screen is larger than max width it will be set to max width, if it's smaller than min width though it will be set to min width
     );
@@ -135,12 +206,15 @@ class LayoutManager {
       console.log(`Large screen detected, setting centreLine...`);
       this.largeScreenWidth = true;
     }
+
+    //We're only dealing with whether the container is shifted to the right, we should also consider a layout where there's a sidebar on the right side of the screen...is it as simple as this? No cos it needs to be part of the minmax calculation I think.
+    // this.pageWidth -= window.innerWidth - this.pageContainerBoundingRect.right;
   }
 
   #createLayoutMarkers() {
     this.#pagePadding = LayoutManager.#PAGE_PADDING;
     this.originX = this.pageContainerBoundingRect.left;
-    this.originY = this.pageContainerBoundingRect.top;
+    this.originY = this.topMargin;
     //because I want to keep the columns as counted from the wireframe (for use in getRowElements) but still want the columnWidth sum to be calculated for small windows...
     let tmpColumnCount = this.columnCount;
     if (this.smallScreenWidth) {
