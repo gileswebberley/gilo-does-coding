@@ -78,6 +78,7 @@ class PageManger {
         setTimeout(() => {
           console.log('Layout shifting from resize...');
           this.layoutManager.inspectScreenForLayout();
+          this.pageContainer.style.height = this.layoutManager.getPageHeight();
           this.floaterMap.forEach((value, key) => {
             const { x, y, w, h } =
               this.layoutManager.getFloaterLayoutObject(key);
@@ -102,10 +103,7 @@ class PageManger {
       };
     });
     console.table(wireframe);
-    this.layoutManager = new LayoutManager(
-      wireframe,
-      this.pageContainer.getBoundingClientRect()
-    );
+    this.layoutManager = new LayoutManager(wireframe, this.pageContainer);
   }
 
   show() {

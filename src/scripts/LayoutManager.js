@@ -17,17 +17,17 @@ class LayoutManager {
     sizeType: {width: 'auto', height: 'fixed'} which means width is a percentage and height is in pixels
  */
 
-  constructor(wireframe, pageContainerBoundingRect) {
+  constructor(wireframe, pageContainer) {
     this.wireframe = wireframe;
-    this.pageContainerBoundingRect = pageContainerBoundingRect; // This is the bounding rect of the page container element to check top and left properties
+    this.pageContainer = pageContainer;
+    this.pageContainerBoundingRect = pageContainer.getBoundingClientRect(); // This is the bounding rect of the page container element to check top and left properties
     //This is for the vertical centre alignment in buildLayout - no cos if another page is revealed then it might have changed the height of the viewport so we can't know on resize. We'll have to assume that when these are created there won't be one open...
-    this.topMargin = pageContainerBoundingRect.top;
-    this.bottomMargin = window.innerHeight - pageContainerBoundingRect.bottom;
+    this.topMargin = this.pageContainerBoundingRect.top;
+    this.bottomMargin =
+      window.innerHeight - this.pageContainerBoundingRect.bottom;
     // this.veiwportHeight =
     //   pageContainerBoundingRect.bottom - pageContainerBoundingRect.top;
-    console.log(
-      `viewportHeight: ${this.veiwportHeight} screenHeight: ${window.innerHeight}`
-    );
+
     // this.layoutArray = [];//let's use the map as it is indexed by their layoutNumber
     this.layoutMap = new Map();
     this.inspectScreenForLayout();
@@ -41,12 +41,13 @@ class LayoutManager {
   }
 
   getFloaterLayoutObject(layoutNumber) {
-    console.log(`get layout for #${layoutNumber}`);
-    console.table(this.layoutMap);
+    // console.log(`get layout for #${layoutNumber}`);
+    // console.table(this.layoutMap);
     return this.layoutMap.get(layoutNumber);
   }
 
   inspectScreenForLayout() {
+    this.pageContainerBoundingRect = this.pageContainer.getBoundingClientRect();
     //Not sure if I need to put some kind of lock flag in here so PageManager can't execute the get functions whilst this is doing it's work??
     this.leftMargin = this.pageContainerBoundingRect.left;
     this.rightMargin = window.innerWidth - this.pageContainerBoundingRect.right;
@@ -55,6 +56,9 @@ class LayoutManager {
       window.innerHeight - (this.topMargin + this.bottomMargin);
     console.log(
       `leftMargin: ${this.leftMargin} rightMargin: ${this.rightMargin} screenWidth: ${this.screenWidth}`
+    );
+    console.log(
+      `viewportHeight: ${this.veiwportHeight} screenHeight: ${window.innerHeight}`
     );
     // this.screenHeight = window.innerHeight - this.topMargin; // Set initial screen height shifted down by container y position
     this.#setPageWidth();
@@ -91,20 +95,22 @@ class LayoutManager {
         const { x, w } = calculateX.call(this, element);
         console.log(`calculateX: x:${x} w:${w}`);
         const { y, h } = calculateY.call(this, element, i);
-        console.log(`calculateY: y:${y} h:${h}`);
+        console.log(`calculateY: y:${y} h:${h} row number:${i}`);
         // this.layoutArray.push({ id: element.layoutNumber, x, y, w, h });
         // if the layout has already been calculated this will simply update the values for each layoutNumber
         console.log(`Making map entry for #${element.layoutNumber}`);
-        console.table(element);
+        // console.table(element);
         this.layoutMap.set(Number(element.layoutNumber), { x, y, w, h });
       });
     }
     nextY += this.#pagePadding;
-    const layoutHeight = nextY - this.topMargin;
+    const layoutHeight = nextY; // - this.topMargin;
     //We need to check whether the available screen height is greater than the height of all of the layout and adjust the y values for each to shift it to vertically centre align. nextY will have been left as the height of all elements but the height of the container may have been changed by the floaters on reveal() :/ hmm, maybe grab the bottom property in the constructor?
+    const yShift = (this.veiwportHeight - layoutHeight) / 2;
     if (layoutHeight < this.veiwportHeight) {
+      console.log(`shifting y down for centering.....................!!!`);
       //loop through the map and add to y property
-      const yShift = (this.veiwportHeight - layoutHeight) / 2;
+      //   const yShift = (this.veiwportHeight - layoutHeight) / 2;
       this.layoutMap.forEach((layoutObject) => {
         layoutObject.y = parseInt(layoutObject.y) + yShift + 'px';
       });
@@ -114,13 +120,22 @@ class LayoutManager {
     }
     //No :( this doesn't have this in scope...but ahhh, this is where the Function.call() comes into play :)
     function calculateX(element) {
+      console.log(
+        `small screen width: ${this.smallScreenWidth}!!!!!!!!!!!!!!!!!!`
+      );
       currentX = this.smallScreenWidth
         ? this.originX
         : this.originX + this.columnWidth * (element.position.column - 1);
-      if (currentX < nextX) {
+
+      console.log(`currentX: ${currentX}, nextX: ${nextX}`);
+      //this is where our small screen column x postion is going wrong I think
+      if (
+        currentX !== this.originX ||
+        (nextX < currentX + this.columnWidth && nextX !== 0)
+      ) {
         //we're dealing with multiple elements inside a single grid square
         currentX = nextX;
-        nextX = 0;
+        // nextX -= this.columnWidth;
       }
       let x = currentX + element.offset.x;
       // let y = currentY + element.offset.y;
@@ -146,6 +161,7 @@ class LayoutManager {
         //we've moved onto the 'next row' in the layout
         currentRow = rowNumber;
         currentY = nextY;
+        currentX = this.originX;
       }
       let y = currentY + element.offset.y;
       let h =
@@ -218,7 +234,7 @@ class LayoutManager {
   #createLayoutMarkers() {
     this.#pagePadding = LayoutManager.#PAGE_PADDING;
     this.originX = this.pageContainerBoundingRect.left;
-    this.originY = this.topMargin;
+    this.originY = 0; // this.topMargin;
     //because I want to keep the columns as counted from the wireframe (for use in getRowElements) but still want the columnWidth sum to be calculated for small windows...
     let tmpColumnCount = this.columnCount;
     if (this.smallScreenWidth) {
