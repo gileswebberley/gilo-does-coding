@@ -1,7 +1,7 @@
 /* Ok, so this will be sent the wireframe from it's page manager and work out the postions and sizes for all of the floaters (by index) and also keep an eye on page resizing. I will want to be able to call, say, getLayout(floaterIndex) and it will return {x,y,w,h} */
 class LayoutManager {
-  static #MAX_WIDTH = 1024;
-  static #MIN_WIDTH = 512;
+  static #MAX_WIDTH = 1280;
+  static #MIN_WIDTH = 740;
   //this is for the height of a row element if sizeType is set to 'auto', kinda like the equivalent of columnWidth
   static #AUTO_FLOATER_HEIGHT = 320;
   static #PAGE_PADDING = 20;
@@ -116,7 +116,8 @@ class LayoutManager {
       });
       this.pageHeight = this.veiwportHeight + 'px';
     } else {
-      this.pageHeight = nextY - this.topMargin + 'px';
+      console.log(`making page bigger for scrolling....................`);
+      this.pageHeight = layoutHeight + 'px'; // thought it wasn't good logic but it turned out to be me forgetting to add the 'px'!!
     }
     //No :( this doesn't have this in scope...but ahhh, this is where the Function.call() comes into play :)
     function calculateX(element) {
