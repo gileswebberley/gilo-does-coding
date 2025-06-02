@@ -33,10 +33,10 @@ const Page_Test = {
       layoutNumber: 2,
       position: { row: 1, column: 2 },
       offset: { x: 0, y: 0 },
-      size: { width: 50, height: 100 },
+      size: { width: 50, height: 200 },
       sizeType: { width: 'auto', height: 'fixed' },
       type: 'image',
-      src: { src: 'https://example.com/image.jpg', alt: 'Example Image' },
+      src: { src: '../c_faye2.jpg', alt: 'Example Image' },
     },
     {
       layoutNumber: 3,
