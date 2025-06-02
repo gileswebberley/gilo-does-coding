@@ -86,8 +86,8 @@ class LayoutManager {
     let currentY = this.originY;
     let nextY = 0;
     let currentRow = 1;
-    let currentColumn = 1;
-    let lastColumn = 1;
+    // let currentColumn = 1;
+    // let lastColumn = 1;
 
     for (let i = 1; i <= this.rowCount; i++) {
       const row = this.#getRowElements(i);
@@ -104,6 +104,7 @@ class LayoutManager {
         this.layoutMap.set(Number(element.layoutNumber), { x, y, w, h });
       });
     }
+    //put a bit of space at the bottom before setting the total layout height
     nextY += this.#pagePadding;
     const layoutHeight = nextY; // - this.topMargin;
     //We need to check whether the available screen height is greater than the height of all of the layout and adjust the y values for each to shift it to vertically centre align. nextY will have been left as the height of all elements but the height of the container may have been changed by the floaters on reveal() :/ hmm, maybe grab the bottom property in the constructor?
@@ -158,6 +159,8 @@ class LayoutManager {
       //to implement the gap between floaters I'll just adjust the final settings now that the numbers have been used to create their 'placeholders' as it were. This is a simplified bit of logic that will create slightly bigger padding on either side but it's all I can think of at the moment without having to loop through again checking whether they are at the beginning of a column and so on - ROOM FOR IMPROVEMENT TO THIS
       x += LayoutManager.#FLOATER_GAP / 2;
       w -= LayoutManager.#FLOATER_GAP;
+      //stop the offset making the box go off the edge of a small screen
+      if (this.smallScreenWidth) w -= element.offset.x;
       //then create a string which can be set as the floater's style.width and style.left
       x += 'px';
       w += 'px';
