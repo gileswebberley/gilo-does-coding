@@ -19,6 +19,10 @@ class LayoutManager {
 
   constructor(wireframe, pageContainer) {
     this.wireframe = wireframe;
+    this.wireframe
+      .sort(this.#compareWireframeRow)
+      .sort(this.#compareWireframeColumns);
+    // this.wireframe.sort(this.#compareWireframeColumns);
     this.pageContainer = pageContainer;
     this.pageContainerBoundingRect = pageContainer.getBoundingClientRect(); // This is the bounding rect of the page container element to check top and left properties
     //This is for the vertical centre alignment in buildLayout - no cos if another page is revealed then it might have changed the height of the viewport so we can't know on resize. We'll have to assume that when these are created there won't be one open...
@@ -29,11 +33,26 @@ class LayoutManager {
     this.inspectScreenForLayout();
   }
 
+  //I need to sort the wireframe so that it is laid out as row 1 col 1 row 1 col 2 row 2 col 1 etc {2,1}{1,1}{1,3}{2,2}{1,2}{2,3} - I am going to sort by row first and then for each row I'll sort by column
+  #compareWireframeRow(a, b) {
+    const rowA = a.position.row;
+    const rowB = b.position.row;
+    return rowA - rowB;
+  }
+  #compareWireframeColumns(a, b) {
+    //this is to take care of when we move to the next row which has already been sorted
+    if (a.position.row !== b.position.row) return 0;
+    const colA = a.position.column;
+    const colB = b.position.column;
+    return colA - colB;
+  }
+
   getPageHeight() {
     console.log(`PAGE HEIGHT REQUESTED: ${this.pageHeight}`);
     return this.pageHeight;
   }
 
+  //This is the main public access for the page manager to get each floater's layout info
   getFloaterLayoutObject(layoutNumber) {
     // console.log(`get layout for #${layoutNumber}`);
     // console.table(this.layoutMap);
@@ -67,15 +86,17 @@ class LayoutManager {
     let currentY = this.originY;
     let nextY = 0;
     let currentRow = 1;
+    let currentColumn = 1;
+    let lastColumn = 1;
 
     for (let i = 1; i <= this.rowCount; i++) {
       const row = this.#getRowElements(i);
       row.forEach((element) => {
         //ok, so, I decided it would be more readable by having the various logic inside self contained functions but I wanted them to be able to share this method's variables (eg currentX) but also refer to this class instance's variables (eg this.smallScreenWidth). I realised that this is the perfect time to use the Function.prototype.call() method to bind it to 'this'
-        const { x, w } = calculateX.call(this, element);
-        console.log(`calculateX: x:${x} w:${w}`);
         const { y, h } = calculateY.call(this, element, i);
         console.log(`calculateY: y:${y} h:${h} row number:${i}`);
+        const { x, w } = calculateX.call(this, element, i);
+        console.log(`calculateX: x:${x} w:${w}`);
         // this.layoutArray.push({ id: element.layoutNumber, x, y, w, h });
         // if the layout has already been calculated this will simply update the values for each layoutNumber
         console.log(`Making map entry for #${element.layoutNumber}`);
@@ -100,23 +121,29 @@ class LayoutManager {
       this.pageHeight = layoutHeight + 'px'; // thought it wasn't good logic but it turned out to be me forgetting to add the 'px'!!
     }
     //No :( this doesn't have this in scope...but ahhh, this is where the Function.call() comes into play :)
-    function calculateX(element) {
+    function calculateX(element, rowNumber) {
       console.log(
-        `small screen width: ${this.smallScreenWidth}!!!!!!!!!!!!!!!!!!`
+        `small screen width: ${this.smallScreenWidth}
+        current row number in calcX is ${currentRow}`
       );
-      currentX = this.smallScreenWidth
-        ? this.originX
-        : this.originX + this.columnWidth * (element.position.column - 1);
-
-      console.log(`currentX: ${currentX}, nextX: ${nextX}`);
-      //this is where our small screen column x postion is going wrong I think
-      if (
-        currentX !== this.originX ||
-        (nextX < currentX + this.columnWidth && nextX !== 0)
-      ) {
-        //we're dealing with multiple elements inside a single grid square
-        currentX = nextX;
-        // nextX -= this.columnWidth;
+      if (this.smallScreenWidth) {
+        currentX = this.originX;
+        if (
+          currentX !== this.originX ||
+          (nextX < currentX + this.columnWidth && nextX !== 0)
+        ) {
+          //we're dealing with multiple elements inside a single grid square
+          currentX = nextX;
+          // nextX = 0;
+        }
+      } else {
+        //I'm trying to get it so I can have a row that only has something in a later column eg {row:2, column:2} when there is no {row:2, column:1}
+        currentX =
+          this.originX + this.columnWidth * (element.position.column - 1);
+        if (currentX < nextX) {
+          currentX = nextX;
+          //   currentColumn = element.position.column;
+        }
       }
       let x = currentX + element.offset.x;
       // let y = currentY + element.offset.y;
@@ -124,7 +151,7 @@ class LayoutManager {
         element.sizeType.width === 'auto'
           ? (this.columnWidth / 100) * element.size.width
           : element.size.width;
-      nextX = currentX + w;
+      nextX = currentX + w; //x + w;
       //using this to round to full pixels and parseInt is apparently slightly more efficient than Math.floor
       w = parseInt(w);
       console.log(`currentX: ${currentX}, nextX: ${nextX}`);
@@ -142,7 +169,8 @@ class LayoutManager {
         //we've moved onto the 'next row' in the layout
         currentRow = rowNumber;
         currentY = nextY;
-        currentX = this.originX;
+        // reset the x position (like hitting return for a new-line)
+        nextX = this.originX;
       }
       let y = currentY + element.offset.y;
       let h =
@@ -212,9 +240,10 @@ class LayoutManager {
     // this.pageWidth -= window.innerWidth - this.pageContainerBoundingRect.right;
   }
 
+  //Need to keep in mind that we are positioning the floaters with absolute which is relative to the container!!
   #createLayoutMarkers() {
     this.#pagePadding = LayoutManager.#PAGE_PADDING;
-    this.originX = this.pageContainerBoundingRect.left;
+    this.originX = 0; //this.pageContainerBoundingRect.left;
     this.originY = 0; // this.topMargin;
     //because I want to keep the columns as counted from the wireframe (for use in getRowElements) but still want the columnWidth sum to be calculated for small windows...
     let tmpColumnCount = this.columnCount;

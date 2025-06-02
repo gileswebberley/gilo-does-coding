@@ -3,6 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <!-- Before the stylesheet has loaded this sets the colour scheme so we avoid any flashes whilst loading -->
+    <meta name="color-scheme" content="dark light" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- <script type="module">
       //This is how I set up SiteManger as a globally available static class
@@ -15,16 +17,15 @@
     <main class="main">
       <header>
         <!-- <div style="height: 145px; width: 100px; background-color: red"></div> -->
-        <h2>gilo_does_coding</h2>
+        <h2>gilo_does_coding<span id="loader">...is loading</span></h2>
         <nav id="main-nav">
           <!-- <button onpointerup="SiteManager.hideAllPages()">test nav</button> -->
         </nav>
         <!-- <p>Welcome to gilo-does-coding!</p> -->
       </header>
       <div class="scrollableMain">
-        <div id="container">
-          <!-- <div class="coloured-background"></div> -->
-        </div>
+        <!-- This is the vital part of the site as this is the div that holds all of the floaters and has it's size controlled by the PageManager -->
+        <div id="container"></div>
       </div>
       <script type="module" src="/src/main.js"></script>
       <footer><p>gilo_does_coding is Giles Webberley</p></footer>

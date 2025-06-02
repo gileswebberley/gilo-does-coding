@@ -36,20 +36,20 @@ const higherOrangeRange = [
 
 const Colourist = {
   getOrangeBGSwatch: () => {
-    if (window.matchMedia('(prefers-color-scheme: light)').matches) {
+    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
       console.log('DARK MODE COLOURS.......');
-      return lowerOrangeRange;
+      return higherOrangeRange;
     } else {
       console.log('LIGHT MODE COLOURS.......');
-      return higherOrangeRange;
+      return lowerOrangeRange;
     }
   },
   getOrangeSwatch: () => {
     if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      console.log('LIGHT MODE COLOURS.......');
+      console.log('DARK MODE COLOURS.......');
       return lowerOrangeRange;
     } else {
-      console.log('DARK MODE COLOURS.......');
+      console.log('LIGHT MODE COLOURS.......');
       return higherOrangeRange;
     }
   },

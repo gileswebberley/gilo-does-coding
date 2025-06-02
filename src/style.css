@@ -2,6 +2,7 @@
   --content_max_width: 60vw;
   --content_min_width: 40vw;
   --content_viewport_height: 30vh;
+  --content-border-radius: 20px;
 
   --colour-orange: #ee8e09;
   --colour-orange-50: #ffefde;
@@ -36,8 +37,8 @@
 
   background-color: var(--colour-blue-300);
 
-  /* color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
+  color-scheme: light dark;
+  /* color: rgba(255, 255, 255, 0.87);
   background-color: #242424; */
 
   font-synthesis: none;
@@ -93,7 +94,7 @@ h1 {
   line-height: auto;
 }
 
-/* This holds the floater #container element to allow for scrolling with a fixed header */
+/* This holds the floater's #container element to allow for scrolling with a fixed header */
 .scrollableMain {
   overflow-y: auto;
   height: 100%;
@@ -136,7 +137,8 @@ h1 {
 }
 
 .nav-button:active,
-.nav-button:focus {
+.nav-button:focus,
+.nav-button:hover {
   outline: none;
   background-color: var(--colour-blue-100);
 }
@@ -164,13 +166,15 @@ h1 {
   /* background-color: rgb(238, 142, 9); set in the Floater script */
   border: 3px solid;
   color: #ca5811;
-  border-radius: 40px;
-  padding: 40px;
+  border-radius: calc(var(--content-border-radius) * 2);
+  /* 40px; */
+  padding: 20px;
 }
 
 /* For the iFrame that is attached to a FloaterIframe */
 iframe {
   border: none;
+  border-radius: var(--content-border-radius);
   top: 0;
   left: 0;
   height: 100%;
@@ -184,6 +188,7 @@ iframe {
 /* For the content-holder of a FloaterInner as a little window */
 .content-viewport {
   width: fit-content;
+  border-radius: var(--content-border-radius);
   /* height: var(--content_viewport_height); */
   height: 100%;
   overflow-y: auto;
@@ -203,7 +208,9 @@ iframe {
   max-width: 100%;
   max-height: 100%;
   object-fit: contain;
+  /* for the alt text we'll set the font really small */
   font-size: x-small;
+  border-radius: calc(var(--content-border-radius) / 2);
 }
 
 header,
