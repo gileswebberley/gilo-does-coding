@@ -68,11 +68,11 @@ class Floater {
     this.element.className = 'floater'; // Add a class for styling
     //set up an initial transition (this is over-written by moveTo()) but now we're setting dimensions from the PageManager we want this here as we won't be setting it in the css
     this.element.style.transition = `all ${this.myDuration}ms ${this.easingStyle}`;
-    const colourRandomiser = 0; //Math.floor(
-    //   Math.random() * World.FLOATER_COLOURS.length
-    // );
+    const colourRandomiser = Math.floor(
+      Math.random() * World.FLOATER_BG_COLOURS.length
+    );
     this.element.style.backgroundColor =
-      World.FLOATER_COLOURS[colourRandomiser];
+      World.FLOATER_BG_COLOURS[colourRandomiser];
     this.element.style.color =
       World.FLOATER_COLOURS[World.FLOATER_COLOURS.length - colourRandomiser];
   }
@@ -81,11 +81,6 @@ class Floater {
     this.isFloating = true;
     // this was when I was playing with the divs being self aware as it were
     this.element.setAttribute('data-floating', this.isFloating);
-    // remove the resize listener as it's not needed whilst we're floating
-    // if (this.resizeListener) {
-    //   window.removeEventListener('resize', this.resizeListener);
-    //   this.hasHeardResize = false;
-    // }
     if (this.revealTimeout) {
       clearTimeout(this.revealTimeout);
     }
@@ -93,18 +88,18 @@ class Floater {
     this.contentHolder.style.visibility = 'hidden';
     // depending on the individual personality this creates the actual movement cyclically
     this.floatInterval = setInterval(() => {
+      //I've just discovered that I can stop this processing if the window is not visible (ie running in the background). This is my quick fix, I may come back to this in the future
+      if (document.visibilityState === 'hidden') return;
       const { x, y, z } = this.createRandomPosition();
       this.moveTo(x, y, z, this.myDuration); // Move to new position
-      //   console.log(`z-index: ${z}`); // Log the z-index for debugging
     }, this.myDuration);
   }
 
   createRandomPosition() {
     const actualSize = this.element.getBoundingClientRect();
+    //stupidly I didn't consider the fact that absolute positioned elements are positioned 'absolutely' in relation to their container. I don't want to use 'fixed' positioning otherwise I don't believe they will scroll inside the container. Therefore I have removed the calculation of the top and left
     const containerRect = this.container.getBoundingClientRect();
-    const x =
-      containerRect.left +
-      Math.random() * (containerRect.width - actualSize.width);
+    const x = Math.random() * (containerRect.width - actualSize.width);
     const y = Math.random() * (containerRect.height - actualSize.height);
     const z = Math.floor(Math.random() * World.DEPTH) * -1; //removed +1 from World.DEPTH as I don't think it's needed any more
     // console.log(`RANDOM POSITION: ${x} ${y} ${z}`);
@@ -165,6 +160,8 @@ class Floater {
       console.error('Invalid position values for moveTo:', x, y, z);
       return;
     }
+    //I think I want to scale the duration based on the distance it's moving
+
     this.element.style.transition = `all ${duration}ms ${this.easingStyle}`;
     this.setPosition(x, y, z);
   }

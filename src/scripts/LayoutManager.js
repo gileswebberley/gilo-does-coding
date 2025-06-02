@@ -25,14 +25,8 @@ class LayoutManager {
     this.topMargin = this.pageContainerBoundingRect.top;
     this.bottomMargin =
       window.innerHeight - this.pageContainerBoundingRect.bottom;
-    // this.veiwportHeight =
-    //   pageContainerBoundingRect.bottom - pageContainerBoundingRect.top;
-
-    // this.layoutArray = [];//let's use the map as it is indexed by their layoutNumber
     this.layoutMap = new Map();
     this.inspectScreenForLayout();
-    //think I'm going to move this to the PageManager and remove it from LayoutManager and Floater
-    // this.#startListeningForResize();
   }
 
   getPageHeight() {
@@ -66,20 +60,6 @@ class LayoutManager {
     this.#createLayoutMarkers();
     this.#buildLayout();
   }
-
-  //   #startListeningForResize() {
-  //     this.resizeListener = window.addEventListener('resize', () => {
-  //       if (!this.hasHeardResize) {
-  //         this.hasHeardResize = true;
-  //         //add a little 'debounce' so that we don't react to 100s of resize events that are triggered by the browser being resized
-  //         setTimeout(() => {
-  //           console.log('Layout shifting from resize...');
-  //           this.inspectScreenForLayout();
-  //           this.hasHeardResize = false;
-  //         }, 1000);
-  //       }
-  //     });
-  //   }
 
   #buildLayout() {
     let currentX = this.originX;
@@ -166,9 +146,9 @@ class LayoutManager {
       }
       let y = currentY + element.offset.y;
       let h =
-        element.sizeType.width === 'auto'
+        element.sizeType.height === 'auto'
           ? (LayoutManager.#AUTO_FLOATER_HEIGHT / 100) * element.size.height
-          : element.size.width;
+          : element.size.height;
       // if this is another element in the same row check whether it's taller than any other element in the row to set the beginning Y for the next row
       if (currentY + h > nextY) {
         nextY = currentY + h;

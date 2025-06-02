@@ -1,3 +1,5 @@
+import Colourist from './Colourist';
+
 const World = {
   DEPTH: 200,
   DURATION: 1000,
@@ -5,7 +7,8 @@ const World = {
   MIN_SPEED: 1,
   CONTENT_PADDING: 10,
   POSSIBLE_EASING_STYLES: ['ease-in', 'ease-out', 'ease-in-out', 'linear'],
-  FLOATER_COLOURS: ['#ee8e09', '#d8962c', '#c39e4f', '#aea772', '#98af95'],
+  FLOATER_BG_COLOURS: Colourist.getOrangeBGSwatch(),
+  FLOATER_COLOURS: Colourist.getOrangeSwatch(),
   BIRTH_POSITION: {
     x: 0,
     y: 0,

@@ -34,7 +34,7 @@
   line-height: 1.5;
   font-weight: 400;
 
-  background-color: var(--colour-blue);
+  background-color: var(--colour-blue-300);
 
   /* color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
@@ -207,7 +207,7 @@ footer {
   padding-left: 10px;
   padding-right: 10px;
   /* This is how you can set the dark mode colour scheme if it's selected on the user's system (see the @media query at the bottom for how this is used) */
-  color-scheme: light dark;
+  color-scheme: dark;
   color: var(--colour-dark-text);
   background-color: var(--colour-dark-bg);
   /* font-size: 2rem; */
@@ -225,6 +225,15 @@ footer {
   }
   button {
     background-color: #f9f9f9;
+  }
+  :root {
+    /* --colour-orange-50: var(--colour-orange-900);
+    --colour-orange-100: var(--colour-orange-800);
+    --colour-orange-200: var(--colour-orange-700);
+    --colour-orange-300: var(--colour-orange-600);
+    --colour-orange-400: var(--colour-orange-500);
+    --colour-orange-500: var(--colour-orange-400); */
+    --colour-blue-300: var(--colour-blue-600);
   }
 }
 

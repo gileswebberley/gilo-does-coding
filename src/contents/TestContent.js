@@ -10,7 +10,7 @@ const Page_Test = {
       // amount to shift layout in pixels
       offset: { x: 0, y: 0 },
       // percentage of available size? no let's work out a way where you can set either a percentage or a max size in pixels (auto or fixed)
-      size: { width: 100, height: 100 },
+      size: { width: 100, height: 300 },
       sizeType: { width: 'auto', height: 'fixed' },
       type: 'html',
       src: `<button
@@ -42,7 +42,7 @@ const Page_Test = {
       layoutNumber: 3,
       position: { row: 1, column: 2 },
       offset: { x: 0, y: 0 },
-      size: { width: 50, height: 100 },
+      size: { width: 50, height: 200 },
       sizeType: { width: 'auto', height: 'fixed' },
       type: 'iframe',
       src: '../TestPage.html',
