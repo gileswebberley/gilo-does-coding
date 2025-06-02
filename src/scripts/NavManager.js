@@ -31,7 +31,7 @@ class NavManager {
     button.addEventListener('pointerdown', (e) => {
       e.preventDefault();
       //   button.classList.add('active'); //for the css styling
-      callback(pageName);
+      callback(pageName, e);
     });
     this.navElement.appendChild(button);
     console.log(`Button for ${pageName} added to navigation`);

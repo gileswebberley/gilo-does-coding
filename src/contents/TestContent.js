@@ -20,8 +20,8 @@
  * @property {string} [src.alt] - The alt text for an image (if type is 'image').
  */
 const Page_Test = {
-  pageId: 'Test',
-  buttonText: 'Test page',
+  pageId: 'Home',
+  buttonText: 'Home',
   content: [
     {
       layoutNumber: 2,

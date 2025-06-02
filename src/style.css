@@ -1,3 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Special+Elite&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+
 :root {
   --content_max_width: 60vw;
   --content_min_width: 40vw;
@@ -31,7 +34,7 @@
   --colour-dark-text: #ede1e1;
   --colour-light-text: #242424;
 
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Noto Sans', Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
@@ -89,9 +92,15 @@ body {
   grid-template-rows: auto 1fr auto;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: auto;
+h1,
+h2,
+h3,
+h4 {
+  font-family: 'Special Elite', system-ui;
+  font-weight: 400;
+  font-style: normal;
+  /* font-size: 2.2em;
+  line-height: auto; */
 }
 
 a {
@@ -102,6 +111,14 @@ a {
 i {
   font-size: inherit;
   transform: translateY(2px);
+}
+
+.contact {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  gap: 2rem;
+  /* flex-wrap: nowrap; */
 }
 
 /* This holds the floater's #container element to allow for scrolling with a fixed header */
@@ -123,6 +140,10 @@ i {
   height: fit-content; No! the floaters are not content because they are absolutely positioned so this will not work!!*/
   overflow: hidden; /* So it ignores the Floaters going out of the browser window*/
   transition: all 500ms ease; /* This is to smooth out changes to it's height*/
+}
+
+#hamburger-button {
+  position: relative;
 }
 
 #main-nav {
@@ -230,6 +251,7 @@ footer {
   align-items: center;
   padding-left: 10px;
   padding-right: 10px;
+  padding-bottom: 8px;
   /* This is how you can set the dark mode colour scheme if it's selected on the user's system (see the @media query at the bottom for how this is used) */
   color-scheme: dark;
   color: var(--colour-dark-text);
@@ -262,6 +284,10 @@ footer {
 }
 
 @media screen and (max-width: 680px) {
+  header,
+  footer {
+    flex-direction: column;
+  }
   :root {
     --content_max_width: 80vw;
     --content_min_width: 50vw;
