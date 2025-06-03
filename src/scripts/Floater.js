@@ -20,10 +20,6 @@ class Floater {
       World.BIRTH_POSITION.y,
       World.BIRTH_POSITION.z
     );
-
-    const { x, y, z } = this.createRandomPosition();
-    this.moveTo(x, y, z, this.myDuration); // move to initial position whilst waiting for float loop
-    // this.float();
   }
 
   createPersonality() {
@@ -84,15 +80,20 @@ class Floater {
     if (this.revealTimeout) {
       clearTimeout(this.revealTimeout);
     }
+    this.triggerMove();
     // just unneccesarily processor intensive to show the contents whilst floating (and the reason for the name 'reveal')
     this.contentHolder.style.visibility = 'hidden';
     // depending on the individual personality this creates the actual movement cyclically
     this.floatInterval = setInterval(() => {
       //I've just discovered that I can stop this processing if the window is not visible (ie running in the background). This is my quick fix, I may come back to this in the future
       if (document.visibilityState === 'hidden') return;
-      const { x, y, z } = this.createRandomPosition();
-      this.moveTo(x, y, z, this.myDuration); // Move to new position
+      this.triggerMove(); // Move to new position
     }, this.myDuration);
+  }
+
+  triggerMove() {
+    const { x, y, z } = this.createRandomPosition();
+    this.moveTo(x, y, z, this.myDuration);
   }
 
   createRandomPosition() {

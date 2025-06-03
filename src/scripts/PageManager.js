@@ -115,7 +115,7 @@ class PageManger {
 
   show() {
     this.isOpen = true;
-    console.table(this.pageObject);
+    // console.table(this.pageObject);
     this.pageContainer.style.height = this.layoutManager.getPageHeight();
     // this.layoutManager.updateLayout(); // Update layout when showing the page
     this.floaterMap.forEach((floater) => floater.reveal());

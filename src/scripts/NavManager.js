@@ -18,8 +18,9 @@ class NavManager {
     return this; // Return the current instance
   }
 
-  static init(navElement) {
+  static init(navElement, hamburger = null) {
     this.navElement = navElement;
+    this.hamburger = hamburger;
     console.log('NavManager initialized with nav element:', navElement);
   }
 
@@ -30,7 +31,7 @@ class NavManager {
     button.setAttribute('data-page', pageName);
     button.addEventListener('pointerdown', (e) => {
       e.preventDefault();
-      //   button.classList.add('active'); //for the css styling
+      e.target.classList.add('active'); //for the css styling
       callback(pageName, e);
     });
     this.navElement.appendChild(button);
