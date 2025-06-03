@@ -2,7 +2,7 @@
 class LayoutManager {
   static #MAX_WIDTH = 1280;
   static #MIN_WIDTH = 740;
-  //this is for the height of a row element if sizeType is set to 'auto', kinda like the equivalent of columnWidth
+  //this is for the height of a row element if sizeType is set to 'auto', kinda like the equivalent of columnWidth, I think I will have the ability to set a base aspect ratio but I have also been thinking that it would be good if elements could grow in height when the width becomes small....hmm - maybe each element could select aspect or grow?
   static #AUTO_FLOATER_HEIGHT = 320;
   static #PAGE_PADDING = 20;
   //an instance property so it can be adjusted for small screens
@@ -24,11 +24,11 @@ class LayoutManager {
       .sort(this.#compareWireframeColumns);
     // this.wireframe.sort(this.#compareWireframeColumns);
     this.pageContainer = pageContainer;
-    this.pageContainerBoundingRect = pageContainer.getBoundingClientRect(); // This is the bounding rect of the page container element to check top and left properties
-    //This is for the vertical centre alignment in buildLayout - no cos if another page is revealed then it might have changed the height of the viewport so we can't know on resize. We'll have to assume that when these are created there won't be one open...
-    this.topMargin = this.pageContainerBoundingRect.top;
-    this.bottomMargin =
-      window.innerHeight - this.pageContainerBoundingRect.bottom;
+    // this.pageContainerBoundingRect = pageContainer.getBoundingClientRect(); // This is the bounding rect of the page container element to check top and left properties
+    // //This is for the vertical centre alignment in buildLayout - no cos if another page is revealed then it might have changed the height of the viewport so we can't know on resize. We'll have to assume that when these are created there won't be one open...
+    // this.topMargin = this.pageContainerBoundingRect.top;
+    // this.bottomMargin =
+    //   window.innerHeight - this.pageContainerBoundingRect.bottom;
     this.layoutMap = new Map();
     this.inspectScreenForLayout();
   }
@@ -48,7 +48,7 @@ class LayoutManager {
   }
 
   getPageHeight() {
-    console.log(`PAGE HEIGHT REQUESTED: ${this.pageHeight}`);
+    // console.log(`PAGE HEIGHT REQUESTED: ${this.pageHeight}`);
     return this.pageHeight;
   }
 
@@ -67,12 +67,12 @@ class LayoutManager {
     this.screenWidth = window.innerWidth - (this.leftMargin + this.rightMargin); // Set initial screen width shifted across by container x position
     this.veiwportHeight =
       window.innerHeight - (this.topMargin + this.bottomMargin);
-    console.log(
-      `leftMargin: ${this.leftMargin} rightMargin: ${this.rightMargin} screenWidth: ${this.screenWidth}`
-    );
-    console.log(
-      `viewportHeight: ${this.veiwportHeight} screenHeight: ${window.innerHeight}`
-    );
+    // console.log(
+    //   `leftMargin: ${this.leftMargin} rightMargin: ${this.rightMargin} screenWidth: ${this.screenWidth}`
+    // );
+    // console.log(
+    //   `viewportHeight: ${this.veiwportHeight} screenHeight: ${window.innerHeight}`
+    // );
     // this.screenHeight = window.innerHeight - this.topMargin; // Set initial screen height shifted down by container y position
     this.#setPageWidth();
     this.#findMaxRowAndColumn();
@@ -123,10 +123,10 @@ class LayoutManager {
     }
     //No :( this doesn't have this in scope...but ahhh, this is where the Function.call() comes into play :)
     function calculateX(element, rowNumber) {
-      console.log(
-        `small screen width: ${this.smallScreenWidth}
-        current row number in calcX is ${currentRow}`
-      );
+      //   console.log(
+      //     `small screen width: ${this.smallScreenWidth}
+      //     current row number in calcX is ${currentRow}`
+      //   );
       if (this.smallScreenWidth) {
         currentX = this.originX;
         if (
@@ -155,7 +155,7 @@ class LayoutManager {
       nextX = currentX + w; //x + w;
       //using this to round to full pixels and parseInt is apparently slightly more efficient than Math.floor
       w = parseInt(w);
-      console.log(`currentX: ${currentX}, nextX: ${nextX}`);
+      //   console.log(`currentX: ${currentX}, nextX: ${nextX}`);
       //to implement the gap between floaters I'll just adjust the final settings now that the numbers have been used to create their 'placeholders' as it were. This is a simplified bit of logic that will create slightly bigger padding on either side but it's all I can think of at the moment without having to loop through again checking whether they are at the beginning of a column and so on - ROOM FOR IMPROVEMENT TO THIS
       x += LayoutManager.#FLOATER_GAP / 2;
       w -= LayoutManager.#FLOATER_GAP;
@@ -186,7 +186,7 @@ class LayoutManager {
       }
       // nextX = currentX + w;
       h = parseInt(h);
-      console.log(`currentY: ${currentY}, nextY: ${nextY}`);
+      //   console.log(`currentY: ${currentY}, nextY: ${nextY}`);
       y += LayoutManager.#FLOATER_GAP / 2;
       h -= LayoutManager.#FLOATER_GAP;
       y += 'px';

@@ -103,6 +103,10 @@ h4 {
   line-height: auto; */
 }
 
+#logo {
+  cursor: pointer;
+}
+
 a {
   color: inherit;
   text-decoration: none;
@@ -139,17 +143,23 @@ i {
   /* padding: 10px;
   height: fit-content; No! the floaters are not content because they are absolutely positioned so this will not work!!*/
   overflow: hidden; /* So it ignores the Floaters going out of the browser window*/
-  transition: all 500ms ease; /* This is to smooth out changes to it's height*/
+  /* transition: all 500ms ease; This is to smooth out changes to it's height */
+}
+
+/* 
+This is all of the styling for the navigation system ------------------------------------
+*/
+#nav-holder {
+  position: relative;
+  margin-right: 0;
 }
 
 #hamburger-button {
   position: relative;
-  /* font-size: 2rem; */
   width: 3rem;
   height: 3rem;
   margin-right: 2rem;
-  /* width: 50px;
-  height: 50px; */
+  cursor: pointer;
 }
 
 #hamburger-button span {
@@ -170,22 +180,22 @@ i {
 #hamburger-button span:nth-child(3) {
   top: 75%;
 }
+#hamburger-button.active span:nth-child(1) {
+  top: 50%;
+  transform: translate(-50%, -0%) rotate(45deg);
+}
 #hamburger-button.active span:nth-child(2) {
   opacity: 0;
 }
-#hamburger-button.active span:nth-child(1) {
+#hamburger-button.active span:nth-child(3) {
   top: 50%;
-  transform: translate(-50%, -50%) rotate(45deg);
-}
-#hamburger-button.active span:nth-child(1) {
-  top: 50%;
-  transform: translate(-50%, 50%) rotate(-45deg);
+  transform: translate(-50%, 0%) rotate(-45deg);
 }
 
 #main-nav {
   position: absolute;
   z-index: 100;
-  top: 3rem;
+  top: 4rem;
   right: 0;
   display: flex;
   justify-content: space-between;
@@ -195,10 +205,11 @@ i {
   width: fit-content;
   height: fit-content;
   background-color: var(--colour-dark-bg);
-  transition: 0.3s ease;
+  border: 1px solid var(--colour-dark-text);
   pointer-events: all !important;
-  /* display: none;
-  opacity: 0; */
+  border-radius: calc(var(--content-border-radius) / 2);
+  /* display: none; */
+  opacity: 0;
 }
 /* This doesn't seem to wortk in my browsers 
 @starting-style {
@@ -208,8 +219,9 @@ i {
 } */
 
 #main-nav.active {
-  display: visible;
+  /* display: visible; */
   opacity: 1;
+  transition: 0.3s ease;
 }
 
 @media screen and (max-width: 680px) {
@@ -220,6 +232,7 @@ i {
 @media (prefers-color-scheme: light) {
   #main-nav {
     background-color: var(--colour-light-bg);
+    border: 1px solid var(--colour-light-text);
   }
   #hamburger-button span {
     background-color: var(--colour-light-text);
@@ -241,7 +254,7 @@ i {
   border-color: var(--colour-blue-100);
 }
 
-.nav-button.active,
+.nav-button.visited,
 .nav-button:focus,
 .nav-button:hover {
   outline: none;
@@ -254,6 +267,8 @@ i {
     border-color: var(--colour-blue-900);
   }
 }
+
+/* End of navigation -------------------------------------------------- */
 
 /* Class which is attached to new floater instances' div */
 .floater {
@@ -321,11 +336,14 @@ iframe {
 header,
 footer {
   display: flex;
+  /* flex-wrap: wrap; */
+  text-wrap: balance;
   justify-content: space-between;
   align-items: center;
   padding-left: 10px;
   padding-right: 10px;
-  padding-bottom: 8px;
+  /* padding-bottom: 8px; */
+  gap: 2rem;
   /* This is how you can set the dark mode colour scheme if it's selected on the user's system (see the @media query at the bottom for how this is used) */
   color-scheme: dark;
   color: var(--colour-dark-text);

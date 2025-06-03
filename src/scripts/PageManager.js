@@ -13,6 +13,7 @@ class PageManger {
       throw new Error('Page object and page container are required.');
     }
     this.pageObject = pageObject;
+    //I think sharing the container is causing the layout manager some trouble now that I've got a few pages (ie when a page is open the container size has been adjusted for that page so all the other pages think that the viewport height is whatever it's set to :/ maybe I just need a sizing div that is not touched by the layout but instead simply fills up the available space according to the screen size being changed? fixed with if(this.isOpen) inside the resize event listener)
     this.pageContainer = pageContainer;
     this.layoutManager = null; // Placeholder for LayoutManager instance
     this.floaterMap = new Map(); // Array to hold Floater instances
@@ -85,12 +86,14 @@ class PageManger {
         setTimeout(() => {
           console.log('Layout shifting from resize...');
           this.layoutManager.inspectScreenForLayout();
-          this.pageContainer.style.height = this.layoutManager.getPageHeight();
-          this.floaterMap.forEach((value, key) => {
+          if (this.isOpen)
+            this.pageContainer.style.height =
+              this.layoutManager.getPageHeight();
+          this.floaterMap.forEach((floater, key) => {
             const { x, y, w, h } =
               this.layoutManager.getFloaterLayoutObject(key);
-            value.setRevealPosition(x, y);
-            value.setDimensions(w, h);
+            floater.setRevealPosition(x, y);
+            floater.setDimensions(w, h);
           });
           this.hasHeardResize = false;
         }, World.RESIZE_TIMEOUT);

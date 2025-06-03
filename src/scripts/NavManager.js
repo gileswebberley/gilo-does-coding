@@ -6,6 +6,8 @@ import SiteManager from './SiteManager';
 class NavManager {
   static #instance = null;
   static navElement = null;
+  static hamburger = null;
+  static hamburgerListener = null;
 
   constructor() {
     if (NavManager.#instance) {
@@ -18,10 +20,33 @@ class NavManager {
     return this; // Return the current instance
   }
 
-  static init(navElement, hamburger = null) {
+  static init(navElement) {
     this.navElement = navElement;
-    this.hamburger = hamburger;
-    console.log('NavManager initialized with nav element:', navElement);
+    // this.hamburger = hamburger;
+    console.log('NavManager initialized with nav element:', this.navElement);
+  }
+
+  static setHamburger(hamburgerElement) {
+    if (hamburgerElement) {
+      //we can set this to null if we want to swap between modes
+      this.hamburgerListener = hamburgerElement.addEventListener(
+        'click',
+        (e) => {
+          //open and close the menu
+          e.preventDefault();
+          //   if (e.target !== hamburgerElement) return;
+          //   console.log(`HAMBURGER CLICKED - navElement:`, this.navElement);
+          hamburgerElement.classList.toggle('active');
+          this.navElement.classList.toggle('active');
+        }
+      );
+    } else {
+      //hamburgerElement is null so clear up the listener
+      this.hamburger.removeEventListener(this.hamburgerListener);
+      this.hamburgerListener = null;
+    }
+    //this is at the end so we can remove the listener if it's being set to null, otherwise we'd lose the reference
+    this.hamburger = hamburgerElement;
   }
 
   static addButton(pageName, title, callback) {
@@ -31,11 +56,16 @@ class NavManager {
     button.setAttribute('data-page', pageName);
     button.addEventListener('pointerdown', (e) => {
       e.preventDefault();
-      e.target.classList.add('active'); //for the css styling
+      e.target.classList.add('visited'); //for the css styling of visited pages
+      //if we're in hamburger mode (ie we have a button that shows the menu) let's set the button and menu to not-active
+      if (this.hamburger) {
+        this.hamburger.classList.toggle('active');
+        this.navElement.classList.toggle('active');
+      }
       callback(pageName, e);
     });
     this.navElement.appendChild(button);
-    console.log(`Button for ${pageName} added to navigation`);
+    // console.log(`Button for ${pageName} added to navigation`);
   }
 }
 
