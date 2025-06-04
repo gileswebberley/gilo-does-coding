@@ -154,8 +154,8 @@ This is all of the styling for the navigation system ---------------------------
 
 #hamburger-button {
   position: relative;
-  width: 3rem;
-  height: 3rem;
+  width: 2.5rem;
+  height: 2.5rem;
   margin-right: 2rem;
   cursor: pointer;
 }
@@ -201,6 +201,7 @@ This is all of the styling for the navigation system ---------------------------
   gap: 1rem;
   padding: 1rem;
   width: fit-content;
+  flex-wrap: wrap;
   height: fit-content;
   background-color: var(--colour-dark-bg);
   border: 1px solid var(--colour-dark-text);
@@ -222,11 +223,11 @@ This is all of the styling for the navigation system ---------------------------
   transition: 0.3s ease;
 }
 
-@media screen and (max-width: 680px) {
+/* @media screen and (max-width: 680px) {
   #main-nav {
     flex-direction: column;
   }
-}
+} */
 @media (prefers-color-scheme: light) {
   #main-nav {
     background-color: var(--colour-light-bg);
@@ -363,6 +364,7 @@ footer {
   /* header, */
   footer {
     flex-direction: column;
+    justify-content: center;
   }
   :root {
     --content_max_width: 80vw;

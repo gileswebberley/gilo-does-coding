@@ -23,7 +23,7 @@ class Floater {
   }
 
   createPersonality() {
-    this.speed = Math.random() * World.MAX_SPEED + World.MIN_SPEED;
+    this.speed = Math.random() * World.MAX_DRAG + World.MIN_DRAG;
     this.myDuration = World.DURATION * this.speed;
     this.easingStyle =
       World.POSSIBLE_EASING_STYLES[
@@ -41,7 +41,7 @@ class Floater {
     this.revealY = y;
     //if this is changed by PageManager whilst open then let's move the floaters
     if (!this.isFloating) {
-      this.moveTo(x, y, 1, this.myDuration);
+      this.moveTo(x, y, 1, World.DURATION);
     }
   }
 

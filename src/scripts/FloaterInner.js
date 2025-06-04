@@ -10,13 +10,17 @@ class FloaterInner extends Floater {
     this.contentHolder = document.createElement('div');
     this.contentHolder.className = 'content-viewport';
     this.element.appendChild(this.contentHolder);
+    this.hasContentAppended = false;
   }
 
   reveal() {
-    const content = document.createElement('div');
-    content.className = 'content-holder';
-    content.innerHTML = this.src;
-    this.contentHolder.appendChild(content);
+    if (!this.hasContentAppended) {
+      const content = document.createElement('div');
+      content.className = 'content-holder';
+      content.innerHTML = this.src;
+      this.contentHolder.appendChild(content);
+      this.hasContentAppended = true;
+    }
     super.reveal();
   }
 }

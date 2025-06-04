@@ -25,7 +25,11 @@ class SiteManager {
   }
 
   static buildPage(pageData) {
-    const pageManager = new PageManger(pageData.content, this.#pageContainer);
+    const pageManager = new PageManger(
+      pageData.content,
+      this.#pageContainer,
+      pageData.aspectRatio
+    );
     pageManager.init(); //this builds the layout manager wireframe
     SiteManager.#addPage(pageData.pageId, pageManager); // Add the page manager to the map
     NavManager.addButton(

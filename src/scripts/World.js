@@ -10,8 +10,9 @@ const World = {
   //these are for the Floater
   DEPTH: 200,
   DURATION: 1000,
-  MAX_SPEED: 4,
-  MIN_SPEED: 1,
+  //these are randomly chosen from and essentially multiply the duration for the amount of time floaters take to move from one position to the next
+  MAX_DRAG: 10,
+  MIN_DRAG: 3,
   POSSIBLE_EASING_STYLES: ['ease-in', 'ease-out', 'ease-in-out', 'linear'],
   FLOATER_BG_COLOURS: Colourist.getOrangeBGSwatch(),
   FLOATER_COLOURS: Colourist.getOrangeSwatch(),
