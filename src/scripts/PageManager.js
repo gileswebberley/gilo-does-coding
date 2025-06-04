@@ -8,7 +8,7 @@ import LayoutManager from './LayoutManager';
 import World from './World';
 
 class PageManger {
-  constructor(pageObject, pageContainer) {
+  constructor(pageObject, pageContainer, baseLayoutAspectRatio = '16:9') {
     if (!pageObject || !pageContainer) {
       throw new Error('Page object and page container are required.');
     }
@@ -16,6 +16,7 @@ class PageManger {
     //I think sharing the container is causing the layout manager some trouble now that I've got a few pages (ie when a page is open the container size has been adjusted for that page so all the other pages think that the viewport height is whatever it's set to :/ maybe I just need a sizing div that is not touched by the layout but instead simply fills up the available space according to the screen size being changed? fixed with if(this.isOpen) inside the resize event listener)
     this.pageContainer = pageContainer;
     this.layoutManager = null; // Placeholder for LayoutManager instance
+    this.baseLayoutAspectRatio = baseLayoutAspectRatio; //see LayoutManager
     this.floaterMap = new Map(); // Array to hold Floater instances
     this.isOpen = false;
   }
@@ -85,10 +86,16 @@ class PageManger {
         //add a little 'debounce' so that we don't react to 100s of resize events that are triggered by the browser being resized
         setTimeout(() => {
           console.log('Layout shifting from resize...');
+          //ok so trying to work out how to get the top and bottom margin calculations in LayoutManager if the page is open - if it is then the container will have it's size set so we cannot use the container rect to calculate them. I have realised that I could change it back to fill the available space whilst we're working out the layout perhaps?....yay seems the logic was correct :)
+          if (this.isOpen) {
+            this.pageContainer.style.height = '100%';
+          }
           this.layoutManager.inspectScreenForLayout();
-          if (this.isOpen)
+          //then we'll reset the size now the calculations have been done....
+          if (this.isOpen) {
             this.pageContainer.style.height =
               this.layoutManager.getPageHeight();
+          }
           this.floaterMap.forEach((floater, key) => {
             const { x, y, w, h } =
               this.layoutManager.getFloaterLayoutObject(key);
@@ -113,7 +120,11 @@ class PageManger {
       };
     });
     console.table(wireframe);
-    this.layoutManager = new LayoutManager(wireframe, this.pageContainer);
+    this.layoutManager = new LayoutManager(
+      wireframe,
+      this.pageContainer,
+      this.baseLayoutAspectRatio
+    );
   }
 
   show() {

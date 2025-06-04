@@ -77,7 +77,7 @@ class SiteManager {
 
   // can I access these private static variables from here? Yep, passing this into NavManager.addButton as a callback seems to work fine!
   selectPage(pageName, e) {
-    console.log(`event target: ${e.target}`);
+    // console.log(`event target: ${e.target}`);
     SiteManager.selectPage(pageName); // Call the static method to select the page
   }
 }

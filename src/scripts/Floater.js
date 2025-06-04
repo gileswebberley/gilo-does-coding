@@ -7,7 +7,7 @@ class Floater {
       throw new Error('A valid container element must be provided.');
     }
     // it's a 'floater' so let's get it floating! This has to be declared first so it can be checked in the setRevealPosition method
-    this.isFloating = true;
+    this.isFloating = true; //this is true because it is checked in the setRevealPosition
     this.setRevealPosition(revealX, revealY);
     this.createPersonality();
     this.createFloaterDiv(layoutNumber);
@@ -69,8 +69,9 @@ class Floater {
     );
     this.element.style.backgroundColor =
       World.FLOATER_BG_COLOURS[colourRandomiser];
-    this.element.style.color =
-      World.FLOATER_COLOURS[World.FLOATER_COLOURS.length - colourRandomiser];
+    // this.element.style.color =
+    //   World.FLOATER_COLOURS[World.FLOATER_COLOURS.length - colourRandomiser];
+    this.element.style.color = World.FLOATER_COLOURS[colourRandomiser];
   }
 
   float() {
@@ -169,24 +170,13 @@ class Floater {
   reveal() {
     //stop the floating cycle cos now we want to take control of the floater
     clearInterval(this.floatInterval);
+    this.isFloating = false;
     // z-index of 1 passed in as we don't want any scaling
     this.moveTo(this.revealX, this.revealY, 1, World.DURATION);
-    // add a resize listener so we can look after the container height
-    // this.resizeListener = window.addEventListener('resize', () => {
-    //   if (!this.hasHeardResize) {
-    //     this.hasHeardResize = true;
-    //     //add a little 'debounce' so that we don't react to 100s of resize events that are triggered by the browser being resized
-    //     setTimeout(() => {
-    //       console.log('Resizing container...');
-    //       this.resizeContainerRect();
-    //       this.hasHeardResize = false;
-    //     }, 1000);
-    //   }
-    // });
     // This is what we want to happen at the end of the reveal hence it's a timeout with the same duration as the moveTo function is using (I've made it fractionally longer so that the call to resizeContainerRect works as hoped)
     this.revealTimeout = setTimeout(() => {
       this.contentHolder.style.visibility = 'visible';
-      this.isFloating = false;
+      // this.isFloating = false;
       this.element.setAttribute('data-floating', this.isFloating);
       // clearTimeout(timeout);//no need I reckon as it clears once it's finished - I'll clear it in float() for the case where it's revealed and then quickly set to float again
       // this.resizeContainerRect();

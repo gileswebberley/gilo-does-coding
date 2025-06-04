@@ -2,9 +2,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap');
 
 :root {
-  --content_max_width: 60vw;
-  --content_min_width: 40vw;
-  --content_viewport_height: 30vh;
+  /* breakpoints are set with Breakpoints.js */
   --content-border-radius: 20px;
 
   --colour-orange: #ee8e09;
@@ -276,18 +274,11 @@ This is all of the styling for the navigation system ---------------------------
   justify-content: center;
   align-items: center;
   width: 300px;
-  /* width: fit-content; */
-  /* min-width: var(--content_min_width); We're going to leave this to Page/LayoutManager*/
-  /* width: var(--content_max_width); */
-  /* min-height: 100px; */
-  /* height: fit-content; */
-  /* height: var(--content_viewport_height); */
   height: 300px;
   /* background-color: rgb(238, 142, 9); set in the Floater script */
   border: 3px solid;
   color: #ca5811;
   border-radius: calc(var(--content-border-radius) * 2);
-  /* 40px; */
   padding: 20px;
 }
 
