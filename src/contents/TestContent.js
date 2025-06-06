@@ -101,7 +101,7 @@ const Page_Test = {
       // let's do the row and column thing here {row, column}
       position: { row: 1, column: 1 },
       // amount to shift layout in pixels - update - now set as a percentage of width and height
-      offset: { x: 0, y: 0 },
+      offset: { x: 30, y: 0 },
       size: { width: 100, height: 100 },
       // percentage of available size? no let's work out a way where you can set either a percentage or a max size in pixels (auto or fixed) - NO width must be a percentage and height percentage (clamp for grow behaviour or auto for aspect ratio behaviour or 'fixed' for pixel size) ----- This can now be simply a string cos it is only relevant to height
       sizeType: 'grow',

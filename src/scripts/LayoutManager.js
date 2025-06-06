@@ -138,7 +138,7 @@ class LayoutManager {
     //IMPORTANT - This must be called BEFORE calculateY!!!!!!!!!!!!!!!!!!!!!!!!
     function calculateX(element, rowNumber) {
       if (rowNumber > currentRow) {
-        // reset the x position (like hitting return for a new-line) this is why it's called before calculateY
+        // reset the x position (like hitting return for a new-line) this is why this called before calculateY
         nextX = this.originX;
       }
       if (this.smallScreenWidth) {
@@ -170,8 +170,19 @@ class LayoutManager {
       } else {
         currentWidthModifier = 1;
       }
-      //Making offset a percentage
-      let x = currentX + element.offset.x * (w / 100);
+
+      const offsetWidth = element.offset.x * (w / 100);
+      //Making offset a percentage of the element width
+      let x = currentX + offsetWidth;
+      if (this.smallScreenWidth && offsetWidth !== 0) {
+        //stop the offset making the box go off the edge of a small screen or stretch it if it's offset to the left - add a force grow behaviour to account for this
+        this.forceGrow = true;
+        const unadjustedWidth = w;
+        w -= offsetWidth;
+        currentWidthModifier *= unadjustedWidth / w;
+      } else {
+        this.forceGrow = false;
+      }
       //we ignore the offset here so that this element's offset doesn't shift the following elements
       nextX = currentX + w; //x + w;
       //using this to round to full pixels and parseInt is apparently slightly more efficient than Math.floor
@@ -179,8 +190,6 @@ class LayoutManager {
       //to implement the gap between floaters I'll just adjust the final settings now that the numbers have been used to create their 'placeholders' as it were. This is a simplified bit of logic that will create slightly bigger padding on either side but it's all I can think of at the moment without having to loop through again checking whether they are at the beginning of a column and so on
       x += LayoutManager.#FLOATER_GAP / 2;
       w -= LayoutManager.#FLOATER_GAP;
-      //stop the offset making the box go off the edge of a small screen or stretch it if it's offset to the left
-      if (this.smallScreenWidth) w -= element.offset.x * (w / 100);
       //then create a string which can be set as the floater's style.width and style.left
       x += 'px';
       w += 'px';
@@ -194,17 +203,14 @@ class LayoutManager {
         currentRow = rowNumber;
         currentY = nextY;
       }
-      //'auto' now means it wants to grow from it's clamp percentage if width is below it's max - no, we'll have 'auto' 'grow' or 'fixed' - see TestContent for jsdocs of the layout object....coming back to this, I'm going to make grow based on the max row height otherwise it's very close to fixed in behaviour
+      //'auto' now means it wants to grow from it's clamp percentage if width is below it's max - no, we'll have 'auto' 'grow' or 'fixed' - see TestContent for jsdocs of the layout object....coming back to this, I'm going to make grow based on the max row height otherwise it's very close to fixed in behaviour (forceGrow is related to offset based width adjustment that occurs on small screens)
       let h =
         element.sizeType === 'auto'
           ? (this.rowHeight / 100) * element.size.height
-          : element.sizeType === 'grow'
+          : element.sizeType === 'grow' || this.forceGrow
           ? (this.maxRowHeight / 100) *
             (element.size.height * currentWidthModifier)
-          : // currentWidthModifier *
-            // element.size.height
-            //
-            element.size.height;
+          : element.size.height;
       let y = currentY + element.offset.y * (h / 100);
       // if this is another element in the same row check whether it's taller than any other element in the row to set the beginning Y for the next row. If there's a y-offset it's probably a column that has become a row for a small screen, so we'll allow for the positioning to still be offset by doing this little check, x-offset is looked after in calculateX.
       if (currentY + h > nextY) {
