@@ -12,8 +12,6 @@ class LayoutManager {
   //this is for the height of a row element if sizeType is set to 'auto', kinda like the equivalent of columnWidth, I think I will have the ability to set a base aspect ratio but I have also been thinking that it would be good if elements could grow in height when the width becomes small....hmm - maybe each element could select aspect or grow?
   //   static #AUTO_FLOATER_HEIGHT = 320; //this needs replacing - now this.rowHeight set according to baseAspectRatio and this.columnWidth
   static #PAGE_PADDING = World.PAGE_PADDING;
-  //an instance property so it can be adjusted for small screens
-  #pagePadding = LayoutManager.#PAGE_PADDING;
   static #FLOATER_GAP = World.FLOATER_GAP;
 
   /* Wireframe entries format
@@ -35,8 +33,8 @@ class LayoutManager {
       `----------------Aspect ratio H/W: ${this.aspectHeightMultiplier}`
     );
     //to improve the 'grow' functionality I think I need to make the min size based on max size
-    LayoutManager.#MIN_WIDTH =
-      LayoutManager.#MAX_WIDTH * this.aspectHeightMultiplier;
+    // LayoutManager.#MIN_WIDTH =
+    //   LayoutManager.#MAX_WIDTH * this.aspectHeightMultiplier;
     this.wireframe = wireframe;
     this.wireframe
       .sort(this.#compareWireframeRow)
@@ -111,6 +109,11 @@ class LayoutManager {
         // console.log(`calculateX: x:${x} w:${w}`);
         const { y, h } = calculateY.call(this, element, i);
         // console.log(`calculateY: y:${y} h:${h} row number:${i}`);
+        console.log(
+          `The area of ${element.layoutNumber} on row ${i} is ${
+            parseInt(w) * parseInt(h)
+          }`
+        );
         console.log(`Making layoutMap entry for #${element.layoutNumber}`);
         // console.table(element);
         // if the layout has already been calculated this will simply update the values for each layoutNumber which is why we're using a map rather than array
@@ -118,7 +121,7 @@ class LayoutManager {
       });
     }
     //add the padding to the bottom before setting the total layout height
-    nextY += this.#pagePadding;
+    nextY += this.pagePadding;
     const layoutHeight = nextY; // - this.topMargin; this is not needed as we are positioning with absolute so it's relative to the container
     //We need to check whether the available screen height is greater than the height of all of the layout and adjust the y values for each to shift it to vertically centre align. nextY will have been left as the height of all elements but the height of the container may have been changed by the floaters on reveal() which is why it's important to read the comment above inspectScreenForLayout
     if (layoutHeight < this.veiwportHeight) {
@@ -161,14 +164,19 @@ class LayoutManager {
       }
       //width must be a percentage!! we'll want to check if height percentage should grow
       let w = (this.columnWidth / 100) * element.size.width;
+      //the area of the elements was becoming much bigger on a small screen so this essentially compares the max width of a column with the width of the single column used in small screen layout and so adjusts accordingly - it has kept the area within <4% of it's initial stated size (ie with text content it resizes so that the same amount of text fits into the element without adding scrolling or excess space at the top and bottom - this is what I wanted so you can do the layout sizing for the content and not worry about it)
+      const smallScreenMaxWidthAdjuster =
+        this.maxColumnWidth / (LayoutManager.#MIN_WIDTH - 2 * this.pagePadding);
       if (element.sizeType === 'grow') {
         currentWidthModifier =
-          ((this.maxColumnWidth / 100) * element.size.width) / w;
+          (((this.maxColumnWidth * smallScreenMaxWidthAdjuster) / 100) *
+            element.size.width) /
+          w;
         // console.log(
         //   `++++++++++++++++ current width modifier: ${currentWidthModifier}`
         // );
       } else {
-        currentWidthModifier = 1;
+        currentWidthModifier = 1 * smallScreenMaxWidthAdjuster;
       }
 
       const offsetWidth = element.offset.x * (w / 100);
@@ -209,8 +217,9 @@ class LayoutManager {
           ? (this.rowHeight / 100) * element.size.height
           : element.sizeType === 'grow' || this.forceGrow
           ? (this.maxRowHeight / 100) *
-            (element.size.height * currentWidthModifier)
-          : element.size.height;
+            element.size.height *
+            currentWidthModifier
+          : element.size.height; //this is if the height is a fixed number of pixels
       let y = currentY + element.offset.y * (h / 100);
       // if this is another element in the same row check whether it's taller than any other element in the row to set the beginning Y for the next row. If there's a y-offset it's probably a column that has become a row for a small screen, so we'll allow for the positioning to still be offset by doing this little check, x-offset is looked after in calculateX.
       if (currentY + h > nextY) {
@@ -271,20 +280,20 @@ class LayoutManager {
 
   //Need to keep in mind that we are positioning the floaters with 'absolute' which is relative to the container!!
   #createLayoutMarkers() {
-    this.#pagePadding = LayoutManager.#PAGE_PADDING;
+    this.pagePadding = LayoutManager.#PAGE_PADDING;
     this.originX = 0; //this.pageContainerBoundingRect.left;
     this.originY = 0; // this.topMargin;
     //this is for working out height when set to 'auto' or 'grow', adjusted if on a small screen
     this.maxColumnWidth =
-      (LayoutManager.#MAX_WIDTH - 2 * this.#pagePadding) / this.columnCount;
+      (LayoutManager.#MAX_WIDTH - 2 * this.pagePadding) / this.columnCount;
     //because I want to keep the columns as counted from the wireframe (for use in getRowElements) but still want the columnWidth sum to be calculated for small windows...
     let tmpColumnCount = this.columnCount;
     if (this.smallScreenWidth) {
       //page size is less than MIN width so reduce the padding and make each row consist of only one column
-      this.#pagePadding = LayoutManager.#PAGE_PADDING / 2;
+      this.pagePadding = LayoutManager.#PAGE_PADDING / 2;
       tmpColumnCount = 1;
-      //...and the max column width needs adjusting accordingly
-      this.maxColumnWidth = LayoutManager.#MIN_WIDTH - 2 * this.#pagePadding;
+      //...and the max column width needs adjusting accordingly - no cos now we can't compare the large screen size with the small screen size...hmm
+      //   this.maxColumnWidth = LayoutManager.#MIN_WIDTH - 2 * this.pagePadding;
     } else if (this.largeScreenWidth) {
       //page size is locked to MAX width
       this.originX += (this.screenWidth - this.pageWidth) / 2;
@@ -292,10 +301,9 @@ class LayoutManager {
     //... for sizeType: 'grow' behaviour which will grow when width is shrunk - should this be based on the initial MAX_WIDTH based column rather than here where it can be small screen affected?
     this.maxRowHeight = this.maxColumnWidth * this.aspectHeightMultiplier;
     //add some padding to the top and left
-    this.originX += this.#pagePadding;
-    this.originY += this.#pagePadding;
-    this.columnWidth =
-      (this.pageWidth - 2 * this.#pagePadding) / tmpColumnCount;
+    this.originX += this.pagePadding;
+    this.originY += this.pagePadding;
+    this.columnWidth = (this.pageWidth - 2 * this.pagePadding) / tmpColumnCount;
     //I'm adding the aspect ratio based grid square height now too
     this.rowHeight = this.columnWidth * this.aspectHeightMultiplier;
     console.log(`columnWidth: ${this.columnWidth}`);
