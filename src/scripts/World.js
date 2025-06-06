@@ -2,9 +2,9 @@ import breakpoints from './Breakpoints';
 import Colourist from './Colourist';
 
 const World = {
-  //these are for the LayoutManager
-  MAX_PAGE_WIDTH: parseInt(breakpoints.lg),
-  MIN_PAGE_WIDTH: parseInt(breakpoints.sm),
+  //these are for the LayoutManager - min is half of max for 'grow' based sizing, it keeps it relatively similar, but perhaps it should be based on the layout aspect ratio?
+  MAX_PAGE_WIDTH: 1280,
+  MIN_PAGE_WIDTH: 640,
   PAGE_PADDING: 20,
   FLOATER_GAP: 10,
   //these are for the Floater

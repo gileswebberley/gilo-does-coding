@@ -9,14 +9,14 @@ const breakpoints = {
 };
 
 // Function to set breakpoints as CSS :root variables - oh bugger, you can't use these in media queries!
-function setBreakpointsAsCSSVars(breakpoints) {
-  const root = document.documentElement;
-  Object.entries(breakpoints).forEach(([key, value]) => {
-    root.style.setProperty(`--breakpoint-${key}`, value);
-  });
-}
+// function setBreakpointsAsCSSVars(breakpoints) {
+//   const root = document.documentElement;
+//   Object.entries(breakpoints).forEach(([key, value]) => {
+//     root.style.setProperty(`--breakpoint-${key}`, value);
+//   });
+// }
 
-// Apply the breakpoints
-setBreakpointsAsCSSVars(breakpoints);
+// // Apply the breakpoints
+// setBreakpointsAsCSSVars(breakpoints);
 
 export default breakpoints;

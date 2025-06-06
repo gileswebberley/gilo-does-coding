@@ -164,7 +164,8 @@ class Floater {
     }
     //I think I want to scale the duration based on the distance it's moving? Hmm no, this would take a re-engineering of the floating loop logic so maybe come back to this for v2
     this.element.style.transition = `all ${duration}ms ${this.easingStyle}`;
-    this.setPosition(x, y, z);
+    //I think this helps it sync the animation to the native screen refresh
+    requestAnimationFrame(() => this.setPosition(x, y, z));
   }
 
   reveal() {

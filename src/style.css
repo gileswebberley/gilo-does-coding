@@ -39,6 +39,9 @@
   background-color: var(--colour-blue-300);
 
   color-scheme: light dark;
+
+  --header-footer-time-colour: var(--colour-orange);
+  --header-footer-time-colour-text: var(--colour-orange-900);
   /* color: rgba(255, 255, 255, 0.87);
   background-color: #242424; */
 
@@ -94,7 +97,7 @@ h1,
 h2,
 h3,
 h4 {
-  font-family: 'Special Elite', system-ui;
+  font-family: 'Special Elite', 'Courier New', Courier, monospace;
   font-weight: 400;
   font-style: normal;
   /* font-size: 2.2em;
@@ -102,6 +105,8 @@ h4 {
 }
 
 #logo {
+  font-size: 4.2rem;
+  line-height: 80%;
   cursor: pointer;
 }
 
@@ -162,7 +167,7 @@ This is all of the styling for the navigation system ---------------------------
 
 #hamburger-button span {
   position: absolute;
-  background-color: #ffffff;
+  background-color: var(--header-footer-time-colour-text);
   /* var(--colour-light-text); */
   width: 100%;
   height: 3px;
@@ -196,38 +201,36 @@ This is all of the styling for the navigation system ---------------------------
   top: 4rem;
   right: 0;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
   gap: 1rem;
   padding: 1rem;
-  width: fit-content;
+  width: 60vw;
   flex-wrap: wrap;
   height: fit-content;
-  background-color: var(--colour-dark-bg);
-  border: 1px solid var(--colour-dark-text);
-  pointer-events: all !important;
+  background-color: var(--header-footer-time-colour);
+  border: 1px solid var(--header-footer-time-colour-text);
+  /* don't allow clicking when it's hidden */
+  pointer-events: none;
   border-radius: calc(var(--content-border-radius) / 2);
-  /* display: none; */
+  visibility: hidden;
   opacity: 0;
-}
-/* This doesn't seem to wortk in my browsers 
-@starting-style {
-  #main-nav {
-    opacity: 0;
-  }
-} */
-
-#main-nav.active {
-  /* display: visible; */
-  opacity: 1;
   transition: 0.3s ease;
 }
 
-/* @media screen and (max-width: 680px) {
+#main-nav.active {
+  pointer-events: all !important;
+  opacity: 1;
+  visibility: visible;
+}
+
+@media screen and (max-width: 680px) {
   #main-nav {
     flex-direction: column;
+    width: fit-content;
   }
-} */
+}
+/* It's time based now so no need
 @media (prefers-color-scheme: light) {
   #main-nav {
     background-color: var(--colour-light-bg);
@@ -236,10 +239,12 @@ This is all of the styling for the navigation system ---------------------------
   #hamburger-button span {
     background-color: var(--colour-light-text);
   }
-}
+} */
 
 .nav-button {
-  width: 100%;
+  font-family: 'Special Elite', 'Courier New', Courier, monospace;
+  /* this is to make the buttons 'stretch' when there is excess space and when they wrap - a setting of 1 makes them all behave the same whereas 'auto' will make ones with smaller content be proportionally smaller than the others */
+  flex: 1;
   white-space: nowrap;
   border: 1px solid;
   border-radius: 7px;
@@ -258,6 +263,12 @@ This is all of the styling for the navigation system ---------------------------
 .nav-button:hover {
   outline: none;
   background-color: var(--colour-blue-100);
+}
+
+@media screen and (max-width: 680px) {
+  .nav-button {
+    width: 100%;
+  }
 }
 
 @media (prefers-color-scheme: light) {
@@ -291,9 +302,6 @@ iframe {
   left: 0;
   height: 100%;
   width: 100%;
-  /* height: var(--content_viewport_height);
-  max-width: var(--content_max_width);
-  min-width: var(--content_min_width); */
   overflow-y: auto !important;
 }
 
@@ -303,6 +311,8 @@ iframe {
   border-radius: var(--content-border-radius);
   /* height: var(--content_viewport_height); */
   height: 100%;
+  /* in case it get's taller than it's content... */
+  align-content: center;
   overflow-y: auto;
   pointer-events: all !important;
 }
@@ -310,8 +320,6 @@ iframe {
 .content-holder {
   border: none;
   height: fit-content;
-  /* width: var(--content_max_width);
-  min-width: var(--content_min_width); */
   width: 100%;
   pointer-events: inherit;
 }
@@ -322,38 +330,41 @@ iframe {
   object-fit: contain;
   /* for the alt text we'll set the font really small */
   font-size: x-small;
-  border-radius: calc(var(--content-border-radius) / 2);
+  /* border-radius: calc(var(--content-border-radius) / 2); */
+  border-radius: min(1vw, 1vh);
 }
 
 header,
 footer {
   display: flex;
-  /* flex-wrap: wrap; */
   text-wrap: balance;
   justify-content: space-between;
   align-items: center;
-  padding-left: 10px;
-  padding-right: 10px;
-  /* padding-bottom: 8px; */
+  padding-left: 2rem;
+  padding-right: 1rem;
   gap: 2rem;
   /* This is how you can set the dark mode colour scheme if it's selected on the user's system (see the @media query at the bottom for how this is used) */
   color-scheme: dark;
-  color: var(--colour-dark-text);
-  background-color: var(--colour-dark-bg);
+  color: var(--header-footer-time-colour-text);
+  background-color: var(--header-footer-time-colour);
   /* font-size: 2rem; */
 }
 
-@media (prefers-color-scheme: light) {
-  /* :root { */
-  header,
-  footer {
-    color: var(--colour-light-text);
-    background-color: var(--colour-light-bg);
-  }
+header {
+  border-bottom: 2px solid var(--header-footer-time-colour-text);
+}
 
+footer {
+  border-top: 2px solid var(--header-footer-time-colour-text);
+}
+
+@media (prefers-color-scheme: light) {
   button {
     background-color: #f9f9f9;
   }
+}
+
+@media (prefers-color-scheme: dark) {
   :root {
     /* change the background blue */
     --colour-blue-300: var(--colour-blue-600);
@@ -365,10 +376,23 @@ footer {
   footer {
     flex-direction: column;
     justify-content: center;
+    padding: 0.5rem;
   }
-  :root {
+
+  #copyright-text {
+    display: none;
+  }
+
+  /* :root {
     --content_max_width: 80vw;
     --content_min_width: 50vw;
     --content_viewport_height: 50vh;
+  } */
+}
+
+@media screen and (max-width: 480px) {
+  #logo {
+    /* stop the h2 logo from breaking across lines on small screens (mobile) */
+    font-size: 160%;
   }
 }

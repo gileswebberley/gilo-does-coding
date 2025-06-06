@@ -5,7 +5,18 @@ import Page_Test2 from './contents/TestContent2.js';
 import Page_Test3 from './contents/TestContent3.js';
 import Page_Test4 from './contents/TestContent4.js';
 import NavManager from './scripts/NavManager.js';
+import Colourist from './scripts/Colourist.js';
 
+//make the header and footer colour time responsive...
+const timeColours = Colourist.getTimeBasedColourBasedOnColourScheme();
+document.documentElement.style.setProperty(
+  '--header-footer-time-colour',
+  timeColours.bg
+);
+document.documentElement.style.setProperty(
+  '--header-footer-time-colour-text',
+  timeColours.text
+);
 //we'll remove the loading message when this loads...
 document.querySelector('#loader').remove();
 //adding my email address like this to try to avoid being the victim of spam...
