@@ -146,10 +146,7 @@ class LayoutManager {
       }
       if (this.smallScreenWidth) {
         currentX = this.originX;
-        if (
-          currentX !== this.originX ||
-          (nextX < currentX + this.columnWidth && nextX !== 0)
-        ) {
+        if (nextX < currentX + this.columnWidth && nextX !== 0) {
           //we're dealing with multiple elements inside a single grid square
           currentX = nextX;
         }
@@ -167,11 +164,15 @@ class LayoutManager {
       //the area of the elements was becoming much bigger on a small screen so this essentially compares the max width of a column with the width of the single column used in small screen layout and so adjusts accordingly - it has kept the area within <4% of it's initial stated size (ie with text content it resizes so that the same amount of text fits into the element without adding scrolling or excess space at the top and bottom - this is what I wanted so you can do the layout sizing for the content and not worry about it)
       const smallScreenMaxWidthAdjuster =
         this.maxColumnWidth / (LayoutManager.#MIN_WIDTH - 2 * this.pagePadding);
-      if (element.sizeType === 'grow') {
+      if (element.sizeType === 'grow' || element.size.width > 100) {
         currentWidthModifier =
           (((this.maxColumnWidth * smallScreenMaxWidthAdjuster) / 100) *
             element.size.width) /
           w;
+        //Trying to deal with elements that are > 100% wide when going onto a small screen
+        if (this.smallScreenWidth && element.size.width > 100) {
+          w *= 100 / element.size.width; //yep, keeps the area
+        }
         // console.log(
         //   `++++++++++++++++ current width modifier: ${currentWidthModifier}`
         // );
@@ -179,11 +180,12 @@ class LayoutManager {
         currentWidthModifier = 1 * smallScreenMaxWidthAdjuster;
       }
 
+      //add any offsetX to the position
       const offsetWidth = element.offset.x * (w / 100);
       //Making offset a percentage of the element width
       let x = currentX + offsetWidth;
       if (this.smallScreenWidth && offsetWidth !== 0) {
-        //stop the offset making the box go off the edge of a small screen or stretch it if it's offset to the left - add a force grow behaviour to account for this
+        //stop the offset making the box go off the edge of a small screen or stretch it if it's offset to the left - add a force grow behaviour to account for this (ie change the height accordingly)
         this.forceGrow = true;
         const unadjustedWidth = w;
         w -= offsetWidth;
@@ -191,7 +193,7 @@ class LayoutManager {
       } else {
         this.forceGrow = false;
       }
-      //we ignore the offset here so that this element's offset doesn't shift the following elements
+      //we ignore the offset here so that this element's offset doesn't shift the following elements - if I implement a wrap functionality would I want to change this? I don't think so cos offset is kinda for forcing overlapping behaviour.
       nextX = currentX + w; //x + w;
       //using this to round to full pixels and parseInt is apparently slightly more efficient than Math.floor
       w = parseInt(w);
