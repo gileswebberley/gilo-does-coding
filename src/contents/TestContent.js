@@ -21,6 +21,7 @@
  * 'auto' it is percentage of the height according to aspectRatio (ie based on columnWidth)
  * 'grow' it is clamped to auto when columnWidth is full otherwise it proportionally bigger than auto based on how much smaller columnWidth is (hard to explain but essentially makes it taller than it would be if the width gets smaller than hoped).
  * @property {string} sizeType - controls the height calculations as described in size.height.
+ * @property {number} clamp - The minimum width (in pixels) that this element can be, it will be wrapped if it cannot fit on it's own row. This was developed so images and video in particular can't get too small (sizeType must be 'auto' for this to work, cos it kinda works with the aspect ratio of the w:h).
  * @property {string} type - The type of content (e.g., 'image', 'html', 'iframe', 'blank').
  * @property {Object|string} src - The source of the content. Can be an object for images or a string for HTML/iframe content.
  * @property {string} [src.src] - The source path for an image (if type is 'image').

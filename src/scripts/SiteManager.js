@@ -73,7 +73,8 @@ class SiteManager {
       console.log(`Page ${pageName} is already open.`);
       return; // No need to change the page if it's already open
     } else if (this.#openPage !== '') {
-      this.#pages.get(this.#openPage).hide(); // Hide the currently open page
+      // Hide the currently open page before showing the selected one
+      this.#pages.get(this.#openPage).hide();
     }
     this.#openPage = pageName;
     this.#pages.get(pageName).show();
