@@ -22,7 +22,7 @@ class LayoutManager {
     sizeType: {width: 'auto', height: 'fixed'} which means width is a percentage and height is in pixels
  */
   //I'm going to add aspect ratio sizing so set your grid base a.r. then you can use percentage sizes - control grid height on width - we'll also let the height be controlled by the width, so it can grow as width becomes smaller - it's a bit fuzzy but let's start with a.r.
-  constructor(wireframe, pageContainer, baseAspectRatio = '16:9') {
+  constructor(wireframe, pageContainerBoundingRect, baseAspectRatio = '16:9') {
     // this.baseAspectRatio = baseAspectRatio;
     const ratioSplitString = baseAspectRatio.split(':');
     this.baseHeightRatio = ratioSplitString[1];
@@ -39,9 +39,9 @@ class LayoutManager {
     this.wireframe
       .sort(this.#compareWireframeRow)
       .sort(this.#compareWireframeColumns);
-    this.pageContainer = pageContainer;
+    // this.pageContainerBoundingRect = pageContainerBoundingRect;
     this.layoutMap = new Map();
-    this.inspectScreenForLayout();
+    this.inspectScreenForLayout(pageContainerBoundingRect);
   }
 
   //I need to sort the wireframe so that it is laid out as row 1 col 1 row 1 col 2 row 2 col 1 etc {2,1}{1,1}{1,3}{2,2}{1,2}{2,3} - I am going to sort by row first and then for each row I'll sort by column
@@ -72,14 +72,14 @@ class LayoutManager {
 
   //Need to find a way to recalculate top and bottom margin even if this page is open???
   //The solution is to make sure that the pageContainer is set to it's initial size before calling this, whatever calls it can then getPageHeight and set the container to that afterwards
-  inspectScreenForLayout() {
-    this.pageContainerBoundingRect = this.pageContainer.getBoundingClientRect();
-    this.leftMargin = this.pageContainerBoundingRect.left;
-    this.rightMargin = window.innerWidth - this.pageContainerBoundingRect.right;
+  inspectScreenForLayout(pageContainerBoundingRect) {
+    // this.pageContainer.style.height = '100%'; //reset the height to 100% so we can get the margins correctly
+    // this.pageContainerBoundingRect = pageContainerBoundingRect//this.pageContainer.getBoundingClientRect();
+    this.leftMargin = pageContainerBoundingRect.left;
+    this.rightMargin = window.innerWidth - pageContainerBoundingRect.right;
     this.screenWidth = window.innerWidth - (this.leftMargin + this.rightMargin); // Set initial screen width taking into account the left and right boundaries of the pageContainer
-    this.topMargin = this.pageContainerBoundingRect.top;
-    this.bottomMargin =
-      window.innerHeight - this.pageContainerBoundingRect.bottom;
+    this.topMargin = pageContainerBoundingRect.top;
+    this.bottomMargin = window.innerHeight - pageContainerBoundingRect.bottom;
     //This is the available screen space so if the layout is taller then pageHeight will be the height of the layout, and if it's smaller then this will be used to centre the layout vertically
     this.veiwportHeight =
       window.innerHeight - (this.topMargin + this.bottomMargin);
@@ -109,11 +109,11 @@ class LayoutManager {
         // console.log(`calculateX: x:${x} w:${w}`);
         const { y, h } = calculateY.call(this, element, i);
         // console.log(`calculateY: y:${y} h:${h} row number:${i}`);
-        console.log(
-          `The area of ${element.layoutNumber} on row ${i} is ${
-            parseInt(w) * parseInt(h)
-          }`
-        );
+        // console.log(
+        //   `The area of ${element.layoutNumber} on row ${i} is ${
+        //     parseInt(w) * parseInt(h)
+        //   }`
+        // );
         console.log(`Making layoutMap entry for #${element.layoutNumber}`);
         // console.table(element);
         // if the layout has already been calculated this will simply update the values for each layoutNumber which is why we're using a map rather than array
@@ -140,6 +140,10 @@ class LayoutManager {
     //No this doesn't have 'this' in scope...but ahhh, this is where the Function.call() comes into play :)
     //IMPORTANT - This must be called BEFORE calculateY!!!!!!!!!!!!!!!!!!!!!!!!
     function calculateX(element, rowNumber) {
+      //clamping can only be set on auto sized elements
+      this.clamped = false;
+      this.clampedWidth = null;
+      this.wrapMe = false;
       if (rowNumber > currentRow) {
         // reset the x position (like hitting return for a new-line) this is why this called before calculateY
         nextX = this.originX;
@@ -160,7 +164,16 @@ class LayoutManager {
         }
       }
       //width must be a percentage!! we'll want to check if height percentage should grow
+      //adding the ability to set a minimum width with clamp: Xpx so we can do wrap (I'm thinking, when they get too small we'll wrap them!? particularly for images/videos)
       let w = (this.columnWidth / 100) * element.size.width;
+
+      if (element.clamp !== null && element.sizeType === 'auto') {
+        this.clampedWidth = Math.min(element.clamp, this.columnWidth);
+        this.clamped = w < this.clampedWidth;
+        if (this.clamped) {
+          w = this.clampedWidth;
+        }
+      }
       //the area of the elements was becoming much bigger on a small screen so this essentially compares the max width of a column with the width of the single column used in small screen layout and so adjusts accordingly - it has kept the area within <4% of it's initial stated size (ie with text content it resizes so that the same amount of text fits into the element without adding scrolling or excess space at the top and bottom - this is what I wanted so you can do the layout sizing for the content and not worry about it)
       const smallScreenMaxWidthAdjuster =
         this.maxColumnWidth / (LayoutManager.#MIN_WIDTH - 2 * this.pagePadding);
@@ -173,9 +186,6 @@ class LayoutManager {
         if (this.smallScreenWidth && element.size.width > 100) {
           w *= 100 / element.size.width; //yep, keeps the area
         }
-        // console.log(
-        //   `++++++++++++++++ current width modifier: ${currentWidthModifier}`
-        // );
       } else {
         currentWidthModifier = 1 * smallScreenMaxWidthAdjuster;
       }
@@ -193,12 +203,20 @@ class LayoutManager {
       } else {
         this.forceGrow = false;
       }
+      //Blimey, finally here's the beginnings of the wrapping functionality
+      const overflowSize = this.pageWidth + this.originX - (currentX + w);
+      if (overflowSize < 0 && this.clamped) {
+        this.wrapMe = true;
+        //overflowSize is clearly a negative number if we're in here so + to move it backwards
+        x += overflowSize - (this.pagePadding + LayoutManager.#FLOATER_GAP / 2);
+        currentX = x;
+      }
       //we ignore the offset here so that this element's offset doesn't shift the following elements - if I implement a wrap functionality would I want to change this? I don't think so cos offset is kinda for forcing overlapping behaviour.
       nextX = currentX + w; //x + w;
       //using this to round to full pixels and parseInt is apparently slightly more efficient than Math.floor
       w = parseInt(w);
       //to implement the gap between floaters I'll just adjust the final settings now that the numbers have been used to create their 'placeholders' as it were. This is a simplified bit of logic that will create slightly bigger padding on either side but it's all I can think of at the moment without having to loop through again checking whether they are at the beginning of a column and so on
-      x += LayoutManager.#FLOATER_GAP / 2;
+      x += !this.wrapMe && LayoutManager.#FLOATER_GAP / 2;
       w -= LayoutManager.#FLOATER_GAP;
       //then create a string which can be set as the floater's style.width and style.left
       x += 'px';
@@ -208,21 +226,42 @@ class LayoutManager {
 
     //call AFTER calculateX
     function calculateY(element, rowNumber) {
+      //if we are on a new row then ignore y-offset
+      let isNewRow = false;
+
       if (rowNumber > currentRow) {
         //we've moved onto the 'next row' in the layout
         currentRow = rowNumber;
         currentY = nextY;
+        isNewRow = true;
+      } else if (this.wrapMe) {
+        currentY = this.lastBottom;
       }
       //'auto' now means it wants to grow from it's clamp percentage if width is below it's max - no, we'll have 'auto' 'grow' or 'fixed' - see TestContent for jsdocs of the layout object....coming back to this, I'm going to make grow based on the max row height otherwise it's very close to fixed in behaviour (forceGrow is related to offset based width adjustment that occurs on small screens)
+      if (this.clamped)
+        console.log(
+          `===============I've had my height clamped to ${
+            this.clampedWidth * this.aspectHeightMultiplier
+          }`
+        );
       let h =
         element.sizeType === 'auto'
-          ? (this.rowHeight / 100) * element.size.height
+          ? this.clamped
+            ? this.clampedWidth *
+              this.aspectHeightMultiplier *
+              (element.size.width / element.size.height)
+            : (this.rowHeight / 100) * element.size.height
           : element.sizeType === 'grow' || this.forceGrow
           ? (this.maxRowHeight / 100) *
             element.size.height *
             currentWidthModifier
           : element.size.height; //this is if the height is a fixed number of pixels
-      let y = currentY + element.offset.y * (h / 100);
+      //adding the clamp functionality so I won't over-confuse the original sizing, I'll just take care of it seperately - oh no, I'll add it into the 'auto' function
+      let y =
+        currentY + (this.wrapMe && isNewRow ? 0 : element.offset.y * (h / 100));
+      //for wrap behaviour we'll store the bottom of each for the next to wrap underneath
+      this.lastBottom = y + h;
+      y += LayoutManager.#FLOATER_GAP / 2;
       // if this is another element in the same row check whether it's taller than any other element in the row to set the beginning Y for the next row. If there's a y-offset it's probably a column that has become a row for a small screen, so we'll allow for the positioning to still be offset by doing this little check, x-offset is looked after in calculateX.
       if (currentY + h > nextY) {
         nextY =
@@ -231,7 +270,6 @@ class LayoutManager {
             : currentY + h;
       }
       h = parseInt(h);
-      y += LayoutManager.#FLOATER_GAP / 2;
       h -= LayoutManager.#FLOATER_GAP;
       y += 'px';
       h += 'px';

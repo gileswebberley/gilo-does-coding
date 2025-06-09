@@ -85,27 +85,40 @@ class PageManger {
         this.hasHeardResize = true;
         //add a little 'debounce' so that we don't react to 100s of resize events that are triggered by the browser being resized
         setTimeout(() => {
-          console.log('Layout shifting from resize...');
-          //ok so trying to work out how to get the top and bottom margin calculations in LayoutManager if the page is open - if it is then the container will have it's size set so we cannot use the container rect to calculate them. I have realised that I could change it back to fill the available space whilst we're working out the layout perhaps?....yay seems the logic was correct :)
-          if (this.isOpen) {
-            this.pageContainer.style.height = '100%';
-          }
-          this.layoutManager.inspectScreenForLayout();
-          //then we'll reset the size now the calculations have been done....
-          if (this.isOpen) {
-            this.pageContainer.style.height =
-              this.layoutManager.getPageHeight();
-          }
-          this.floaterMap.forEach((floater, key) => {
-            const { x, y, w, h } =
-              this.layoutManager.getFloaterLayoutObject(key);
-            floater.setRevealPosition(x, y);
-            floater.setDimensions(w, h);
-          });
-          this.hasHeardResize = false;
+          this.#resizeFunctionality();
         }, World.RESIZE_TIMEOUT);
       }
     });
+  }
+
+  #resizeFunctionality() {
+    console.log('Layout shifting from resize...');
+    //ok so trying to work out how to get the top and bottom margin calculations in LayoutManager if the page is open - if it is then the container will have it's size set so we cannot use the container rect to calculate them. I have realised that I could change it back to fill the available space whilst we're working out the layout perhaps?
+
+    // Right, this checks the height of the page currently (in case another page is open) and stores it so it can change the height to 100% to get the viewportHeight within LayoutManager and then put it back to how it found it. This means that the various pages don't interfere with the container height for other pages. It's a bit hacky as sharing the container amongst pages probably wasn't the ultimate decision to have made early on, but it works so I'm going with it as a solution to the problem I was trying to overcome!
+    const tempHeight = getComputedStyle(this.pageContainer).getPropertyValue(
+      'height'
+    );
+    // console.log(`@@@@@@@@@@@@@@@@ tempHeight: ${tempHeight}`);
+    this.pageContainer.style.height = '100%';
+    // }
+    this.layoutManager.inspectScreenForLayout(
+      this.pageContainer.getBoundingClientRect()
+    );
+    if (!this.isOpen) {
+      this.pageContainer.style.height = tempHeight;
+    } else {
+      console.log(
+        `THE PAGE IS OPEN, SETTING HEIGHT TO ${this.layoutManager.getPageHeight()}`
+      );
+      this.pageContainer.style.height = this.layoutManager.getPageHeight();
+    }
+    this.floaterMap.forEach((floater, key) => {
+      const { x, y, w, h } = this.layoutManager.getFloaterLayoutObject(key);
+      floater.setRevealPosition(x, y);
+      floater.setDimensions(w, h);
+    });
+    this.hasHeardResize = false;
   }
 
   #createLayoutManager() {
@@ -117,12 +130,14 @@ class PageManger {
         offset: content.offset,
         size: content.size,
         sizeType: content.sizeType,
+        clamp: content.clamp ?? null,
       };
     });
     console.table(wireframe);
+    // this.pageContainer.style.height = '100%';
     this.layoutManager = new LayoutManager(
       wireframe,
-      this.pageContainer,
+      this.pageContainer.getBoundingClientRect(),
       this.baseLayoutAspectRatio
     );
   }
