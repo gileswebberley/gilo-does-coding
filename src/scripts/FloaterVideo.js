@@ -1,6 +1,6 @@
 import Floater from './Floater';
 //src is {src,alt}
-class FloaterImage extends Floater {
+class FloaterVideo extends Floater {
   constructor(src, ...rest) {
     super(...rest);
     this.src = src;
@@ -28,4 +28,4 @@ class FloaterImage extends Floater {
   }
 }
 
-export default FloaterImage;
+export default FloaterVideo;

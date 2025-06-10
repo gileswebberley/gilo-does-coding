@@ -4,6 +4,7 @@ import FloaterBlank from './FloaterBlank';
 import FloaterIframe from './FloaterIframe';
 import FloaterImage from './FloaterImage';
 import FloaterInner from './FloaterInner';
+import FloaterVideo from './FloaterVideo';
 import LayoutManager from './LayoutManager';
 import World from './World';
 
@@ -42,12 +43,12 @@ class PageManger {
         //     new TextFloater(content.src, this.pageContainer)
         //   );
         //   break;
-        // case 'video':
-        //   this.floaterMap.set(
-        //     content.layoutNumber,
-        //     new VideoFloater(content.src, this.pageContainer)
-        //   );
-        //   break;
+        case 'video':
+          this.floaterMap.set(
+            content.layoutNumber,
+            new FloaterVideo(content.src, this.pageContainer)
+          );
+          break;
         case 'html':
           this.floaterMap.set(
             content.layoutNumber,

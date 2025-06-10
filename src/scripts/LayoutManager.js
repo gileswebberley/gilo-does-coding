@@ -332,6 +332,7 @@ class LayoutManager {
       this.pagePadding = LayoutManager.#PAGE_PADDING / 2;
       tmpColumnCount = 1;
       //...and the max column width needs adjusting accordingly - no cos now we can't compare the large screen size with the small screen size...hmm
+      // this.maxColumnWidth -= this.pagePadding;
       //   this.maxColumnWidth = LayoutManager.#MIN_WIDTH - 2 * this.pagePadding;
     } else if (this.largeScreenWidth) {
       //page size is locked to MAX width
