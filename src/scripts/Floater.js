@@ -108,6 +108,21 @@ class Floater {
     return { x, y, z };
   }
 
+  // essentially set's the transition property before calling setPosition()
+  moveTo(x, y, z, duration = World.DURATION) {
+    typeof x !== 'number' && (x = parseInt(x));
+    typeof y !== 'number' && (y = parseInt(y));
+    typeof z !== 'number' && (z = parseInt(z));
+    if (isNaN(x) || isNaN(y) || isNaN(z)) {
+      console.error('Invalid position values for moveTo:', x, y, z);
+      return;
+    }
+    //I think I want to scale the duration based on the distance it's moving? Hmm no, this would take a re-engineering of the floating loop logic so maybe come back to this for v2
+    this.element.style.transition = `all ${duration}ms ${this.easingStyle}`;
+    //I think this helps it sync the animation to the native screen refresh
+    requestAnimationFrame(() => this.setPosition(x, y, z));
+  }
+
   // This does the grunt work of actually setting the style properties including the transform (used for scaling and rotation)
   setPosition(x, y, z = 1) {
     typeof x !== 'number' && (x = parseInt(x));
@@ -121,9 +136,12 @@ class Floater {
     this.element.style.top = `${y}px`;
     this.element.style.zIndex = z;
     let transformStr;
-    transformStr = this.setZBasedScale(z);
+    //let's test an idea of using translate rather than top left - no, it makes the rotation function fall apart (because it uses top/left for the calculations) and is not any smoother than what I've got already
+    // transformStr = `translate(${x}px, ${y}px) `;
+    // transformStr += ' ';
+    transformStr = this.rotateTowardsTarget(x, y);
     transformStr += ' ';
-    transformStr += this.rotateTowardsTarget(x, y);
+    transformStr += this.setZBasedScale(z);
     this.element.style.transform = transformStr;
   }
 
@@ -151,21 +169,6 @@ class Floater {
     }
     // just fiddled around with so that they don't become too small
     return `scale(${(95 / World.DEPTH) * (World.DEPTH / Math.abs(z)) + 5}%)`;
-  }
-
-  // essentially set's the transition property before calling setPosition()
-  moveTo(x, y, z, duration = 500) {
-    typeof x !== 'number' && (x = parseInt(x));
-    typeof y !== 'number' && (y = parseInt(y));
-    typeof z !== 'number' && (z = parseInt(z));
-    if (isNaN(x) || isNaN(y) || isNaN(z)) {
-      console.error('Invalid position values for moveTo:', x, y, z);
-      return;
-    }
-    //I think I want to scale the duration based on the distance it's moving? Hmm no, this would take a re-engineering of the floating loop logic so maybe come back to this for v2
-    this.element.style.transition = `all ${duration}ms ${this.easingStyle}`;
-    //I think this helps it sync the animation to the native screen refresh
-    requestAnimationFrame(() => this.setPosition(x, y, z));
   }
 
   reveal() {

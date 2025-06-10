@@ -242,6 +242,7 @@ class LayoutManager {
             this.clampedWidth * this.aspectHeightMultiplier
           }`
         );
+      //gosh, this has grown to a bit of a mess of ternary operators but essentially it's dealing with the various sizeType options including keeping the same aspect ratio of elements that have been 'clamped' to a minimum width
       let h =
         element.sizeType === 'auto'
           ? this.clamped
@@ -266,9 +267,6 @@ class LayoutManager {
       // if this is another element in the same row check whether it's taller than any other element in the row to set the beginning Y for the next row. If there's a y-offset it's probably a column that has become a row for a small screen, so we'll allow for the positioning to still be offset by doing this little check, x-offset is looked after in calculateX.
       if (y + h > nextY) {
         nextY = y + h;
-        //   this.smallScreenWidth && element.offset.y !== 0
-        // ? y + h
-        // : currentY + h;
       }
       h = parseInt(h);
       h -= LayoutManager.#FLOATER_GAP;

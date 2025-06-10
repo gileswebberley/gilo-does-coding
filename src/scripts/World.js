@@ -1,4 +1,3 @@
-import breakpoints from './Breakpoints';
 import Colourist from './Colourist';
 
 const World = {
