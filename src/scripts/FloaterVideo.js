@@ -20,11 +20,24 @@ class FloaterVideo extends Floater {
     this.contentHolder.innerText =
       'Unfortunately it seems that your browser does not support this video';
     this.element.appendChild(this.contentHolder);
+    this.hasSrcSet = false;
   }
 
   reveal() {
-    this.contentHolder.setAttribute('src', this.src.src);
+    if (!this.hasSrcSet) {
+      this.contentHolder.setAttribute('src', this.src.src);
+      this.contentHolder.load();
+      this.hasSrcSet = true;
+    }
     super.reveal();
+  }
+
+  float() {
+    if (!this.contentHolder.paused) {
+      this.contentHolder.pause();
+      this.contentHolder.currentTime = 0; // Reset video to start
+    }
+    super.float();
   }
 }
 

@@ -324,6 +324,13 @@ iframe {
   pointer-events: inherit;
 }
 
+.content-title {
+  font-family: 'Special Elite', 'Courier New', Courier, monospace;
+  font-size: clamp(1.2rem, 2vw, 3rem);
+  max-width: 100%;
+  text-align: center;
+}
+
 .content-video {
   max-width: 100%;
   max-height: 100%;

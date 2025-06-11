@@ -87,5 +87,5 @@ class SiteManager {
   }
 }
 
-/* When build(contents) is called we will want to go through each 'page' and add it's title to the navigation with an onPointerDown event that calls this revealPage(pageName) method. This will then call the PageManager associated with that pageName to call reveal on all of it's own floaters. We'll want to check whether that page is already open, or indeed if any page is open, and set the open page's floaters to float as well*/
+/* When build(contents) is called we will want to go through each 'page' and add it's title to the navigation with an onPointerDown event that calls this selectPage(pageName) method. This will then call the PageManager associated with that pageName to call reveal on all of it's own floaters. We'll want to check whether that page is already open, or indeed if any page is open, and set the open page's floaters to float as well*/
 export default SiteManager;

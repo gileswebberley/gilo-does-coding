@@ -22,7 +22,6 @@ class NavManager {
 
   static init(navElement) {
     this.navElement = navElement;
-    // this.hamburger = hamburger;
     console.log('NavManager initialized with nav element:', this.navElement);
   }
 
@@ -30,12 +29,10 @@ class NavManager {
     if (hamburgerElement) {
       //we can set this to null if we want to swap between modes
       this.hamburgerListener = hamburgerElement.addEventListener(
-        'click',
+        'pointerdown',
         (e) => {
           //open and close the menu
           e.preventDefault();
-          //   if (e.target !== hamburgerElement) return;
-          //   console.log(`HAMBURGER CLICKED - navElement:`, this.navElement);
           hamburgerElement.classList.toggle('active');
           this.navElement.classList.toggle('active');
         }

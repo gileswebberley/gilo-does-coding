@@ -87,6 +87,7 @@ class PageManger {
         //add a little 'debounce' so that we don't react to 100s of resize events that are triggered by the browser being resized
         setTimeout(() => {
           this.#resizeFunctionality();
+          this.hasHeardResize = false;
         }, World.RESIZE_TIMEOUT);
       }
     });
@@ -100,18 +101,13 @@ class PageManger {
     const tempHeight = getComputedStyle(this.pageContainer).getPropertyValue(
       'height'
     );
-    // console.log(`@@@@@@@@@@@@@@@@ tempHeight: ${tempHeight}`);
     this.pageContainer.style.height = '100%';
-    // }
     this.layoutManager.inspectScreenForLayout(
       this.pageContainer.getBoundingClientRect()
     );
     if (!this.isOpen) {
       this.pageContainer.style.height = tempHeight;
     } else {
-      console.log(
-        `THE PAGE IS OPEN, SETTING HEIGHT TO ${this.layoutManager.getPageHeight()}`
-      );
       this.pageContainer.style.height = this.layoutManager.getPageHeight();
     }
     this.floaterMap.forEach((floater, key) => {
@@ -119,7 +115,6 @@ class PageManger {
       floater.setRevealPosition(x, y);
       floater.setDimensions(w, h);
     });
-    this.hasHeardResize = false;
   }
 
   #createLayoutManager() {
@@ -134,8 +129,7 @@ class PageManger {
         clamp: content.clamp ?? null,
       };
     });
-    console.table(wireframe);
-    // this.pageContainer.style.height = '100%';
+    // console.table(wireframe);
     this.layoutManager = new LayoutManager(
       wireframe,
       this.pageContainer.getBoundingClientRect(),
@@ -145,9 +139,7 @@ class PageManger {
 
   show() {
     this.isOpen = true;
-    // console.table(this.pageObject);
     this.pageContainer.style.height = this.layoutManager.getPageHeight();
-    // this.layoutManager.updateLayout(); // Update layout when showing the page
     this.floaterMap.forEach((floater) => floater.reveal());
   }
 
