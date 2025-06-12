@@ -21,8 +21,13 @@ class LayoutManager {
     size: {width: 100, height: 100}
     sizeType: {width: 'auto', height: 'fixed'} which means width is a percentage and height is in pixels
  */
-  //I'm going to add aspect ratio sizing so set your grid base a.r. then you can use percentage sizes - control grid height on width - we'll also let the height be controlled by the width, so it can grow as width becomes smaller - it's a bit fuzzy but let's start with a.r.
-  constructor(wireframe, pageContainerBoundingRect, baseAspectRatio = '16:9') {
+  //I'm going to add aspect ratio sizing so set your grid base aspect ratio then you can use percentage sizes - control grid height on width - we'll also let the height be controlled by the width, so it can grow as width becomes smaller - it's a bit fuzzy but let's start with aspect ratio - I've added some functionality to make row elements centre vertically if the previous column has make it taller than the element being calculated; I'll make this optional
+  constructor(
+    wireframe,
+    pageContainerBoundingRect,
+    baseAspectRatio = '16:9',
+    verticalCentre = true
+  ) {
     // this.baseAspectRatio = baseAspectRatio;
     const ratioSplitString = baseAspectRatio.split(':');
     this.baseHeightRatio = ratioSplitString[1];
@@ -32,6 +37,7 @@ class LayoutManager {
     console.log(
       `----------------Aspect ratio H/W: ${this.aspectHeightMultiplier}`
     );
+    this.verticalCentre = verticalCentre;
     //to improve the 'grow' functionality I think I need to make the min size based on max size
     // LayoutManager.#MIN_WIDTH =
     //   LayoutManager.#MAX_WIDTH * this.aspectHeightMultiplier;
@@ -195,14 +201,23 @@ class LayoutManager {
       } else {
         this.forceGrow = false;
       }
-      //Blimey, finally here's the beginnings of the wrapping functionality - calculate how far it's going over the edge of the page
-      const overflowSize =
-        this.pageWidth +
-        this.originX -
-        this.pagePadding -
-        (currentX + w + LayoutManager.#FLOATER_GAP / 2);
+      //Blimey, finally here's the beginnings of the wrapping functionality - calculate how far it's going over the edge of the page - this needs to be adjusted to deal with wrapping in columns rather than just the page
+      let overflowSize = 0;
+      // console.log(`set up overflowSize: ${overflowSize}`);
+      if (this.smallScreenWidth) {
+        overflowSize += this.columnWidth;
+      } else {
+        overflowSize +=
+          this.originX + this.columnWidth * element.position.column;
+      }
+      console.log(`overflowSize: ${overflowSize}`);
+      // this.pageWidth +
+      // this.originX -
+      // this.pagePadding -
+      overflowSize -= currentX + w - this.pagePadding;
+      console.log(`checked overflowSize: ${overflowSize}`);
       // if it is going over the edge of the page put it below the previous element in the row and drag it back so it lines up with the edge of the page
-      if (overflowSize < 0) {
+      if (overflowSize < 0 && element.size.width <= 100) {
         console.log(`WRAP ME - ${overflowSize}`);
         this.wrapMe = true;
         //overflowSize is clearly a negative number if we're in here so + to move it backwards
@@ -215,7 +230,7 @@ class LayoutManager {
       w = parseInt(w);
       //to implement the gap between floaters I'll just adjust the final settings now that the numbers have been used to create their 'placeholders' as it were. This is a simplified bit of logic that will create slightly bigger padding on either side but it's all I can think of at the moment without having to loop through again checking whether they are at the beginning of a column and so on
       x += !this.wrapMe && LayoutManager.#FLOATER_GAP / 2;
-      w -= LayoutManager.#FLOATER_GAP;
+      w = Math.max(w - LayoutManager.#FLOATER_GAP, 1); //in case the size is smaller than floater gap
       //then create a string which can be set as the floater's style.width and style.left
       x += 'px';
       w += 'px';
@@ -232,9 +247,10 @@ class LayoutManager {
         currentRow = rowNumber;
         currentY = nextY;
         isNewRow = true;
-      } else if (this.wrapMe) {
-        currentY = this.lastBottom;
       }
+      //  else if (this.wrapMe) {
+      //   currentY = this.lastBottom;
+      // }
       //'auto' now means it wants to grow from it's clamp percentage if width is below it's max - no, we'll have 'auto' 'grow' or 'fixed' - see TestContent for jsdocs of the layout object....coming back to this, I'm going to make grow based on the max row height otherwise it's very close to fixed in behaviour (forceGrow is related to offset based width adjustment that occurs on small screens)
       if (this.clamped)
         console.log(
@@ -248,7 +264,7 @@ class LayoutManager {
           ? this.clamped
             ? this.clampedWidth *
               this.aspectHeightMultiplier *
-              (element.size.width / element.size.height)
+              (element.size.height / element.size.width)
             : (this.rowHeight / 100) * element.size.height
           : element.sizeType === 'grow' || this.forceGrow
           ? (this.maxRowHeight / 100) *
@@ -258,20 +274,28 @@ class LayoutManager {
       //adding the clamp functionality so I won't over-confuse the original sizing, I'll just take care of it seperately - oh no, I'll add it into the 'auto' function
       let y =
         currentY +
-        /*(this.wrapMe && isNewRow)*/ (this.wrapMe ||
-        (isNewRow && this.smallScreenWidth) ||
-        this.clamped
-          ? 0
+        /*(this.wrapMe && isNewRow)*/ // this.wrapMe ||
+        (isNewRow && this.smallScreenWidth
+          ? // || this.clamped
+            0
           : element.offset.y * (h / 100));
       //for wrap behaviour we'll store the bottom of each for the next to wrap underneath
+      if (this.wrapMe) {
+        y = this.lastBottom - element.offset.y * (this.rowHeight / 100);
+      }
       this.lastBottom = y + h;
       y += LayoutManager.#FLOATER_GAP / 2;
       // if this is another element in the same row check whether it's taller than any other element in the row to set the beginning Y for the next row. If there's a y-offset it's probably a column that has become a row for a small screen, so we'll allow for the positioning to still be offset by doing this little check, x-offset is looked after in calculateX.
       if (y + h > nextY) {
         nextY = y + h;
+      } else if (!isNewRow && this.verticalCentre) {
+        console.log(
+          `Y is being adlusted because it needs to be vertically centred`
+        );
+        y += (nextY - (y + h)) / 2;
       }
       h = parseInt(h);
-      h -= LayoutManager.#FLOATER_GAP;
+      h = Math.max(h - LayoutManager.#FLOATER_GAP, 1); //in case the size is smaller than floater gap
       y += 'px';
       h += 'px';
       return { y, h };

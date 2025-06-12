@@ -24,7 +24,7 @@ const WelcomeContent = {
       layoutNumber: 3,
       position: { row: 2, column: 1 },
       offset: { x: 10, y: 10 },
-      size: { width: 50, height: 50 },
+      size: { width: 60, height: 60 },
       sizeType: 'auto',
       clamp: 250,
       type: 'image',
@@ -57,7 +57,7 @@ const WelcomeContent = {
     {
       layoutNumber: 6,
       position: { row: 3, column: 1 },
-      offset: { x: 10, y: -20 },
+      offset: { x: 10, y: 0 },
       size: { width: 100, height: 100 },
       sizeType: 'grow',
       type: 'html',
