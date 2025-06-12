@@ -1,3 +1,4 @@
+import Floater from './Floater';
 import NavManager from './NavManager';
 import PageManger from './PageManager';
 
@@ -56,6 +57,7 @@ class SiteManager {
   }
 
   static hideAllPages() {
+    Floater.repressFloaters = false;
     console.log('Hiding all pages');
     if (this.#openPage !== '') {
       this.#pages.get(this.#openPage).hide(); // Hide the currently open page
@@ -65,6 +67,7 @@ class SiteManager {
 
   // I think I want to pass an instance to the nav manager to keep it less coupled so perhaps I should define an instance method for this instead of a static one?
   static selectPage(pageName) {
+    Floater.repressFloaters = true;
     if (!this.#pages.has(pageName)) {
       console.error(`Page ${pageName} does not exist.`);
       return;

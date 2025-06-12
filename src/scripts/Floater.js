@@ -3,6 +3,8 @@ import World from './World';
 //I think pass these a reference to their LayoutManager and perhaps let their PageManager take care of sizing the container??
 class Floater {
   static colourNumber = 0; // Static variable to keep track of the colour index
+  static repressFloaters = false; // Static variable to control whether floaters should be able to use the entire depth, so they stay in the background when a page is open.
+
   constructor(container, layoutNumber, revealX = 0, revealY = 0) {
     if (!container || !(container instanceof HTMLElement)) {
       throw new Error('A valid container element must be provided.');
@@ -111,8 +113,9 @@ class Floater {
     const containerRect = this.container.getBoundingClientRect();
     const x = Math.random() * (containerRect.width - actualSize.width);
     const y = Math.random() * (containerRect.height - actualSize.height);
-    const z =
-      Math.floor((Math.random() * World.DEPTH) / 2 + World.DEPTH / 2) * -1; //removed +1 from World.DEPTH as I don't think it's needed any more
+    const z = Floater.repressFloaters
+      ? Math.floor((Math.random() * World.DEPTH) / 2 + World.DEPTH / 2) * -1
+      : Math.floor(Math.random() * World.DEPTH) * -1; //removed +1 from World.DEPTH as I don't think it's needed any more
     // console.log(`RANDOM POSITION: ${x} ${y} ${z}`);
     return { x, y, z };
   }
