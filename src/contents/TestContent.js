@@ -105,25 +105,11 @@ const Page_Test = {
       position: { row: 1, column: 1 },
       // amount to shift layout in pixels - update - now set as a percentage of width and height
       offset: { x: 0, y: 0 },
-      size: { width: 150, height: 100 },
+      size: { width: 150, height: 20 },
       // percentage of available size? no let's work out a way where you can set either a percentage or a max size in pixels (auto or fixed) - NO width must be a percentage and height percentage (clamp for grow behaviour or auto for aspect ratio behaviour or 'fixed' for pixel size) ----- This can now be simply a string cos it is only relevant to height
       sizeType: 'grow',
-      type: 'html',
-      src: `<button
-        onclick="alert('Hello, world!')"
-        >Gilo Does Coding</button
-      >
-      <h2>R:1 col:1</h2>
-      <p>This is a simple HTML page with an external CSS file.</p>
-      <p>
-        This page is designed to test and showcase basic HTML and CSS
-        integration. It serves as a sandbox environment where you can experiment
-        with various web development techniques, including layout design,
-        styling, and interactivity. Whether you're a beginner learning the ropes
-        or an experienced developer trying out new ideas, this page provides a
-        flexible and straightforward platform to explore and refine your skills.
-        Feel free to explore and modify the content as needed!
-      </p>`,
+      type: 'title',
+      src: `Welcome to the Test Page, let's just check how it works when longer`,
     },
     {
       layoutNumber: 6,

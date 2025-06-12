@@ -326,9 +326,24 @@ iframe {
 
 .content-title {
   font-family: 'Special Elite', 'Courier New', Courier, monospace;
-  font-size: clamp(1.2rem, 2vw, 3rem);
-  max-width: 100%;
+  font-size: clamp(1.8rem, min(2.8cqi, 3.5cqh), 3.4rem);
+  width: 100%;
+  height: fit-content;
+  min-width: fit-content;
+  /* max-width: 100%;
+  max-height: 100%; */
+  /* text-wrap: nowrap; */
   text-align: center;
+}
+
+/* We want to change the floater's styling when it's being used as a FloaterTitle */
+.floater:has(.content-title) {
+  /* This is the title floater */
+  padding: 1rem;
+  min-width: fit-content; /* belt and braces for if there's a word that is too long */
+  /* min-height: calc-size(fit-content, size - 2rem); */
+  /* This is so we can use container size units in our font-size clamp */
+  container-type: inline-size;
 }
 
 .content-video {

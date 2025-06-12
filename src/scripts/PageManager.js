@@ -4,6 +4,7 @@ import FloaterBlank from './FloaterBlank';
 import FloaterIframe from './FloaterIframe';
 import FloaterImage from './FloaterImage';
 import FloaterInner from './FloaterInner';
+import FloaterTitle from './FloaterTitle';
 import FloaterVideo from './FloaterVideo';
 import LayoutManager from './LayoutManager';
 import World from './World';
@@ -37,12 +38,12 @@ class PageManger {
             new FloaterImage(content.src, this.pageContainer)
           );
           break;
-        // case 'text':
-        //   this.floaterMap.set(
-        //     content.layoutNumber,
-        //     new TextFloater(content.src, this.pageContainer)
-        //   );
-        //   break;
+        case 'title':
+          this.floaterMap.set(
+            content.layoutNumber,
+            new FloaterTitle(content.src, this.pageContainer)
+          );
+          break;
         case 'video':
           this.floaterMap.set(
             content.layoutNumber,
@@ -74,6 +75,7 @@ class PageManger {
       const { x, y, w, h } = this.layoutManager.getFloaterLayoutObject(
         content.layoutNumber
       );
+      console.log(`Floater ${content.layoutNumber} position:`, x, y, w, h);
       currentFloater.setRevealPosition(x, y);
       currentFloater.setDimensions(w, h);
       currentFloater.float();

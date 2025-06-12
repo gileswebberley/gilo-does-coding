@@ -3,7 +3,7 @@
  * @typedef {Object} PageLayout
  * @property {string} pageId - A unique page identifier
  * @property {string} buttonText - The label for the button within the navigation system
- * @property {string} aspectRation - The base aspect ratio for layout containers (ie the ratio to work out rowHeight based on columnWidth) in the format 'widthUnits:heightUnits'
+ * @property {string} aspectRation - The base aspect ratio for layout containers (ie the ratio to work out rowHeight based on columnWidth) in the format 'widthUnits:heightUnits' (OPTIONAL - default is '16:9')
  * @property {Array<ContentElement>} content - The individual elements that form the page
  *
  * @typedef {Object} ContentElement

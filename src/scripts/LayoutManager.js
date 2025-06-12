@@ -258,7 +258,9 @@ class LayoutManager {
       //adding the clamp functionality so I won't over-confuse the original sizing, I'll just take care of it seperately - oh no, I'll add it into the 'auto' function
       let y =
         currentY +
-        ((this.wrapMe && isNewRow) || isNewRow || this.clamped
+        /*(this.wrapMe && isNewRow)*/ (this.wrapMe ||
+        (isNewRow && this.smallScreenWidth) ||
+        this.clamped
           ? 0
           : element.offset.y * (h / 100));
       //for wrap behaviour we'll store the bottom of each for the next to wrap underneath

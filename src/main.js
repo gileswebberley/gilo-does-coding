@@ -6,6 +6,7 @@ import Page_Test3 from './contents/TestContent3.js';
 import Page_Test4 from './contents/TestContent4.js';
 import NavManager from './scripts/NavManager.js';
 import Colourist from './scripts/Colourist.js';
+import WelcomeContent from './contents/Welcome.js';
 
 //make the header and footer colour time responsive...
 const timeColours = Colourist.getTimeBasedColourBasedOnColourScheme();
@@ -38,6 +39,7 @@ const navElement = document.querySelector('#main-nav');
 const hamburger = document.querySelector('#hamburger-button');
 SiteManager.init(navElement, container);
 NavManager.setHamburger(hamburger);
+SiteManager.buildPage(WelcomeContent);
 SiteManager.buildPage(Page_Test);
 SiteManager.buildPage(Page_Test2);
 SiteManager.buildPage(Page_Test3);
