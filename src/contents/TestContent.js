@@ -53,8 +53,9 @@ const Page_Test = {
       size: { width: 100, height: 80 },
       sizeType: 'grow',
       type: 'html',
-      src: `<button
-        onclick="alert('Hello, world!')"
+      src: `
+      <button
+        onclick="SiteLinkManager.selectPage('Welcome')"
         >Gilo Does Coding</button
       >
       <h2>R:2 Col:2</h2>

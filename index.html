@@ -10,7 +10,7 @@
     <!-- <script type="module">
       //This is how I set up SiteManger as a globally available static class
       import SiteManager from '/src/scripts/SiteManager.js';
-      window.SiteManager = SiteManager;
+      window.SiteLinkManager = SiteManager;
     </script> -->
     <!-- get the Font Awesome kit for use in the footer -->
     <script
@@ -41,6 +41,12 @@
         <div id="container"></div>
       </div>
       <script type="module" src="/src/main.js"></script>
+      <script type="module">
+        //This makes it possible to to link between pages from within the innerHTML of the floaters!! By placing this script tag below the main.js it seems to work, however when it was above it stopped the floaters having a background colour and stopped the header/footer from being time based coloured. I'm not sure what was overlapping to cause this as everything else worked and Colourist has no connection to SiteManager!? :/
+        // Simply make onclick events SiteLinkManager.selectPage('pageName') to change the page
+        import SiteManager from '/src/scripts/SiteManager.js';
+        window.SiteLinkManager = SiteManager;
+      </script>
       <footer>
         <p id="copyright-text">
           gilo_does_coding is Giles Webberley

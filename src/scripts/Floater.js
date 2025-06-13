@@ -67,6 +67,10 @@ class Floater {
     this.element.className = 'floater'; // Add a class for styling
     //set up an initial transition (this is over-written by moveTo()) but now we're setting dimensions from the PageManager we want this here as we won't be setting it in the css
     this.element.style.transition = `all ${this.myDuration}ms ${this.easingStyle}`;
+    this.colouriseFloater();
+  }
+
+  colouriseFloater() {
     //I'm not liking the way we can end up with elements majoritively with the same colour to be honest, so I'm going to use a static variable to loop through on each element.
     // const colourRandomiser = Math.floor(
     //   Math.random() * World.FLOATER_BG_COLOURS.length
@@ -115,8 +119,7 @@ class Floater {
     const y = Math.random() * (containerRect.height - actualSize.height);
     const z = Floater.repressFloaters
       ? Math.floor((Math.random() * World.DEPTH) / 2 + World.DEPTH / 2) * -1
-      : Math.floor(Math.random() * World.DEPTH) * -1; //removed +1 from World.DEPTH as I don't think it's needed any more
-    // console.log(`RANDOM POSITION: ${x} ${y} ${z}`);
+      : Math.floor(Math.random() * World.DEPTH) * -1; //this keeps the floaters below a certain depth to make them less distracting when a page is open
     return { x, y, z };
   }
 
