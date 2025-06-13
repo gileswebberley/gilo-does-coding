@@ -16,7 +16,7 @@ class FloaterInner extends Floater {
   reveal() {
     if (!this.hasContentAppended) {
       const content = document.createElement('div');
-      content.className = 'content-holder';
+      content.classList.add('content-holder');
       content.innerHTML = this.src;
       this.contentHolder.appendChild(content);
       this.hasContentAppended = true;

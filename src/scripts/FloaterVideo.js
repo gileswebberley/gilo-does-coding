@@ -6,7 +6,7 @@ class FloaterVideo extends Floater {
     this.src = src;
     //Add an element to hold the content so it can have it's visibilty toggled in float() and reveal()
     this.contentHolder = document.createElement('video');
-    this.contentHolder.className = 'content-video';
+    this.contentHolder.classList.add('content-video');
     this.contentHolder.setAttribute('controls', '');
     this.contentHolder.setAttribute(
       'controlslist',

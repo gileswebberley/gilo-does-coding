@@ -6,7 +6,7 @@ class FloaterImage extends Floater {
     this.src = src;
     //Add an element to hold the content so it can have it's visibilty toggled in float() and reveal()
     this.contentHolder = document.createElement('img');
-    this.contentHolder.className = 'content-image';
+    this.contentHolder.classList.add('content-image');
     this.contentHolder.setAttribute('loading', 'lazy');
     this.contentHolder.setAttribute('decoding', 'async');
     this.contentHolder.setAttribute('alt', this.src.alt);

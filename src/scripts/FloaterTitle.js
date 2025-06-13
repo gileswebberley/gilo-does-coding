@@ -6,7 +6,7 @@ class FloaterTitle extends Floater {
     this.src = src;
     //Add an element to hold the content so it can have it's visibilty toggled in float() and reveal()
     this.contentHolder = document.createElement('h1');
-    this.contentHolder.className = 'content-title';
+    this.contentHolder.classList.add('content-title');
     this.contentHolder.innerText = this.src;
     this.element.appendChild(this.contentHolder);
   }
