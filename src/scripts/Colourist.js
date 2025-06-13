@@ -53,7 +53,7 @@ const Colourist = {
       'data-colour-scheme',
       this.colourScheme
     );
-    console.log(`Setting colour scheme to ${this.colourScheme}`);
+    // console.log(`Setting colour scheme to ${this.colourScheme}`);
     document.dispatchEvent(this.colourModeEvent);
   },
 
@@ -65,26 +65,26 @@ const Colourist = {
   },
   getOrangeBGSwatch: function () {
     if (this.colourScheme === 'dark') {
-      console.log('DARK MODE COLOURS.......');
+      // console.log('DARK MODE COLOURS.......');
       return this.higherOrangeRange;
     } else {
-      console.log('LIGHT MODE COLOURS.......');
+      // console.log('LIGHT MODE COLOURS.......');
       return this.lowerOrangeRange;
     }
   },
   getOrangeSwatch: function () {
     if (this.colourScheme === 'dark') {
-      console.log('DARK MODE COLOURS.......');
+      // console.log('DARK MODE COLOURS.......');
       return this.lowerOrangeRange;
     } else {
-      console.log('LIGHT MODE COLOURS.......');
+      // console.log('LIGHT MODE COLOURS.......');
       return this.higherOrangeRange;
     }
   },
   //make it an anonymous function rather than an arrow function so I can access the colourSwatchLength - stupid, I'd forgotten about the scope difference :/
   getTimeBasedColourBasedOnColourScheme: function () {
     const timestep = 23 / this.getColourSwatchLength();
-    console.log(`Timestep in colourist is ${timestep}`);
+    // console.log(`Timestep in colourist is ${timestep}`);
     const currentTime = new Date().getHours();
     const currentTextSwatch =
       this.colourScheme === 'dark'
@@ -94,11 +94,11 @@ const Colourist = {
       this.colourScheme === 'dark'
         ? this.higherOrangeRange
         : this.lowerOrangeRange;
-    console.log(
-      `colour selected: time: ${currentTime} ${Math.floor(
-        currentTime / timestep
-      )} ${currentSwatch[Math.floor(currentTime / timestep) - 1]}`
-    );
+    // console.log(
+    //   `colour selected: time: ${currentTime} ${Math.floor(
+    //     currentTime / timestep
+    //   )} ${currentSwatch[Math.floor(currentTime / timestep) - 1]}`
+    // );
     const indexSelection = Math.floor(currentTime / timestep) - 1;
     return {
       bg: currentSwatch[indexSelection],

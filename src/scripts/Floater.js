@@ -68,24 +68,15 @@ class Floater {
     this.element.className = 'floater'; // Add a class for styling
     //set up an initial transition (this is over-written by moveTo()) but now we're setting dimensions from the PageManager we want this here as we won't be setting it in the css
     this.element.style.transition = `all ${this.myDuration}ms ${this.easingStyle}`;
+    // add the listener for the custom event emitted by Colourist
     document.addEventListener('colourModeChange', (e) => {
-      console.log('Colour mode changed, re-colourising floater');
       this.colouriseFloater();
     });
     this.colouriseFloater();
   }
 
   colouriseFloater() {
-    // console.log(`COLOURISING FLOATER`);
     //I'm not liking the way we can end up with elements majoritively with the same colour to be honest, so I'm going to use a static variable to loop through on each element.
-    // const colourRandomiser = Math.floor(
-    //   Math.random() * World.FLOATER_BG_COLOURS.length
-    // );
-    // this.element.style.backgroundColor =
-    //   World.FLOATER_BG_COLOURS[colourRandomiser];
-    // // this.element.style.color =
-    // //   World.FLOATER_COLOURS[World.FLOATER_COLOURS.length - colourRandomiser];
-    // this.element.style.color = World.FLOATER_COLOURS[colourRandomiser];
     const colourRandomiser =
       Floater.colourNumber % Colourist.getColourSwatchLength();
     Floater.colourNumber++;

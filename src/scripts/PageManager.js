@@ -75,7 +75,7 @@ class PageManger {
       const { x, y, w, h } = this.layoutManager.getFloaterLayoutObject(
         content.layoutNumber
       );
-      console.log(`Floater ${content.layoutNumber} position:`, x, y, w, h);
+      // console.log(`Floater ${content.layoutNumber} position:`, x, y, w, h);
       currentFloater.setRevealPosition(x, y);
       currentFloater.setDimensions(w, h);
       currentFloater.float();
@@ -96,7 +96,7 @@ class PageManger {
   }
 
   #resizeFunctionality() {
-    console.log('Layout shifting from resize...');
+    // console.log('Layout shifting from resize...');
     //ok so trying to work out how to get the top and bottom margin calculations in LayoutManager if the page is open - if it is then the container will have it's size set so we cannot use the container rect to calculate them. I have realised that I could change it back to fill the available space whilst we're working out the layout perhaps?
 
     // Right, this checks the height of the page currently (in case another page is open) and stores it so it can change the height to 100% to get the viewportHeight within LayoutManager and then put it back to how it found it. This means that the various pages don't interfere with the container height for other pages. It's a bit hacky as sharing the container amongst pages probably wasn't the ultimate decision to have made early on, but it works so I'm going with it as a solution to the problem I was trying to overcome!

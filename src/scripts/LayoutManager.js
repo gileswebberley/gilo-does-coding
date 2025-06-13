@@ -34,9 +34,9 @@ class LayoutManager {
     this.baseWidthRatio = ratioSplitString[0];
     //used in createLayoutMarkers to produce this.rowHeight
     this.aspectHeightMultiplier = this.baseHeightRatio / this.baseWidthRatio;
-    console.log(
-      `----------------Aspect ratio H/W: ${this.aspectHeightMultiplier}`
-    );
+    // console.log(
+    //   `----------------Aspect ratio H/W: ${this.aspectHeightMultiplier}`
+    // );
     this.verticalCentre = verticalCentre;
     //to improve the 'grow' functionality I think I need to make the min size based on max size
     // LayoutManager.#MIN_WIDTH =
@@ -122,7 +122,7 @@ class LayoutManager {
     const layoutHeight = nextY; // - this.topMargin; this is not needed as we are positioning with absolute so it's relative to the container
     //We need to check whether the available screen height is greater than the height of all of the layout and adjust the y values for each to shift it to vertically centre align. nextY will have been left as the height of all elements but the height of the container may have been changed by the floaters on reveal() which is why it's important to read the comment above inspectScreenForLayout
     if (layoutHeight < this.veiwportHeight) {
-      console.log(`shifting y down for centering.....................!!!`);
+      // console.log(`shifting y down for centering.....................!!!`);
       const yShift = (this.veiwportHeight - layoutHeight) / 2;
       //loop through the map and add to y property
       this.layoutMap.forEach((layoutObject) => {
@@ -130,7 +130,7 @@ class LayoutManager {
       });
       this.pageHeight = this.veiwportHeight + 'px';
     } else {
-      console.log(`making page bigger for scrolling....................`);
+      // console.log(`making page bigger for scrolling....................`);
       this.pageHeight = layoutHeight + 'px'; // thought it wasn't good logic but it turned out to be me forgetting to add the 'px' :D !!
     }
 
@@ -210,15 +210,15 @@ class LayoutManager {
         overflowSize +=
           this.originX + this.columnWidth * element.position.column;
       }
-      console.log(`overflowSize: ${overflowSize}`);
+      // console.log(`overflowSize: ${overflowSize}`);
       // this.pageWidth +
       // this.originX -
       // this.pagePadding -
       overflowSize -= currentX + w - this.pagePadding;
-      console.log(`checked overflowSize: ${overflowSize}`);
+      // console.log(`checked overflowSize: ${overflowSize}`);
       // if it is going over the edge of the page put it below the previous element in the row and drag it back so it lines up with the edge of the page
       if (overflowSize < 0 && element.size.width <= 100) {
-        console.log(`WRAP ME - ${overflowSize}`);
+        // console.log(`WRAP ME - ${overflowSize}`);
         this.wrapMe = true;
         //overflowSize is clearly a negative number if we're in here so + to move it backwards
         x += overflowSize - LayoutManager.#FLOATER_GAP / 2;
@@ -252,12 +252,12 @@ class LayoutManager {
       //   currentY = this.lastBottom;
       // }
       //'auto' now means it wants to grow from it's clamp percentage if width is below it's max - no, we'll have 'auto' 'grow' or 'fixed' - see TestContent for jsdocs of the layout object....coming back to this, I'm going to make grow based on the max row height otherwise it's very close to fixed in behaviour (forceGrow is related to offset based width adjustment that occurs on small screens)
-      if (this.clamped)
-        console.log(
-          `===============I've had my height clamped to ${
-            this.clampedWidth * this.aspectHeightMultiplier
-          }`
-        );
+      // if (this.clamped)
+      //   console.log(
+      //     `===============I've had my height clamped to ${
+      //       this.clampedWidth * this.aspectHeightMultiplier
+      //     }`
+      //   );
       //gosh, this has grown to a bit of a mess of ternary operators but essentially it's dealing with the various sizeType options including keeping the same aspect ratio of elements that have been 'clamped' to a minimum width
       let h =
         element.sizeType === 'auto'
@@ -289,9 +289,9 @@ class LayoutManager {
       if (y + h > nextY) {
         nextY = y + h;
       } else if (!isNewRow && this.verticalCentre) {
-        console.log(
-          `Y is being adlusted because it needs to be vertically centred`
-        );
+        // console.log(
+        //   `Y is being adlusted because it needs to be vertically centred`
+        // );
         y += (nextY - (y + h)) / 2;
       }
       h = parseInt(h);
@@ -372,8 +372,8 @@ class LayoutManager {
     this.columnWidth = (this.pageWidth - 2 * this.pagePadding) / tmpColumnCount;
     //I'm adding the aspect ratio based grid square height now too
     this.rowHeight = this.columnWidth * this.aspectHeightMultiplier;
-    console.log(`columnWidth: ${this.columnWidth}`);
-    console.log(`rowHeight: ${this.rowHeight}`);
+    // console.log(`columnWidth: ${this.columnWidth}`);
+    // console.log(`rowHeight: ${this.rowHeight}`);
   }
 
   //whizz through the wireframe to get an idea of it's basic layout
