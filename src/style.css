@@ -36,12 +36,12 @@
   line-height: 1.5;
   font-weight: 400;
 
-  background-color: var(--colour-blue-300);
+  /* background-color: var(--colour-blue-300); */
 
   color-scheme: light dark;
-
-  --header-footer-time-colour: var(--colour-orange);
-  --header-footer-time-colour-text: var(--colour-orange-900);
+  transition: color 1.6s ease, background-color 1.6s ease;
+  /* --header-footer-time-colour: var(--colour-orange);
+  --header-footer-time-colour-text: var(--colour-orange-900); */
   /* color: rgba(255, 255, 255, 0.87);
   background-color: #242424; */
 
@@ -230,16 +230,6 @@ This is all of the styling for the navigation system ---------------------------
     width: fit-content;
   }
 }
-/* It's time based now so no need
-@media (prefers-color-scheme: light) {
-  #main-nav {
-    background-color: var(--colour-light-bg);
-    border: 1px solid var(--colour-light-text);
-  }
-  #hamburger-button span {
-    background-color: var(--colour-light-text);
-  }
-} */
 
 .nav-button {
   font-family: 'Special Elite', 'Courier New', Courier, monospace;
@@ -271,12 +261,11 @@ This is all of the styling for the navigation system ---------------------------
   }
 }
 
-@media (prefers-color-scheme: light) {
+/* @media (prefers-color-scheme: light) {
   .nav-button {
-    /* color: var(--colour-blue-100); */
     border-color: var(--colour-blue-900);
   }
-}
+} */
 
 /* End of navigation -------------------------------------------------- */
 
@@ -393,12 +382,11 @@ footer {
   }
 }
 
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
   :root {
-    /* change the background blue */
     --colour-blue-300: var(--colour-blue-600);
   }
-}
+} */
 
 @media screen and (max-width: 680px) {
   /* header, */

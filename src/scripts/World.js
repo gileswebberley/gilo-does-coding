@@ -1,5 +1,3 @@
-import Colourist from './Colourist';
-
 const World = {
   //these are for the LayoutManager - min is half of max for 'grow' based sizing, it keeps it relatively similar, but perhaps it should be based on the layout aspect ratio?
   MAX_PAGE_WIDTH: 1280,
@@ -13,8 +11,6 @@ const World = {
   MAX_DRAG: 10,
   MIN_DRAG: 3,
   POSSIBLE_EASING_STYLES: ['ease-in', 'ease-out', 'ease-in-out', 'linear'],
-  FLOATER_BG_COLOURS: Colourist.getOrangeBGSwatch(),
-  FLOATER_COLOURS: Colourist.getOrangeSwatch(),
   BIRTH_POSITION: {
     x: 0,
     y: 0,

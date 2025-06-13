@@ -39,7 +39,25 @@ const Colourist = {
     ),
   ],
 
-  colourSwatchLength: function () {
+  getBackgroundColour: function () {
+    return getComputedStyle(document.documentElement).getPropertyValue(
+      this.colourScheme === 'dark' ? '--colour-blue-600' : '--colour-blue-300'
+    );
+  },
+
+  colourModeEvent: new Event('colourModeChange'),
+
+  toggleColourScheme: function () {
+    this.colourScheme = this.colourScheme === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute(
+      'data-colour-scheme',
+      this.colourScheme
+    );
+    console.log(`Setting colour scheme to ${this.colourScheme}`);
+    document.dispatchEvent(this.colourModeEvent);
+  },
+
+  getColourSwatchLength: function () {
     return Math.min(
       this.higherOrangeRange.length,
       this.lowerOrangeRange.length
@@ -65,7 +83,7 @@ const Colourist = {
   },
   //make it an anonymous function rather than an arrow function so I can access the colourSwatchLength - stupid, I'd forgotten about the scope difference :/
   getTimeBasedColourBasedOnColourScheme: function () {
-    const timestep = 23 / this.colourSwatchLength();
+    const timestep = 23 / this.getColourSwatchLength();
     console.log(`Timestep in colourist is ${timestep}`);
     const currentTime = new Date().getHours();
     const currentTextSwatch =
