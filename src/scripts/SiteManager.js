@@ -8,6 +8,7 @@ class SiteManager {
   static #openPage = '';
   static #pages = new Map(); // key: pageName, value: PageManager instance
   static #pageContainer = null; // container element that the Floaters are attached to - set in init()
+  static #isInitialized = false; // flag to check if SiteManager is initialized
 
   // basically this is a static class so we want any instance to be the same, we use the instance for sending the callback to NavManager
   constructor() {
@@ -23,9 +24,14 @@ class SiteManager {
     this.#pageContainer = pageContainer;
     NavManager.init(navElement);
     console.log('SiteManager initialized');
+    this.#isInitialized = true;
   }
 
   static buildPage(pageData) {
+    if (!this.#isInitialized) {
+      console.error('SiteManager is not initialized. Call init() first.');
+      return;
+    }
     const pageManager = new PageManger(
       pageData.content,
       this.#pageContainer,
@@ -89,6 +95,7 @@ class SiteManager {
     SiteManager.selectPage(pageName); // Call the static method to select the page
   }
 }
+window.SiteLinkManager = SiteManager.getInstance(); // Expose the instance globally so I can have buttons or links in the content of the floaters etc that can only select a page, not build one (ie the content is already built and just needs to be shown when the button is clicked). It also means I can use this in the HTML of the floaters themselves, like in the Page_Test content where I have a button that selects the Welcome page.
 
 /* When build(contents) is called we will want to go through each 'page' and add it's title to the navigation with an onPointerDown event that calls this selectPage(pageName) method. This will then call the PageManager associated with that pageName to call reveal on all of it's own floaters. We'll want to check whether that page is already open, or indeed if any page is open, and set the open page's floaters to float as well*/
 export default SiteManager;

@@ -44,8 +44,8 @@ const WelcomeContent = {
       src: `self portrait <a onpointerdown='window.SiteLinkManager.selectPage("Home")'>'timeograph'</a>`,
     },
     {
-      layoutNumber: 5,
-      position: { row: 2, column: 2 },
+      layoutNumber: 6,
+      position: { row: 3, column: 2 },
       offset: { x: 0, y: 0 },
       size: { width: 100, height: 110 },
       sizeType: 'grow',
@@ -55,7 +55,7 @@ const WelcomeContent = {
     },
 
     {
-      layoutNumber: 6,
+      layoutNumber: 5,
       position: { row: 3, column: 1 },
       offset: { x: 10, y: 0 },
       size: { width: 100, height: 100 },

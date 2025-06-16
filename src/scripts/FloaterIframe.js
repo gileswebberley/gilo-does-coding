@@ -8,7 +8,7 @@ class FloaterIframe extends Floater {
     this.contentHolder = document.createElement('iframe');
     this.contentHolder.setAttribute(
       'sandbox',
-      'allow-scripts allow-top-navigation'
+      'allow-scripts allow-top-navigation allow-modals'
     );
     this.element.appendChild(this.contentHolder);
   }

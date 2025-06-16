@@ -7,7 +7,7 @@
  * @property {Array<ContentElement>} content - The individual elements that form the page
  *
  * @typedef {Object} ContentElement
- * @property {number} layoutNumber - A unique identifier for the layout element.
+ * @property {number} layoutNumber - A unique identifier for the layout element, the page is sorted according to this in PageManager and so if you want something to overlap on top of another element you can simply give it a higher layout number.
  * @property {Object} position - The position of the layout element in the grid.
  * @property {number} position.row - The row position of the layout element.
  * @property {number} position.column - The column position of the layout element.

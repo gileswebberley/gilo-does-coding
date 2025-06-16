@@ -15,6 +15,7 @@ class PageManger {
       throw new Error('Page object and page container are required.');
     }
     this.pageObject = pageObject;
+    this.pageObject.sort((a, b) => a.layoutNumber - b.layoutNumber); // Sort the pageObject by layoutNumber
     //I think sharing the container is causing the layout manager some trouble now that I've got a few pages (ie when a page is open the container size has been adjusted for that page so all the other pages think that the viewport height is whatever it's set to :/ maybe I just need a sizing div that is not touched by the layout but instead simply fills up the available space according to the screen size being changed? fixed with if(this.isOpen) inside the resize event listener)
     this.pageContainer = pageContainer;
     this.pageContainer.style.position = 'relative';
