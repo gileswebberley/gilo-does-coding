@@ -17,7 +17,6 @@ class Floater {
     this.createFloaterDiv(layoutNumber);
 
     this.container = container; //Do not give container a z-index!
-    this.container.style.position = 'relative';
     this.container.appendChild(this.element);
     // this.setPosition(
     //   World.BIRTH_POSITION.x,

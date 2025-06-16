@@ -133,23 +133,16 @@ a:has(i)::after {
 
 a::after {
   font: var(--fa-font-solid);
-  font-size: 0.9rem;
+  font-size: 50%;
   content: '\f0c1';
   display: inline-block;
-  transform: rotate(-45deg);
+  transform: rotate(-45deg) translateY(-0.3rem);
 }
-
+/* The font awesome icons mainly used in the footer */
 i {
   font-size: inherit;
   transform: translateY(2px);
 }
-/* 
-.contact {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  gap: 2rem;
-} */
 
 /* This holds the floater's #container element to allow for scrolling with a fixed header */
 .scrollableMain {
@@ -159,17 +152,14 @@ i {
   pointer-events: all; /* this was needed to get the contents of the floaters scrolling as well as the main container (that's inside this!) */
 }
 
-/* The area that the floaters are attached to */
+/* The area that the floaters are attached to. The position and height properties are set by the page managers */
 #container {
   display: block;
   flex: 1;
   width: 100%;
   margin: 0 auto;
   min-height: 100%;
-  /* padding: 10px;
-  height: fit-content; No! the floaters are not content because they are absolutely positioned so this will not work!!*/
   overflow: hidden; /* So it ignores the Floaters going out of the browser window*/
-  /* transition: all 500ms ease; This is to smooth out changes to it's height */
 }
 
 /* 
@@ -247,12 +237,9 @@ This is all of the styling for the navigation system ---------------------------
   visibility: visible;
 }
 
-@media screen and (max-width: 680px) {
+@media screen and (max-width: 480px) {
   #main-nav {
-    /* flex: 0 0 100%; */
-    /* flex-direction: column; */
     width: fit-content;
-    /* max-height: 20vh; */
   }
 }
 
@@ -284,20 +271,6 @@ This is all of the styling for the navigation system ---------------------------
   background-color: var(--colour-nav-button-hover);
   /* color: var(--colour-nav-button-text); */
 }
-
-@media screen and (max-width: 680px) {
-  .nav-button {
-    /* width: 100%; */
-    /* flex: 0 0 50%; */
-  }
-}
-
-/* @media (prefers-color-scheme: light) {
-  .nav-button {
-    border-color: var(--colour-blue-900);
-  }
-} */
-
 /* End of navigation -------------------------------------------------- */
 
 /* Class which is attached to new floater instances' div */
