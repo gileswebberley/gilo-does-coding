@@ -331,12 +331,18 @@ iframe {
 
 .content-title {
   /* font-family: 'Special Elite', 'Courier New', Courier, monospace; */
-  font-size: clamp(1.8rem, min(2.8cqi, 3.5cqh), 3.4rem);
+  font-size: clamp(1.8rem, 3cqmax, 4.4rem);
+  overflow-wrap: anywhere;
+  /* -webkit-hyphens: auto;
+  -moz-hyphens: auto;
+  -ms-hyphens: auto;
+  hyphens: auto; */
   font-weight: 400;
   width: 100%;
   height: fit-content;
   min-width: fit-content;
   word-spacing: -0.3rem;
+  line-height: 1.2;
   /* padding: var(--content-border-radius); */
   text-align: center;
 }

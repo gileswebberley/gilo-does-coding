@@ -137,7 +137,7 @@ class LayoutManager {
     //No this doesn't have 'this' in scope...but ah-ha, this is where the Function.call() comes into play :)
     //IMPORTANT - This must be called BEFORE calculateY!!!!!!!!!!!!!!!!!!!!!!!!
     function calculateX(element, rowNumber) {
-      //clamping can only be set on auto sized elements
+      //clamping can only be set on auto sized elements - changed this when using it for an actual layout, it can now be set on grow elements too
       this.clamped = false;
       this.clampedWidth = null;
       this.wrapMe = false;
@@ -163,8 +163,8 @@ class LayoutManager {
       //width must be a percentage!! we'll want to check if height percentage should grow
       //adding the ability to set a minimum width with clamp: Xpx so we can do wrap (I'm thinking, when they get too small we'll wrap them!? particularly for images/videos)
       let w = (this.columnWidth / 100) * element.size.width;
-
-      if (element.clamp !== null && element.sizeType === 'auto') {
+      if (element.clamp !== null) {
+        // if (element.clamp !== null && element.sizeType === 'auto') {
         //we have to ignore the clamp size if the screen (column width on small screen) is smaller, to avoid going off the edge
         this.clampedWidth = Math.min(element.clamp, this.columnWidth);
         //set this to true if the calculated width has gone below the clamped width

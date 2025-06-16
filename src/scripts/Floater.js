@@ -19,11 +19,11 @@ class Floater {
     this.container = container; //Do not give container a z-index!
     this.container.style.position = 'relative';
     this.container.appendChild(this.element);
-    this.setPosition(
-      World.BIRTH_POSITION.x,
-      World.BIRTH_POSITION.y,
-      World.BIRTH_POSITION.z
-    );
+    // this.setPosition(
+    //   World.BIRTH_POSITION.x,
+    //   World.BIRTH_POSITION.y,
+    //   World.BIRTH_POSITION.z
+    // );
   }
 
   createPersonality() {
