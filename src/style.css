@@ -122,21 +122,34 @@ h4 {
 
 a {
   color: inherit;
-  text-decoration: dashed underline;
+  text-decoration: none;
+  cursor: pointer;
+}
+/* We just want this for links that are not our icon links to github etc */
+a:has(i)::after {
+  content: '';
+  display: inline-block;
+}
+
+a::after {
+  font: var(--fa-font-solid);
+  font-size: 0.9rem;
+  content: '\f0c1';
+  display: inline-block;
+  transform: rotate(-45deg);
 }
 
 i {
   font-size: inherit;
   transform: translateY(2px);
 }
-
+/* 
 .contact {
   display: flex;
   flex-direction: row;
   width: 100%;
   gap: 2rem;
-  /* flex-wrap: nowrap; */
-}
+} */
 
 /* This holds the floater's #container element to allow for scrolling with a fixed header */
 .scrollableMain {
@@ -236,9 +249,10 @@ This is all of the styling for the navigation system ---------------------------
 
 @media screen and (max-width: 680px) {
   #main-nav {
-    flex-direction: column;
-    min-width: fit-content;
-    max-height: 20vh;
+    /* flex: 0 0 100%; */
+    /* flex-direction: column; */
+    width: fit-content;
+    /* max-height: 20vh; */
   }
 }
 
@@ -253,7 +267,7 @@ This is all of the styling for the navigation system ---------------------------
   font-size: 1.4rem;
   font-weight: 400;
   cursor: pointer;
-  color-scheme: light dark;
+  /* color-scheme: light dark; */
   color: var(--colour-nav-button-text);
   background-color: var(--colour-nav-button-bg);
   border-color: var(--colour-nav-button-border);
@@ -273,8 +287,8 @@ This is all of the styling for the navigation system ---------------------------
 
 @media screen and (max-width: 680px) {
   .nav-button {
-    width: 100%;
-    /* flex: 1 1 100%; */
+    /* width: 100%; */
+    /* flex: 0 0 50%; */
   }
 }
 
