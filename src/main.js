@@ -24,7 +24,7 @@ document.querySelector('#logo').addEventListener('pointerup', (e) => {
   SiteManager.hideAllPages();
 });
 
-//make the header and footer colour time responsive...
+//set up all the colour styling now that I have implemented the colour-scheme functionality (rather than just the css @media (prefers-color-scheme: dark) stuff)
 function setHeaderFooterColour() {
   const timeColours = Colourist.getTimeBasedColourBasedOnColourScheme();
   document.documentElement.style.setProperty(
@@ -46,25 +46,52 @@ function setBodyColour() {
 }
 setBodyColour();
 
-// going to try to implement dark mode toggling
+//final bit of colourisation is to take care of the navigation colours
+function setNavColours() {
+  const navSwatch = Colourist.getNavSwatch();
+  document.documentElement.style.setProperty(
+    '--colour-nav-button-text',
+    navSwatch.text
+  );
+  document.documentElement.style.setProperty(
+    '--colour-nav-button-bg',
+    navSwatch.bg
+  );
+  document.documentElement.style.setProperty(
+    '--colour-nav-button-border',
+    navSwatch.border
+  );
+  document.documentElement.style.setProperty(
+    '--colour-nav-button-visited',
+    navSwatch.visited
+  );
+  document.documentElement.style.setProperty(
+    '--colour-nav-button-hover',
+    navSwatch.hover
+  );
+}
+setNavColours();
+
+// going to try to implement dark mode toggling as it looks nicer to me in dark mode and I think it will be good practice to implement it
 const darkModeToggle = document.querySelector('#dark-mode-toggle');
 darkModeToggle.style.marginRight = '2rem';
 darkModeToggle.style.cursor = 'pointer';
 
-function setDarkModeToggle() {
+function setDarkModeToggleButton() {
   darkModeToggle.innerHTML =
     Colourist.colourScheme === 'dark'
       ? `<i class="fa-solid fa-sun"></i>`
       : `<i class="fa-solid fa-moon"></i>`;
 }
-setDarkModeToggle();
+setDarkModeToggleButton();
 
 darkModeToggle.addEventListener('pointerup', (e) => {
   Colourist.toggleColourScheme();
   //we'll also want to update the time colours
   setHeaderFooterColour();
+  setNavColours();
   setBodyColour();
-  setDarkModeToggle();
+  setDarkModeToggleButton();
 });
 
 // Now build the site...

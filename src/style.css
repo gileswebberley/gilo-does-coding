@@ -1,8 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=Special+Elite&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Special+Elite&text=gilo_does_coding&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap');
+/* by including the 'text' param to the font url it only downloads those characters so less bandwidth is used */
 
 :root {
-  /* breakpoints are set with Breakpoints.js */
   --content-border-radius: 20px;
 
   --colour-orange: #ee8e09;
@@ -32,6 +33,12 @@
   --colour-dark-text: #ede1e1;
   --colour-light-text: #242424;
 
+  --colour-nav-button-text: var(--colour-orange-900);
+  --colour-nav-button-bg: var(--colour-blue);
+  --colour-nav-button-border: var(--colour-blue-100);
+  --colour-nav-button-visited: var(--colour-blue-100);
+  --colour-nav-button-hover: var(--colour-blue-200);
+
   font-family: 'Noto Sans', Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
@@ -39,7 +46,8 @@
   /* background-color: var(--colour-blue-300); */
 
   color-scheme: light dark;
-  transition: color 1.6s ease, background-color 1.6s ease;
+  transition: color 1.6s ease;
+  transition: background-color 60ms ease;
   /* --header-footer-time-colour: var(--colour-orange);
   --header-footer-time-colour-text: var(--colour-orange-900); */
   /* color: rgba(255, 255, 255, 0.87);
@@ -97,14 +105,16 @@ h1,
 h2,
 h3,
 h4 {
-  font-family: 'Special Elite', 'Courier New', Courier, monospace;
-  font-weight: 400;
+  font-family: 'Courier Prime', 'Courier New', Courier, monospace;
+  font-weight: 700;
   font-style: normal;
+  word-spacing: -0.7rem;
   /* font-size: 2.2em;
   line-height: auto; */
 }
 
 #logo {
+  font-family: 'Special Elite', 'Courier New', Courier, monospace;
   font-size: 4.2rem;
   line-height: 80%;
   cursor: pointer;
@@ -112,7 +122,7 @@ h4 {
 
 a {
   color: inherit;
-  text-decoration: none;
+  text-decoration: dashed underline;
 }
 
 i {
@@ -232,32 +242,38 @@ This is all of the styling for the navigation system ---------------------------
 }
 
 .nav-button {
-  font-family: 'Special Elite', 'Courier New', Courier, monospace;
+  font-family: 'Courier Prime', 'Courier New', Courier, monospace;
   /* this is to make the buttons 'stretch' when there is excess space and when they wrap - a setting of 1 makes them all behave the same whereas 'auto' will make ones with smaller content be proportionally smaller than the others */
-  flex: 1;
+  flex: 1 1 15%;
   white-space: nowrap;
   border: 1px solid;
   border-radius: 7px;
-  padding: 0.4rem 0.8rem;
+  padding: 0.8rem 1.2rem;
   font-size: 1.4rem;
-  font-weight: 600;
+  font-weight: 400;
   cursor: pointer;
   color-scheme: light dark;
-  color: var(--colour-orange-900);
-  background-color: var(--colour-blue);
-  border-color: var(--colour-blue-100);
+  color: var(--colour-nav-button-text);
+  background-color: var(--colour-nav-button-bg);
+  border-color: var(--colour-nav-button-border);
 }
 
-.nav-button.visited,
+.nav-button.visited {
+  outline: none;
+  border: 1px dashed var(--colour-nav-button-visited);
+}
+
 .nav-button:focus,
 .nav-button:hover {
   outline: none;
-  background-color: var(--colour-blue-100);
+  background-color: var(--colour-nav-button-hover);
+  /* color: var(--colour-nav-button-text); */
 }
 
 @media screen and (max-width: 680px) {
   .nav-button {
     width: 100%;
+    /* flex: 1 1 100%; */
   }
 }
 
@@ -277,7 +293,7 @@ This is all of the styling for the navigation system ---------------------------
   width: 300px;
   height: 300px;
   /* background-color: rgb(238, 142, 9); set in the Floater script */
-  border: 3px solid;
+  border: 2px solid;
   color: #ca5811;
   border-radius: calc(var(--content-border-radius) * 2);
   padding: 20px;
@@ -314,14 +330,14 @@ iframe {
 }
 
 .content-title {
-  font-family: 'Special Elite', 'Courier New', Courier, monospace;
+  /* font-family: 'Special Elite', 'Courier New', Courier, monospace; */
   font-size: clamp(1.8rem, min(2.8cqi, 3.5cqh), 3.4rem);
+  font-weight: 400;
   width: 100%;
   height: fit-content;
   min-width: fit-content;
-  /* max-width: 100%;
-  max-height: 100%; */
-  /* text-wrap: nowrap; */
+  word-spacing: -0.3rem;
+  /* padding: var(--content-border-radius); */
   text-align: center;
 }
 
@@ -376,11 +392,11 @@ footer {
   border-top: 2px solid var(--header-footer-time-colour-text);
 }
 
-@media (prefers-color-scheme: light) {
+/* @media (prefers-color-scheme: light) {
   button {
     background-color: #f9f9f9;
   }
-}
+} */
 
 /* @media (prefers-color-scheme: dark) {
   :root {

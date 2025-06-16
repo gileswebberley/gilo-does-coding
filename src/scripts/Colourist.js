@@ -45,24 +45,41 @@ const Colourist = {
     );
   },
 
-  colourModeEvent: new Event('colourModeChange'),
-
-  toggleColourScheme: function () {
-    this.colourScheme = this.colourScheme === 'dark' ? 'light' : 'dark';
-    document.documentElement.setAttribute(
-      'data-colour-scheme',
-      this.colourScheme
-    );
-    // console.log(`Setting colour scheme to ${this.colourScheme}`);
-    document.dispatchEvent(this.colourModeEvent);
+  getNavSwatch: function () {
+    const documentStyle = getComputedStyle(document.documentElement);
+    const swatch = {
+      text: documentStyle.getPropertyValue(
+        this.colourScheme === 'dark' ? '--colour-blue-50' : '--colour-blue-900'
+      ),
+      bg: documentStyle.getPropertyValue(
+        this.colourScheme === 'dark' ? '--colour-blue-700' : '--colour-blue-200'
+      ),
+      border: documentStyle.getPropertyValue(
+        this.colourScheme === 'dark' ? '--colour-blue-50' : '--colour-blue-900'
+      ),
+      // I think maybe I'll just make the border orange when a page has been visited, I think it's a nicer subtle way to denote this event
+      visited: documentStyle.getPropertyValue(
+        this.colourScheme === 'dark'
+          ? '--colour-orange-200'
+          : '--colour-orange-700'
+      ),
+      hover: documentStyle.getPropertyValue(
+        this.colourScheme === 'dark'
+          ? '--colour-orange-800'
+          : '--colour-orange-200'
+      ),
+    };
+    return swatch;
   },
 
+  //this is for the floaters so they know the number to use as the modulus value when they are setting their colours (I changed it from random to a static number that is incremented each time a colour is set)
   getColourSwatchLength: function () {
     return Math.min(
       this.higherOrangeRange.length,
       this.lowerOrangeRange.length
     );
   },
+  //These are the selection of coloursa that can be used for the background and color settings of the floaters
   getOrangeBGSwatch: function () {
     if (this.colourScheme === 'dark') {
       // console.log('DARK MODE COLOURS.......');
@@ -72,6 +89,7 @@ const Colourist = {
       return this.lowerOrangeRange;
     }
   },
+
   getOrangeSwatch: function () {
     if (this.colourScheme === 'dark') {
       // console.log('DARK MODE COLOURS.......');
@@ -82,9 +100,9 @@ const Colourist = {
     }
   },
   //make it an anonymous function rather than an arrow function so I can access the colourSwatchLength - stupid, I'd forgotten about the scope difference :/
+  //The header and footer set their colour based on the time of day that the page is loaded, along with the colour-scheme setting.
   getTimeBasedColourBasedOnColourScheme: function () {
     const timestep = 23 / this.getColourSwatchLength();
-    // console.log(`Timestep in colourist is ${timestep}`);
     const currentTime = new Date().getHours();
     const currentTextSwatch =
       this.colourScheme === 'dark'
@@ -94,16 +112,23 @@ const Colourist = {
       this.colourScheme === 'dark'
         ? this.higherOrangeRange
         : this.lowerOrangeRange;
-    // console.log(
-    //   `colour selected: time: ${currentTime} ${Math.floor(
-    //     currentTime / timestep
-    //   )} ${currentSwatch[Math.floor(currentTime / timestep) - 1]}`
-    // );
     const indexSelection = Math.floor(currentTime / timestep) - 1;
     return {
       bg: currentSwatch[indexSelection],
       text: currentTextSwatch[indexSelection],
     };
+  },
+
+  colourModeEvent: new Event('colourModeChange'),
+
+  toggleColourScheme: function () {
+    this.colourScheme = this.colourScheme === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute(
+      'data-colour-scheme',
+      this.colourScheme
+    );
+    // this is for the floaters to listen to (ie document.addEventListener('colourModeChange', (e) => { ... })) as they programatically set their colours when they are created rather than being based on the pre-written css.
+    document.dispatchEvent(this.colourModeEvent);
   },
 };
 
