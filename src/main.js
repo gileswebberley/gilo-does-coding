@@ -74,8 +74,8 @@ setNavColours();
 
 // going to try to implement dark mode toggling as it looks nicer to me in dark mode and I think it will be good practice to implement it
 const darkModeToggle = document.querySelector('#dark-mode-toggle');
-darkModeToggle.style.marginRight = '2rem';
-darkModeToggle.style.cursor = 'pointer';
+// darkModeToggle.style.marginRight = '2rem';
+// darkModeToggle.style.cursor = 'pointer'; //I should not be doing this here!!
 
 function setDarkModeToggleButton() {
   darkModeToggle.innerHTML =

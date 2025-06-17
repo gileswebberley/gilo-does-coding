@@ -104,7 +104,12 @@ class Floater {
 
   triggerMove() {
     const { x, y, z } = this.createRandomPosition();
-    this.moveTo(x, y, z, this.myDuration);
+    this.moveTo(
+      x,
+      y,
+      z,
+      Floater.repressFloaters ? this.myDuration * 5 : this.myDuration
+    ); //slow them down when a page is showing
   }
 
   createRandomPosition() {

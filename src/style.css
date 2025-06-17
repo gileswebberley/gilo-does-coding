@@ -148,11 +148,6 @@ a::after {
   display: inline-block;
   transform: rotate(-45deg) translateY(-0.3rem);
 }
-/* The font awesome icons mainly used in the footer */
-i {
-  font-size: inherit;
-  transform: translateY(2px);
-}
 
 /* This holds the floater's #container element to allow for scrolling with a fixed header */
 .scrollableMain {
@@ -311,7 +306,7 @@ iframe {
 /* For the content-holder of a FloaterInner as a little window */
 .content-viewport {
   width: fit-content;
-  border-radius: var(--content-border-radius);
+  border-radius: var(--content-border-radius) / 2;
   /* height: var(--content_viewport_height); */
   height: 100%;
   /* in case it get's taller than it's content... */
@@ -328,20 +323,15 @@ iframe {
 }
 
 .content-title {
-  /* font-family: 'Special Elite', 'Courier New', Courier, monospace; */
-  font-size: clamp(1.8rem, 3cqmin, 4.4rem);
+  font-size: clamp(1.6rem, 3cqmin, 4.4rem);
   overflow-wrap: anywhere;
-  /* -webkit-hyphens: auto;
-  -moz-hyphens: auto;
-  -ms-hyphens: auto;
-  hyphens: auto; */
+  text-wrap: balance;
   font-weight: 400;
   width: 100%;
-  height: fit-content;
+  max-height: fit-content;
   min-width: fit-content;
   word-spacing: -0.3rem;
   line-height: 1.2;
-  /* padding: var(--content-border-radius); */
   text-align: center;
 }
 
@@ -350,7 +340,8 @@ iframe {
   /* This is the title floater */
   padding: 1rem;
   min-width: fit-content; /* belt and braces for if there's a word that is too long */
-  /* min-height: calc-size(fit-content, size - 2rem); */
+  /* min-height: fit-content; */
+  min-height: calc-size(fit-content, size - 1rem);
   /* This is so we can use container size units in our font-size clamp */
   container-type: inline-size;
 }
@@ -378,11 +369,11 @@ footer {
   text-wrap: balance;
   justify-content: space-between;
   align-items: center;
-  padding-left: 2rem;
-  padding-right: 1rem;
-  gap: 2rem;
+  padding-left: 3dvw;
+  padding-right: 1dvw;
+  gap: 1dvw;
   /* This is how you can set the dark mode colour scheme if it's selected on the user's system (see the @media query at the bottom for how this is used) */
-  color-scheme: dark;
+  /* color-scheme: dark; */
   color: var(--header-footer-time-colour-text);
   background-color: var(--header-footer-time-colour);
   /* font-size: 2rem; */
@@ -393,42 +384,33 @@ header {
 }
 
 footer {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
   border-top: 2px solid var(--header-footer-time-colour-text);
 }
 
-/* @media (prefers-color-scheme: light) {
-  button {
-    background-color: #f9f9f9;
-  }
-} */
+/* The font awesome icons mainly used in the footer */
+i {
+  font-size: inherit;
+  transform: translateY(2px);
+}
 
-/* @media (prefers-color-scheme: dark) {
-  :root {
-    --colour-blue-300: var(--colour-blue-600);
-  }
-} */
+#dark-mode-toggle {
+  margin-right: 2dvw;
+  cursor: pointer;
+}
 
 @media screen and (max-width: 680px) {
   /* header, */
   footer {
     flex-direction: column;
     justify-content: center;
-    padding: 0.5rem;
+    padding-left: 0.5dvw;
+    padding-right: 0.5dvw;
+    /* padding: 0.5dvw; */
   }
 
   #copyright-text {
     display: none;
   }
-
-  /* :root {
-    --content_max_width: 80vw;
-    --content_min_width: 50vw;
-    --content_viewport_height: 50vh;
-  } */
 }
-/* 
-@media screen and (max-width: 480px) {
-  #logo {
-    font-size: 160%;
-  }
-} */
