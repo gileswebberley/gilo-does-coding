@@ -141,6 +141,7 @@ class LayoutManager {
       this.clamped = false;
       this.clampedWidth = null;
       this.wrapMe = false;
+      this.forceGrow = false;
       if (rowNumber > currentRow) {
         // reset the x position (like hitting return for a new-line) this is why this called before calculateY
         nextX = this.originX;
@@ -183,7 +184,11 @@ class LayoutManager {
           w;
         //Trying to deal with elements that are > 100% wide when going onto a small screen
         if (this.smallScreenWidth && element.size.width > 100) {
-          w *= 100 / element.size.width; //yep, keeps the area
+          const adjustment = 100 / element.size.width;
+          console.log(`adjustment for over width element: ${adjustment}`);
+          w *= adjustment; //yep, keeps the area
+          currentWidthModifier *= adjustment; //so that the height is adjusted accordingly
+          this.forceGrow = true; //so an element spans columns in desktop view which means it's content is probably designed to fit nicely, if it's now made smaller I think it should grow in height even if it's sizeType is auto - I'll make some pages and review this decision
         }
       } else {
         currentWidthModifier = 1 * smallScreenMaxWidthAdjuster;
@@ -198,9 +203,10 @@ class LayoutManager {
         const unadjustedWidth = w;
         w -= offsetWidth;
         currentWidthModifier *= unadjustedWidth / w;
-      } else {
-        this.forceGrow = false;
       }
+      // else {
+      //   this.forceGrow = false;
+      // }
       //Blimey, finally here's the beginnings of the wrapping functionality - calculate how far it's going over the edge of the page - this needs to be adjusted to deal with wrapping in columns rather than just the page
       let overflowSize = 0;
       // console.log(`set up overflowSize: ${overflowSize}`);
@@ -260,7 +266,7 @@ class LayoutManager {
       //   );
       //gosh, this has grown to a bit of a mess of ternary operators but essentially it's dealing with the various sizeType options including keeping the same aspect ratio of elements that have been 'clamped' to a minimum width
       let h =
-        element.sizeType === 'auto'
+        element.sizeType === 'auto' && !this.forceGrow
           ? this.clamped
             ? this.clampedWidth *
               this.aspectHeightMultiplier *

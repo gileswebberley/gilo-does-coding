@@ -201,20 +201,6 @@ class Floater {
 
   // Set the container height to fit content so it will scroll when the floaters overflow the height of the container
   // I'm moving this functionality to the PageManager
-  // resizeContainerRect() {
-  //   if (this.isFloating) {
-  //     return;
-  //   }
-  //   setTimeout(() => {
-  //     const containerRect = this.container.getBoundingClientRect();
-  //     const elementRect = this.element.getBoundingClientRect();
-  //     this.container.style.height =
-  //       Math.max(
-  //         parseInt(this.container.style.height),
-  //         elementRect.bottom - containerRect.top + World.CONTENT_PADDING
-  //       ) + 'px';
-  //   }, this.myDuration + 100);
-  // }
 }
 
 export default Floater;

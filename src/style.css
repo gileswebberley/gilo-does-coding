@@ -113,9 +113,19 @@ h4 {
   line-height: auto; */
 }
 
+/* Just clearing the automatically added space around the various text elements inside the floaters */
+.floater h1,
+h2,
+h3,
+h4,
+p {
+  margin: 0;
+  padding: 0;
+}
+
 #logo {
   font-family: 'Special Elite', 'Courier New', Courier, monospace;
-  font-size: 4.2rem;
+  font-size: clamp(1.2rem, 7.5dvw, 4.2rem);
   line-height: 80%;
   cursor: pointer;
 }
@@ -319,7 +329,7 @@ iframe {
 
 .content-title {
   /* font-family: 'Special Elite', 'Courier New', Courier, monospace; */
-  font-size: clamp(1.8rem, 3cqmax, 4.4rem);
+  font-size: clamp(1.8rem, 3cqmin, 4.4rem);
   overflow-wrap: anywhere;
   /* -webkit-hyphens: auto;
   -moz-hyphens: auto;
@@ -416,10 +426,9 @@ footer {
     --content_viewport_height: 50vh;
   } */
 }
-
+/* 
 @media screen and (max-width: 480px) {
   #logo {
-    /* stop the h2 logo from breaking across lines on small screens (mobile) */
     font-size: 160%;
   }
-}
+} */
