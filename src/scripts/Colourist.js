@@ -102,7 +102,7 @@ const Colourist = {
   //make it an anonymous function rather than an arrow function so I can access the colourSwatchLength - stupid, I'd forgotten about the scope difference :/
   //The header and footer set their colour based on the time of day that the page is loaded, along with the colour-scheme setting.
   getTimeBasedColourBasedOnColourScheme: function () {
-    const timestep = 23 / this.getColourSwatchLength();
+    const timestep = 24 / this.getColourSwatchLength(); //24 rather than 23 cos I was working on it at midnight and it obviously broke :D !?
     const currentTime = new Date().getHours();
     const currentTextSwatch =
       this.colourScheme === 'dark'
@@ -112,7 +112,7 @@ const Colourist = {
       this.colourScheme === 'dark'
         ? this.higherOrangeRange
         : this.lowerOrangeRange;
-    const indexSelection = Math.floor(currentTime / timestep) - 1;
+    const indexSelection = Math.floor(currentTime / timestep);
     return {
       bg: currentSwatch[indexSelection],
       text: currentTextSwatch[indexSelection],
