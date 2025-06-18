@@ -341,7 +341,7 @@ iframe {
   padding: 1rem;
   /* min-width: fit-content; belt and braces for if there's a word that is too long */
   /* min-height: fit-content; */
-  min-height: calc-size(fit-content, size - 1rem);
+  min-height: calc-size(fit-content, size - 1.5rem);
   /* This is so we can use container size units in our font-size clamp */
   container-type: inline-size;
 }

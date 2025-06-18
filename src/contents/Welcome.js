@@ -125,7 +125,7 @@ const WelcomeContent = {
       type: 'html',
       src: `
       <h2>Life is for living, and learning</h2>
-      <p>Having spent a while getting back up to speed with web development mainly through a course in React I decided that, for my protfolio, I wanted to rediscover some confidence with 'vanilla' HTML,CSS, and Javascript. This was originally reliant on the Flash player but I fell in love with the idea and decided I wanted to recreate it with the, massively matured, tools that are now available.</p><p>Each of these elements is built with a bit of 'personality' via a randomisation of various properties which is a method I enjoy using, I define some boundaries and then let my creations do their thing.</p>`,
+      <p>Having spent a while getting back up to speed with web development mainly through a course in React I decided that, for my portfolio, I wanted to rediscover some confidence with 'vanilla' HTML,CSS, and Javascript. This was originally reliant on the Flash player but I fell in love with the idea and decided I wanted to recreate it with the, massively matured, tools that are now available.</p><p>Each of these elements is built with a bit of 'personality' via a randomisation of various properties which is a method I enjoy using, I define some boundaries and then let my creations do their thing.</p>`,
     },
   ],
 };

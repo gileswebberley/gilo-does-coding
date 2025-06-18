@@ -243,12 +243,12 @@ class LayoutManager {
         w -= offsetWidth;
         currentWidthModifier *= unadjustedWidth / w;
       }
-      overflowSize -= x - offsetWidth + w - this.pagePadding;
+      overflowSize -= x - offsetWidth + w; // - this.pagePadding;
       // console.log(`checked overflowSize: ${overflowSize}`);
       // if it is going over the edge of the page put it below the previous element in the row and drag it back so it starts a new sub-row. I've got a problem with offsetX pushing an item in the last column across the page boundary so I've created the pageXBounds variable in createLayotMarkers. I need the overflowSize calculation to remove the offsetWidth so it works in the first column though!?
       if (
         (overflowSize < 0 && element.size.width <= 100) ||
-        (x + offsetWidth + w > this.pageXBound && nthChild > 0)
+        (x + w > this.pageXBound && nthChild > 0)
       ) {
         console.log(
           `WRAP ME - ${overflowSize} row:${element.position.row} col:${element.position.column}`
@@ -289,8 +289,8 @@ class LayoutManager {
         currentY = nextY;
         isNewRow = true;
       }
-      //  else if (this.wrapMe) {
-      //   currentY = this.lastBottom;
+      // else if (this.wrapMe) {
+      //   currentY = this.lastBottom;//No, this makes the next column start at the wrapped height
       // }
       //'auto' now means it wants to grow from it's clamp percentage if width is below it's max - no, we'll have 'auto' 'grow' or 'fixed' - see TestContent for jsdocs of the layout object....coming back to this, I'm going to make grow based on the max row height otherwise it's very close to fixed in behaviour (forceGrow is related to offset based width adjustment that occurs on small screens)
       // if (this.clamped)
@@ -299,7 +299,7 @@ class LayoutManager {
       //       this.clampedWidth * this.aspectHeightMultiplier
       //     }`
       //   );
-      //gosh, this has grown to a bit of a mess of ternary operators but essentially it's dealing with the various sizeType options including keeping the same aspect ratio of elements that have been 'clamped' to a minimum width
+      //gosh, this has grown to a bit of a mess of ternary operators but essentially it's dealing with the various sizeType options including keeping the same aspect ratio of elements that have been 'clamped' to a minimum width (forceGrow is for >100% width and for offset driven width resizing on small screens)
       let h =
         element.sizeType === 'auto' && !this.forceGrow
           ? this.clamped
@@ -315,27 +315,32 @@ class LayoutManager {
       //adding the clamp functionality so I won't over-confuse the original sizing, I'll just take care of it seperately - oh no, I'll add it into the 'auto' function
       let y =
         currentY +
-        /*(this.wrapMe && isNewRow)*/ // this.wrapMe || || this.wrapMe || nthChild > 0
-        ((isNewRow || this.wrapMe) && this.smallScreenWidth
-          ? // || this.clamped
-            0
+        (this.smallScreenWidth //nthChild === 0 &&
+          ? 0
           : element.offset.y * (h / 100));
       //for wrap behaviour we'll store the bottom of each for the next to wrap underneath
       if (this.wrapMe) {
-        y = this.lastBottom - element.offset.y * (this.rowHeight / 100);
-        // nextY = y;
+        y = this.lastBottom; // - Math.abs(element.offset.y) * (this.rowHeight / 100);
+        //  nextY = y + h;
+        if (this.smallScreenWidth) currentY = y;
       }
-      this.lastBottom = y + h;
       y += LayoutManager.#FLOATER_GAP / 2;
       // if this is another element in the same row check whether it's taller than any other element in the row to set the beginning Y for the next row. If there's a y-offset it's probably a column that has become a row for a small screen, so we'll allow for the positioning to still be offset by doing this little check, x-offset is looked after in calculateX.
       if (y + h > nextY) {
+        // && !this.wrapMe
         nextY = y + h;
-      } else if (!isNewRow && this.verticalCentre) {
+      } else if (
+        !isNewRow &&
+        this.verticalCentre
+        // && !(nthWrapped > 0 && nthChild > nthWrapped)
+      ) {
+        // && !(nthWrapped > 0) && !(nthChild > nthWrapped)
         // console.log(
         //   `Y is being adlusted because it needs to be vertically centred`
         // );
         y += (nextY - (y + h)) / 2;
       }
+      this.lastBottom = y + h;
       h = parseInt(h);
       h = Math.max(h - LayoutManager.#FLOATER_GAP, 1); //in case the size is smaller than floater gap
       y += 'px';
