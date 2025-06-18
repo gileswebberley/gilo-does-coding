@@ -36,7 +36,7 @@ const WelcomeContent = {
     {
       layoutNumber: 4,
       position: { row: 2, column: 1 },
-      offset: { x: -5, y: 20 },
+      offset: { x: 0, y: 20 },
       size: { width: 40, height: 35 },
       sizeType: 'grow',
       clamp: 190,
