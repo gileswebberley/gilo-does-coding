@@ -104,6 +104,7 @@ class LayoutManager {
     let currentRow = 1;
     let currentColumn = 1;
     let nthChild = 0; //This is because I want to be able to know about where the element sits inside their own containing grid square...It's going to be for wrapping behaviour and whether to attach a offsetY, namely it will be like a text wrap with the alignment to the left (I hope)
+    let nthWrapped = 0;
     //So we have the height based on the width and whether the mode is grow....
     let currentWidthModifier = 1;
 
@@ -148,17 +149,22 @@ class LayoutManager {
         // reset the x position (like hitting return for a new-line) this is why this called before calculateY
         nextX = this.originX;
         nthChild = 0; //it's a new grid square
+        nthWrapped = 0;
       }
       //We're only passing the row number because of the column folding that we're performing for small screens so this is a bit more simple - if it's a new row because of the small screen it's still within the same grid square if the column number's the same
-      if (element.position.column > currentColumn) {
+      if (element.position.column !== currentColumn) {
+        //oh, if we're working in row 1 col 2 and then the next is row 2 col 2 then this will fall over :/
         currentColumn = element.position.column;
+        nthChild = 0;
+        nthWrapped = 0; //reset the wrapped marker now we're in a new column
       } else {
         nthChild++;
       }
       if (this.smallScreenWidth) {
         currentX = this.originX;
-        // if (nextX < currentX + this.columnWidth && nextX !== 0) {
-        if (nthChild > 0) {
+        if (nextX < currentX + this.columnWidth && nextX !== 0) {
+          // if (nthChild > 0 && nextX !== 0) {
+          //nextX !== 0 is for the first element on a page
           //we're dealing with multiple elements inside a single grid square
           currentX = nextX;
         }
@@ -167,6 +173,7 @@ class LayoutManager {
         currentX =
           this.originX + this.columnWidth * (element.position.column - 1);
         if (currentX < nextX) {
+          // if (nthChild > 0 && nextX !== 0) {
           //we're dealing with multiple elements inside a single grid square or an element in a column next to an empty one
           currentX = nextX;
         }
@@ -222,6 +229,7 @@ class LayoutManager {
       if (
         this.smallScreenWidth &&
         offsetWidth !== 0 &&
+        currentColumn > element.position.column &&
         overflowSize < x + w + this.pagePadding &&
         rowNumber > currentRow
       ) {
@@ -231,16 +239,22 @@ class LayoutManager {
         w -= offsetWidth;
         currentWidthModifier *= unadjustedWidth / w;
       }
-      overflowSize -= x + w - this.pagePadding;
+      overflowSize -= x - offsetWidth + w - this.pagePadding;
       // console.log(`checked overflowSize: ${overflowSize}`);
       // if it is going over the edge of the page put it below the previous element in the row and drag it back so it starts a new sub-row
       if (overflowSize < 0 && element.size.width <= 100) {
-        // console.log(`WRAP ME - ${overflowSize}`);
+        console.log(
+          `WRAP ME - ${overflowSize} row:${element.position.row} col:${element.position.column}`
+        );
         this.wrapMe = true;
         //overflowSize is clearly a negative number if we're in here so + to move it backwards
         // x += overflowSize - LayoutManager.#FLOATER_GAP / 2;
-        x = this.originX + element.offset.x;
+        x =
+          this.originX +
+          (!this.smallScreenWidth &&
+            this.columnWidth * (element.position.column - 1));
         currentX = x;
+        x += element.offset.x;
       }
       //we ignore the offset here so that this element's offset doesn't shift the following elements - if I implement a wrap functionality would I want to change this? I don't think so cos offset is kinda for forcing overlapping behaviour.
       nextX = currentX + w; //x + w;
@@ -292,18 +306,15 @@ class LayoutManager {
       //adding the clamp functionality so I won't over-confuse the original sizing, I'll just take care of it seperately - oh no, I'll add it into the 'auto' function
       let y =
         currentY +
-        /*(this.wrapMe && isNewRow)*/ // this.wrapMe ||
-        ((isNewRow ||
-          this.wrapMe ||
-          currentColumn === element.position.column) &&
-        this.smallScreenWidth
+        /*(this.wrapMe && isNewRow)*/ // this.wrapMe || || this.wrapMe || nthChild > 0
+        ((isNewRow || this.wrapMe) && this.smallScreenWidth
           ? // || this.clamped
             0
           : element.offset.y * (h / 100));
       //for wrap behaviour we'll store the bottom of each for the next to wrap underneath
       if (this.wrapMe) {
         y = this.lastBottom - element.offset.y * (this.rowHeight / 100);
-        nextY = y;
+        // nextY = y;
       }
       this.lastBottom = y + h;
       y += LayoutManager.#FLOATER_GAP / 2;

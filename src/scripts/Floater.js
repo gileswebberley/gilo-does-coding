@@ -108,7 +108,9 @@ class Floater {
       x,
       y,
       z,
-      Floater.repressFloaters ? this.myDuration * 5 : this.myDuration
+      Floater.repressFloaters && this.isFloating
+        ? this.myDuration * 5
+        : this.myDuration
     ); //slow them down when a page is showing
   }
 
