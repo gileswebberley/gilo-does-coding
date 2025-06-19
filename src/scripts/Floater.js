@@ -5,19 +5,21 @@ import World from './World';
 class Floater {
   static colourNumber = 0; // Static variable to keep track of the colour index
   static repressFloaters = false; // Static variable to control whether floaters should be able to use the entire depth, so they stay in the background when a page is open.
+  #isFloating;
+  #element;
 
   constructor(container, layoutNumber, revealX = 0, revealY = 0) {
     if (!container || !(container instanceof HTMLElement)) {
       throw new Error('A valid container element must be provided.');
     }
     // it's a 'floater' so let's get it floating! This has to be declared first so it can be checked in the setRevealPosition method
-    this.isFloating = true; //this is true because it is checked in the setRevealPosition
+    this.#isFloating = true; //this is true because it is checked in the setRevealPosition
     this.setRevealPosition(revealX, revealY);
     this.#createPersonality();
-    this.createFloaterDiv(layoutNumber);
+    this.#createFloaterDiv(layoutNumber);
 
     this.container = container; //Do not give container a z-index!
-    this.container.appendChild(this.element);
+    this.container.appendChild(this.#element);
     this.setPosition(
       World.BIRTH_POSITION.x,
       World.BIRTH_POSITION.y,
@@ -25,9 +27,17 @@ class Floater {
     );
   }
 
+  appendChildToElement(child) {
+    this.#element.appendChild(child);
+  }
+
+  getElementStyle() {
+    return this.#element.style;
+  }
+
   #createPersonality() {
-    this.speed = Math.random() * World.MAX_DRAG + World.MIN_DRAG;
-    this.myDuration = World.DURATION * this.speed;
+    const speed = Math.random() * World.MAX_DRAG + World.MIN_DRAG;
+    this.myDuration = World.DURATION * speed;
     this.easingStyle =
       World.POSSIBLE_EASING_STYLES[
         Math.floor(Math.random() * World.POSSIBLE_EASING_STYLES.length)
@@ -43,7 +53,7 @@ class Floater {
     this.revealX = x;
     this.revealY = y;
     //if this is changed by PageManager whilst open then let's move the floaters
-    if (!this.isFloating) {
+    if (!this.#isFloating) {
       this.moveTo(x, y, 1, World.DURATION);
     }
   }
@@ -54,46 +64,46 @@ class Floater {
     if (typeof width !== 'number' || typeof height !== 'number') {
       throw new Error('Width and height: unable to parseInt');
     }
-    this.element.style.width = `${width}px`;
-    this.element.style.height = `${height}px`;
+    this.#element.style.width = `${width}px`;
+    this.#element.style.height = `${height}px`;
     //if this has happened whilst open we want it to happen quickly
-    if (!this.isFloating) {
-      this.element.style.transition = `all ${World.DURATION}ms ${this.easingStyle}`;
+    if (!this.#isFloating) {
+      this.#element.style.transition = `all ${World.DURATION}ms ${this.easingStyle}`;
     }
   }
 
-  createFloaterDiv(layoutNumber) {
+  #createFloaterDiv(layoutNumber) {
     //create our moving div
-    this.element = document.createElement('div');
-    this.element.style.position = 'absolute';
-    this.element.setAttribute('data-layout-number', layoutNumber);
-    // this.element.setAttribute('data-floating', this.isFloating);
-    this.element.className = 'floater'; // Add a class for styling
+    this.#element = document.createElement('div');
+    this.#element.style.position = 'absolute';
+    this.#element.setAttribute('data-layout-number', layoutNumber);
+    // this.#element.setAttribute('data-floating', this.#isFloating);
+    this.#element.className = 'floater'; // Add a class for styling
     //set up an initial transition (this is over-written by moveTo()) but now we're setting dimensions from the PageManager we want this here as we won't be setting it in the css
-    this.element.style.transition = `all ${this.myDuration}ms ${this.easingStyle}`;
+    this.#element.style.transition = `all ${this.myDuration}ms ${this.easingStyle}`;
     // add the listener for the custom event emitted by Colourist
     document.addEventListener('colourModeChange', (e) => {
-      this.colouriseFloater();
+      this.#colouriseFloater();
     });
-    this.colouriseFloater();
+    this.#colouriseFloater();
   }
 
-  colouriseFloater() {
-    //I'm not liking the way we can end up with elements majoritively with the same colour to be honest, so I'm going to use a static variable to loop through on each element.
+  #colouriseFloater() {
+    //I'm not liking the way we can end up with #elements majoritively with the same colour to be honest, so I'm going to use a static variable to loop through on each #element.
     const colourRandomiser =
       Floater.colourNumber % Colourist.getColourSwatchLength();
     Floater.colourNumber++;
-    this.element.style.backgroundColor =
+    this.#element.style.backgroundColor =
       Colourist.getOrangeBGSwatch()[colourRandomiser];
-    this.element.style.color = Colourist.getOrangeSwatch()[colourRandomiser];
+    this.#element.style.color = Colourist.getOrangeSwatch()[colourRandomiser];
   }
 
   float() {
     this.triggerMove();
     //call this first so that when a new page is selected they go at full speed
-    this.isFloating = true;
+    this.#isFloating = true;
     // this was when I was playing with the divs being self aware as it were
-    this.element.setAttribute('data-floating', this.isFloating);
+    this.#element.setAttribute('data-floating', this.#isFloating);
     if (this.revealTimeout) {
       clearTimeout(this.revealTimeout);
     }
@@ -113,15 +123,15 @@ class Floater {
       x,
       y,
       z,
-      Floater.repressFloaters && this.isFloating
+      Floater.repressFloaters && this.#isFloating
         ? this.myDuration * 5
         : this.myDuration
     ); //slow them down when a page is showing
   }
 
   createRandomPosition() {
-    const actualSize = this.element.getBoundingClientRect();
-    //stupidly I didn't consider the fact that absolute positioned elements are positioned 'absolutely' in relation to their container. I don't want to use 'fixed' positioning otherwise I don't believe they will scroll inside the container. Therefore I have removed the calculation of the top and left
+    const actualSize = this.#element.getBoundingClientRect();
+    //stupidly I didn't consider the fact that absolute positioned #elements are positioned 'absolutely' in relation to their container. I don't want to use 'fixed' positioning otherwise I don't believe they will scroll inside the container. Therefore I have removed the calculation of the top and left
     const containerRect = this.container.getBoundingClientRect();
     const x = Math.random() * (containerRect.width - actualSize.width);
     const y = Math.random() * (containerRect.height - actualSize.height);
@@ -141,7 +151,7 @@ class Floater {
       return;
     }
     //I think I want to scale the duration based on the distance it's moving? Hmm no, this would take a re-engineering of the floating loop logic so maybe come back to this for v2
-    this.element.style.transition = `all ${duration}ms ${this.easingStyle}`;
+    this.#element.style.transition = `all ${duration}ms ${this.easingStyle}`;
     //I think this helps it sync the animation to the native screen refresh
     requestAnimationFrame(() => this.setPosition(x, y, z));
   }
@@ -155,9 +165,9 @@ class Floater {
       console.error('Invalid position values for setPosition:', x, y, z);
       return;
     }
-    this.element.style.left = `${x}px`;
-    this.element.style.top = `${y}px`;
-    this.element.style.zIndex = z;
+    this.#element.style.left = `${x}px`;
+    this.#element.style.top = `${y}px`;
+    this.#element.style.zIndex = z;
     let transformStr;
     //let's test an idea of using translate rather than top left - no, it makes the rotation function fall apart (because it uses top/left for the calculations) and is not any smoother than what I've got already
     // transformStr = `translate(${x}px, ${y}px) `;
@@ -165,7 +175,7 @@ class Floater {
     transformStr = this.rotateTowardsTarget(x, y);
     transformStr += ' ';
     transformStr += this.setZBasedScale(z);
-    this.element.style.transform = transformStr;
+    this.#element.style.transform = transformStr;
   }
 
   // change these to return their transform strings instead
@@ -180,8 +190,8 @@ class Floater {
       );
       return;
     }
-    const dx = targetX - parseFloat(this.element.style.left);
-    const dy = targetY - parseFloat(this.element.style.top);
+    const dx = targetX - parseFloat(this.#element.style.left);
+    const dy = targetY - parseFloat(this.#element.style.top);
     const angle = Math.atan2(dy, dx) * (180 / Math.PI); // Convert radians to degrees
     return `rotate(${angle}deg)`; // Return the rotation transform string
   }
@@ -197,14 +207,14 @@ class Floater {
   reveal() {
     //stop the floating cycle cos now we want to take control of the floater
     clearInterval(this.floatInterval);
-    this.isFloating = false;
+    this.#isFloating = false;
     // z-index of 1 passed in as we don't want any scaling
     this.moveTo(this.revealX, this.revealY, 1, World.DURATION);
     // This is what we want to happen at the end of the reveal hence it's a timeout with the same duration as the moveTo function is using (I've made it fractionally longer so that the call to resizeContainerRect works as hoped)
     this.revealTimeout = setTimeout(() => {
       this.contentHolder.style.visibility = 'visible';
-      // this.isFloating = false;
-      this.element.setAttribute('data-floating', this.isFloating);
+      // this.#isFloating = false;
+      this.#element.setAttribute('data-floating', this.#isFloating);
       // clearTimeout(timeout);//no need I reckon as it clears once it's finished - I'll clear it in float() for the case where it's revealed and then quickly set to float again
       // this.resizeContainerRect();
       this.revealTimeout = null;

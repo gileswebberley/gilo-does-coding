@@ -10,7 +10,8 @@ class FloaterImage extends Floater {
     this.contentHolder.setAttribute('loading', 'lazy');
     this.contentHolder.setAttribute('decoding', 'async');
     this.contentHolder.setAttribute('alt', this.src.alt);
-    this.element.appendChild(this.contentHolder);
+    // this.element.appendChild(this.contentHolder);
+    this.appendChildToElement(this.contentHolder);
   }
 
   reveal() {

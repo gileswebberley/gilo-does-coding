@@ -4,8 +4,10 @@ class FloaterBlank extends Floater {
   constructor(...rest) {
     super(...rest);
     this.contentHolder = document.createElement('span');
-    this.element.appendChild(this.contentHolder);
-    this.element.style.visibility = 'hidden';
+    // this.element.appendChild(this.contentHolder);
+    this.appendChildToElement(this.contentHolder);
+    // this.element.style.visibility = 'hidden';
+    this.getElementStyle().visibility = 'hidden';
   }
 
   reveal() {

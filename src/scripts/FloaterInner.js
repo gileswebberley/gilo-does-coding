@@ -9,7 +9,8 @@ class FloaterInner extends Floater {
     //Add an element to hold the content so it can have it's visibilty toggled in super.float() and super.reveal()
     this.contentHolder = document.createElement('div');
     this.contentHolder.className = 'content-viewport';
-    this.element.appendChild(this.contentHolder);
+    // this.element.appendChild(this.contentHolder);
+    this.appendChildToElement(this.contentHolder);
     this.hasContentAppended = false;
   }
 

@@ -19,7 +19,8 @@ class FloaterVideo extends Floater {
     if (this.src.alt) this.contentHolder.setAttribute('poster', this.src.alt);
     this.contentHolder.innerText =
       'Unfortunately it seems that your browser does not support this video';
-    this.element.appendChild(this.contentHolder);
+    // this.element.appendChild(this.contentHolder);
+    this.appendChildToElement(this.contentHolder);
     this.hasSrcSet = false;
   }
 

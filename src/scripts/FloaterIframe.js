@@ -10,7 +10,8 @@ class FloaterIframe extends Floater {
       'sandbox',
       'allow-scripts allow-top-navigation allow-modals'
     );
-    this.element.appendChild(this.contentHolder);
+    // this.element.appendChild(this.contentHolder);
+    this.appendChildToElement(this.contentHolder);
   }
 
   reveal() {

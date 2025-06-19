@@ -8,7 +8,8 @@ class FloaterTitle extends Floater {
     this.contentHolder = document.createElement('h1');
     this.contentHolder.classList.add('content-title');
     this.contentHolder.innerHTML = this.src;
-    this.element.appendChild(this.contentHolder);
+    // this.element.appendChild(this.contentHolder);
+    this.appendChildToElement(this.contentHolder);
   }
 
   reveal() {
