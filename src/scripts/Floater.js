@@ -13,19 +13,19 @@ class Floater {
     // it's a 'floater' so let's get it floating! This has to be declared first so it can be checked in the setRevealPosition method
     this.isFloating = true; //this is true because it is checked in the setRevealPosition
     this.setRevealPosition(revealX, revealY);
-    this.createPersonality();
+    this.#createPersonality();
     this.createFloaterDiv(layoutNumber);
 
     this.container = container; //Do not give container a z-index!
     this.container.appendChild(this.element);
-    // this.setPosition(
-    //   World.BIRTH_POSITION.x,
-    //   World.BIRTH_POSITION.y,
-    //   World.BIRTH_POSITION.z
-    // );
+    this.setPosition(
+      World.BIRTH_POSITION.x,
+      World.BIRTH_POSITION.y,
+      World.BIRTH_POSITION.z
+    );
   }
 
-  createPersonality() {
+  #createPersonality() {
     this.speed = Math.random() * World.MAX_DRAG + World.MIN_DRAG;
     this.myDuration = World.DURATION * this.speed;
     this.easingStyle =
@@ -56,6 +56,10 @@ class Floater {
     }
     this.element.style.width = `${width}px`;
     this.element.style.height = `${height}px`;
+    //if this has happened whilst open we want it to happen quickly
+    if (!this.isFloating) {
+      this.element.style.transition = `all ${World.DURATION}ms ${this.easingStyle}`;
+    }
   }
 
   createFloaterDiv(layoutNumber) {
@@ -85,13 +89,14 @@ class Floater {
   }
 
   float() {
+    this.triggerMove();
+    //call this first so that when a new page is selected they go at full speed
     this.isFloating = true;
     // this was when I was playing with the divs being self aware as it were
     this.element.setAttribute('data-floating', this.isFloating);
     if (this.revealTimeout) {
       clearTimeout(this.revealTimeout);
     }
-    this.triggerMove();
     // just unneccesarily processor intensive to show the contents whilst floating (and the reason for the name 'reveal')
     this.contentHolder.style.visibility = 'hidden';
     // depending on the individual personality this creates the actual movement cyclically

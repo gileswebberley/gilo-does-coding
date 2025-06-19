@@ -221,7 +221,7 @@ class LayoutManager {
       let overflowSize = 0;
       // console.log(`set up overflowSize: ${overflowSize}`);
       if (this.smallScreenWidth) {
-        overflowSize += this.columnWidth;
+        overflowSize += this.columnWidth + this.pagePadding;
       } else {
         //if not a small screen set the overflow boundary to the edge of the column we're in
         overflowSize +=
@@ -243,7 +243,7 @@ class LayoutManager {
         w -= offsetWidth;
         currentWidthModifier *= unadjustedWidth / w;
       }
-      overflowSize -= x - offsetWidth + w; // - this.pagePadding;
+      overflowSize -= x - offsetWidth + w; // - this.pagePadding; //kept noticing things being wrapped by 10px on a small screen so put the pagePadding back onto this sum, oh no, it leads to wrapping in the first column on a large screen not work ffs
       // console.log(`checked overflowSize: ${overflowSize}`);
       // if it is going over the edge of the page put it below the previous element in the row and drag it back so it starts a new sub-row. I've got a problem with offsetX pushing an item in the last column across the page boundary so I've created the pageXBounds variable in createLayotMarkers. I need the overflowSize calculation to remove the offsetWidth so it works in the first column though!?
       if (
@@ -251,7 +251,7 @@ class LayoutManager {
         (x + w > this.pageXBound && nthChild > 0)
       ) {
         console.log(
-          `WRAP ME - ${overflowSize} row:${element.position.row} col:${element.position.column}`
+          `WRAP ME - ${overflowSize} row:${element.position.row} col:${element.position.column} nthChild:${nthChild}`
         );
         this.wrapMe = true;
         nthWrapped = nthChild; //I'm putting this in so that calculateY will know if it's dealing with an element inside the same grid square that comes after a wrapped element
@@ -292,13 +292,7 @@ class LayoutManager {
       // else if (this.wrapMe) {
       //   currentY = this.lastBottom;//No, this makes the next column start at the wrapped height
       // }
-      //'auto' now means it wants to grow from it's clamp percentage if width is below it's max - no, we'll have 'auto' 'grow' or 'fixed' - see TestContent for jsdocs of the layout object....coming back to this, I'm going to make grow based on the max row height otherwise it's very close to fixed in behaviour (forceGrow is related to offset based width adjustment that occurs on small screens)
-      // if (this.clamped)
-      //   console.log(
-      //     `===============I've had my height clamped to ${
-      //       this.clampedWidth * this.aspectHeightMultiplier
-      //     }`
-      //   );
+      //'auto' now means it wants to grow from it's clamp percentage if width is below it's max - no, we'll have 'auto' 'grow' or 'fixed' - see ContentTemplateExample for jsdocs of the layout object....coming back to this, I'm going to make grow based on the max row height otherwise it's very close to fixed in behaviour (forceGrow is related to offset based width adjustment that occurs on small screens)
       //gosh, this has grown to a bit of a mess of ternary operators but essentially it's dealing with the various sizeType options including keeping the same aspect ratio of elements that have been 'clamped' to a minimum width (forceGrow is for >100% width and for offset driven width resizing on small screens)
       let h =
         element.sizeType === 'auto' && !this.forceGrow
@@ -312,7 +306,7 @@ class LayoutManager {
             element.size.height *
             currentWidthModifier
           : element.size.height; //this is if the height is a fixed number of pixels
-      //adding the clamp functionality so I won't over-confuse the original sizing, I'll just take care of it seperately - oh no, I'll add it into the 'auto' function
+      //adding the clamp functionality so I won't over-confuse the original sizing, I'll just take care of it seperately - oh no, I'll add it into the 'auto' function. Simply remove offsetY when on a small screen because it ends up messy and we are wrapping columns into rows so it doesn't seem appropriate
       let y =
         currentY +
         (this.smallScreenWidth //nthChild === 0 &&

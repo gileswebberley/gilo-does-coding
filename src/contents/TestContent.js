@@ -54,7 +54,7 @@ const Page_Test = {
       sizeType: 'grow',
       type: 'html',
       src: `
-      <button
+      <button id="link-to-welcome"
         onclick="SiteLinkManager.selectPage('Welcome')"
         >Gilo Does Coding</button
       >

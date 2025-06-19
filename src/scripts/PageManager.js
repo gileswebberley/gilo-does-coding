@@ -116,8 +116,8 @@ class PageManger {
     }
     this.floaterMap.forEach((floater, key) => {
       const { x, y, w, h } = this.layoutManager.getFloaterLayoutObject(key);
-      floater.setRevealPosition(x, y);
       floater.setDimensions(w, h);
+      floater.setRevealPosition(x, y);
     });
   }
 
