@@ -142,9 +142,9 @@ class Floater {
     this.#element.style.width = `${width}px`;
     this.#element.style.height = `${height}px`;
     //if this has happened whilst open we want it to happen quickly
-    if (!this.#isFloating) {
-      this.#element.style.transition = `all ${World.DURATION}ms ${this.easingStyle}`;
-    }
+    // if (!this.#isFloating) {
+    this.#element.style.transition = `all ${World.DURATION}ms ${this.easingStyle}`;
+    // }
   }
 
   #createPersonality() {

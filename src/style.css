@@ -323,7 +323,7 @@ iframe {
 }
 
 .content-title {
-  font-size: clamp(1.6rem, 3cqmin, 4.4rem);
+  font-size: clamp(1.6rem, 3cqi, 4.4rem);
   overflow-wrap: anywhere;
   text-wrap: balance;
   font-weight: 400;
