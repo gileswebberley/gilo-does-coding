@@ -7,6 +7,7 @@ import NavManager from './scripts/NavManager.js';
 import Colourist from './scripts/Colourist.js';
 import WelcomeContent from './contents/Welcome.js';
 import TimeographyContent from './contents/Timeography.js';
+import ParticlesContent from './contents/Particles.js';
 
 //we'll remove the loading message when this loads...
 document.querySelector('#loader').remove();
@@ -110,6 +111,6 @@ SiteManager.init(navElement, container);
 NavManager.setHamburger(hamburger);
 SiteManager.buildPage(WelcomeContent);
 SiteManager.buildPage(TimeographyContent);
-SiteManager.buildPage(Page_Test2);
+SiteManager.buildPage(ParticlesContent);
 SiteManager.buildPage(Page_Test3);
 SiteManager.buildPage(Page_Test4);

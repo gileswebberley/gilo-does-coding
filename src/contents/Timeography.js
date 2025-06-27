@@ -111,7 +111,7 @@ const TimeographyContent = {
       size: { width: 80, height: 15 },
       sizeType: 'grow',
       type: 'title',
-      src: `check out the <a href="https://github.com/gileswebberley/Timeography" target="_blank">source code</a> on GitHub`,
+      src: `check out the <a aria-label="Visit the GitHub repo for this project" href="https://github.com/gileswebberley/Timeography" target="_blank">source code</a> on GitHub`,
     },
   ],
 };
