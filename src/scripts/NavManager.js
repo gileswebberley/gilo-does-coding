@@ -29,7 +29,7 @@ class NavManager {
     if (hamburgerElement) {
       //we can set this to null if we want to swap between modes
       this.hamburgerListener = hamburgerElement.addEventListener(
-        'pointerdown',
+        'click',
         (e) => {
           //open and close the menu
           e.preventDefault();
@@ -51,7 +51,8 @@ class NavManager {
     button.innerText = title; //.toUpperCase();
     button.className = 'nav-button';
     button.setAttribute('data-page', pageName);
-    button.addEventListener('pointerdown', (e) => {
+    button.setAttribute('aria-label', `Open the ${title} page`);
+    button.addEventListener('click', (e) => {
       e.preventDefault();
       e.target.classList.add('visited'); //for the css styling of visited pages
       //if we're in hamburger mode (ie we have a button that shows the menu) let's set the button and menu to not-active

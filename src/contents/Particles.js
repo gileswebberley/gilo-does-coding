@@ -1,6 +1,6 @@
-const TimeographyContent = {
-  pageId: 'Timeography',
-  buttonText: 'Project - Timeography',
+const ParticlesContent = {
+  pageId: 'Particles',
+  buttonText: 'Project - Yellow Bird',
   aspectRatio: '16:9',
   content: [
     {
@@ -10,7 +10,7 @@ const TimeographyContent = {
       size: { width: 150, height: 25 },
       sizeType: 'auto',
       type: 'title',
-      src: `Timeography - C++ (OpenFrameworks)`,
+      src: `Yellow Bird - C++/OpenFrameworks/GLSL`,
     },
     {
       layoutNumber: 2,
@@ -115,4 +115,4 @@ const TimeographyContent = {
     },
   ],
 };
-export default TimeographyContent;
+export default ParticlesContent;

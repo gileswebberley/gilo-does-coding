@@ -17,6 +17,7 @@ class Floater {
   #revealTimeout;
   #floatInterval;
   #myDuration;
+  #easingStyle;
 
   /**
    *
@@ -37,11 +38,8 @@ class Floater {
 
     this.#container = container; //Do not give container a z-index!
     this.#container.appendChild(this.#element);
-    this.#setPosition(
-      World.BIRTH_POSITION.x,
-      World.BIRTH_POSITION.y,
-      World.BIRTH_POSITION.z
-    );
+    const { x, y, z } = this.#createRandomPosition();
+    this.#setPosition(x, y, z);
   }
 
   float() {
@@ -60,16 +58,11 @@ class Floater {
     // just unneccesarily processor intensive to show the contents whilst floating (and the reason for the name 'reveal')
     this.#contentHolder.style.visibility = 'hidden';
     // depending on the individual personality this creates the actual movement cyclically
-    this.#floatInterval = setInterval(
-      () => {
-        //I've just discovered that I can stop this processing if the window is not visible (ie running in the background). This is my quick fix, I may come back to this in the future
-        if (document.visibilityState === 'hidden') return;
-        this.#triggerMove(); // Move to new position
-      },
-      Floater.repressFloaters
-        ? this.#myDuration * Floater.repressMoveSpeedDivisor
-        : this.#myDuration
-    );
+    this.#floatInterval = setInterval(() => {
+      //I've just discovered that I can stop this processing if the window is not visible (ie running in the background). This is my quick fix, I may come back to this in the future
+      if (document.visibilityState === 'hidden') return;
+      this.#triggerMove(); // Move to new position
+    }, this.#calculateMyDuration());
   }
 
   reveal() {
@@ -143,14 +136,26 @@ class Floater {
     this.#element.style.height = `${height}px`;
     //if this has happened whilst open we want it to happen quickly
     // if (!this.#isFloating) {
-    this.#element.style.transition = `all ${World.DURATION}ms ${this.easingStyle}`;
+    this.#element.style.transition = `all ${World.DURATION}ms ${
+      this.#easingStyle
+    }`;
     // }
+  }
+
+  //now that I have repressed the motion when a page is open (and at some point I should deal with prefers-reduced-motion in the near future)
+  #calculateMyDuration() {
+    //I want them to move quickly back into position if they are currently revealed as it means another page has been selected and with repression switched on it will currently be slow
+    if (!this.#isFloating) return World.DURATION;
+    else
+      return Floater.repressFloaters
+        ? this.#myDuration * Floater.repressMoveSpeedDivisor
+        : this.#myDuration;
   }
 
   #createPersonality() {
     const speed = Math.random() * World.MAX_DRAG + World.MIN_DRAG;
     this.#myDuration = World.DURATION * speed;
-    this.easingStyle =
+    this.#easingStyle =
       World.POSSIBLE_EASING_STYLES[
         Math.floor(Math.random() * World.POSSIBLE_EASING_STYLES.length)
       ];
@@ -165,7 +170,7 @@ class Floater {
     this.#element.className = 'floater'; // Add a class for styling
     //set up an initial transition (this is over-written by moveTo()) but now we're setting dimensions from the PageManager we want this here as we won't be setting it in the css
     this.#element.style.transition = `all ${this.#myDuration}ms ${
-      this.easingStyle
+      this.#easingStyle
     }`;
     // add the listener for the custom event emitted by Colourist
     document.addEventListener('colourModeChange', (e) => {
@@ -186,14 +191,7 @@ class Floater {
 
   #triggerMove() {
     const { x, y, z } = this.#createRandomPosition();
-    this.#moveTo(
-      x,
-      y,
-      z,
-      Floater.repressFloaters && this.#isFloating
-        ? this.#myDuration * Floater.repressMoveSpeedDivisor
-        : this.#myDuration
-    ); //slow them down when a page is showing
+    this.#moveTo(x, y, z, this.#calculateMyDuration()); //slow them down when a page is showing
   }
 
   #createRandomPosition() {
@@ -218,7 +216,7 @@ class Floater {
       return;
     }
     //I think I want to scale the duration based on the distance it's moving? Hmm no, this would take a re-engineering of the floating loop logic so maybe come back to this for v2
-    this.#element.style.transition = `all ${duration}ms ${this.easingStyle}`;
+    this.#element.style.transition = `all ${duration}ms ${this.#easingStyle}`;
     //I think this helps it sync the animation to the native screen refresh
     requestAnimationFrame(() => this.#setPosition(x, y, z));
   }

@@ -19,17 +19,25 @@
       <header>
         <!-- <div style="height: 145px; width: 100px; background-color: red"></div> -->
         <h1 id="logo">
-          gilo_does_coding<span id="loader">...is loading</span>
+          <a
+            href=""
+            tabindex="0"
+            aria-label="Click here to close all pages and enjoy the natural floating behaviour"
+            >gilo_does_coding</a
+          ><span id="loader">...is loading</span>
         </h1>
         <!-- ok, so we're making the classic hamburger menu button -->
         <nav id="nav-holder">
-          <div id="hamburger-button">
+          <a
+            href=""
+            id="hamburger-button"
+            tabindex="0"
+            aria-label="Hamburger style button to open the navigation menu"
+          >
             <span></span><span></span><span></span>
-          </div>
+          </a>
           <nav id="main-nav"></nav>
-          <!-- <button onpointerup="SiteManager.hideAllPages()">test nav</button> -->
         </nav>
-        <!-- <p>Welcome to gilo-does-coding!</p> -->
       </header>
       <div class="scrollableMain">
         <!-- This is the vital part of the site as this is the div that holds all of the floaters and has it's size controlled by the PageManager -->
@@ -54,12 +62,20 @@
         </p>
         <div class="'contact">
           <!-- <p id="'phone-number"></p> -->
-          <span id="dark-mode-toggle"></span>
+          <a
+            href=""
+            id="dark-mode-toggle"
+            role="switch"
+            aria-label="This is a clickable button-like element that toggles between dark mode and light mode"
+            tabindex="0"
+          ></a>
           <span
             ><a
               href="https://www.linkedin.com/in/giles-webberley-793308257"
               target="_blank"
               rel="noreferrer"
+              aria-label="Click to visit my LinkedIn profile in a seperate tab"
+              tabindex="0"
               ><i class="fa-brands fa-linkedin"></i>&nbsp;</a
             ></span
           >
@@ -68,6 +84,8 @@
               href="https://github.com/gileswebberley"
               target="_blank"
               rel="noreferrer"
+              aria-label="Click to visit my GitHub profile in a seperate tab"
+              tabindex="0"
               ><i class="fa-brands fa-github"></i>&nbsp;</a
             ></span
           >

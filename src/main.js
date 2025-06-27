@@ -1,6 +1,5 @@
 import './style.css';
 import SiteManager from './scripts/SiteManager.js';
-import Page_Test from './contents/TestContent.js';
 import Page_Test2 from './contents/TestContent2.js';
 import Page_Test3 from './contents/TestContent3.js';
 import Page_Test4 from './contents/TestContent4.js';
@@ -18,10 +17,13 @@ document.querySelector('#email-address').innerHTML = ` <a
               )}'
               target="_blank"
               rel="noreferrer"
+              aria-label="Click to open your email client and compose an email to me"
+              tabindex="0"
             >
             <i class="fa-regular fa-envelope"></i></a>&nbsp; gileswebberley@gmail.com`;
 //finally let's set the logo to clear all pages' reveal
-document.querySelector('#logo').addEventListener('pointerup', (e) => {
+document.querySelector('#logo').addEventListener('click', (e) => {
+  e.preventDefault();
   SiteManager.hideAllPages();
 });
 
@@ -75,18 +77,23 @@ setNavColours();
 
 // going to try to implement dark mode toggling as it looks nicer to me in dark mode and I think it will be good practice to implement it
 const darkModeToggle = document.querySelector('#dark-mode-toggle');
-// darkModeToggle.style.marginRight = '2rem';
-// darkModeToggle.style.cursor = 'pointer'; //I should not be doing this here!!
 
 function setDarkModeToggleButton() {
   darkModeToggle.innerHTML =
     Colourist.colourScheme === 'dark'
       ? `<i class="fa-solid fa-sun"></i>`
       : `<i class="fa-solid fa-moon"></i>`;
+  //continuing my attempts to make this a bit more accessible friendly
+  darkModeToggle.setAttribute(
+    'aria-checked',
+    Colourist.colourScheme === 'dark'
+  );
 }
 setDarkModeToggleButton();
 
-darkModeToggle.addEventListener('pointerup', (e) => {
+//I have made this a click event rather than pointer for accessibilty - apparently pointer events do not fire when the enter key is pressed but a click event does
+darkModeToggle.addEventListener('click', (e) => {
+  e.preventDefault();
   Colourist.toggleColourScheme();
   //we'll also want to update the time colours
   setHeaderFooterColour();

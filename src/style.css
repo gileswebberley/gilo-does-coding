@@ -113,14 +113,23 @@ h4 {
   line-height: auto; */
 }
 
-/* Just clearing the automatically added space around the various text elements inside the floaters */
-.floater h1,
-h2,
-h3,
-h4,
 p {
   margin: 0;
   padding: 0;
+}
+
+/* Just clearing the automatically added space around the various text elements when used inside the floaters */
+.floater :is(h1, h2, h3, h4) {
+  margin: 0;
+  padding: 0;
+  text-wrap: pretty; /* May not work on Firefox but 'balance' is too much */
+}
+
+/* The higher specificity of this means it overrides the styling for the basic p tag (where the padding and margin are removed) */
+.floater p {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  text-wrap: balance;
 }
 
 #logo {
@@ -135,19 +144,19 @@ a {
   text-decoration: none;
   cursor: pointer;
 }
-/* We just want this for links that are not our icon links to github etc */
-a:has(i)::after {
-  content: '';
-  display: inline-block;
+
+.floater a {
+  text-decoration: underline solid;
 }
 
-a::after {
+/* links within the floater have a link icon added after as we have switched off the decoration */
+/* .floater a::after {
   font: var(--fa-font-solid);
   font-size: 50%;
-  content: '\f0c1';
+  content: ' \f0c1';
   display: inline-block;
   transform: rotate(-45deg) translateY(-0.3rem);
-}
+} */
 
 /* This holds the floater's #container element to allow for scrolling with a fixed header */
 .scrollableMain {
@@ -176,6 +185,7 @@ This is all of the styling for the navigation system ---------------------------
 }
 
 #hamburger-button {
+  display: block;
   position: relative;
   width: 2.5rem;
   height: 2.5rem;
