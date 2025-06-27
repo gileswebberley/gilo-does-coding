@@ -1,5 +1,40 @@
 import World from './World';
 
+/**
+ * * Instance Variables:
+ * - baseHeightRatio: Number - Height part of the base aspect ratio.
+ * - baseWidthRatio: Number - Width part of the base aspect ratio.
+ * - aspectHeightMultiplier: Number - Ratio of height/width for aspect calculations.
+ * - verticalCentre: Boolean - Whether to vertically center elements in rows.
+ * - wireframe: Array - The layout wireframe describing floaters.
+ * - layoutMap: Map - Maps layoutNumber to {x, y, w, h} for each floater.
+ * - leftMargin: Number - Left margin of the container.
+ * - rightMargin: Number - Right margin of the container.
+ * - screenWidth: Number - Usable width for layout.
+ * - topMargin: Number - Top margin of the container.
+ * - bottomMargin: Number - Bottom margin of the container.
+ * - veiwportHeight: Number - Usable height for layout (typo: should be 'viewportHeight').
+ * - pageWidth: Number - Calculated page width.
+ * - smallScreenWidth: Boolean - True if in small screen mode.
+ * - largeScreenWidth: Boolean - True if in large screen mode.
+ * - rowCount: Number - Number of rows in the layout.
+ * - columnCount: Number - Number of columns in the layout.
+ * - pagePadding: Number - Padding around the page.
+ * - originX: Number - X origin for layout.
+ * - originY: Number - Y origin for layout.
+ * - maxColumnWidth: Number - Maximum width of a column.
+ * - maxRowHeight: Number - Maximum height of a row (aspect-based).
+ * - pageXBound: Number - Right boundary for layout (used for wrapping).
+ * - columnWidth: Number - Width of a column.
+ * - rowHeight: Number - Height of a row (aspect-based).
+ * - pageHeight: String - Calculated page height (with 'px').
+ * - clamped: Boolean - Used during layout calculation to indicate width clamping.
+ * - clampedWidth: Number|null - Used during layout calculation for clamped width.
+ * - wrapMe: Boolean - Used during layout calculation for wrapping.
+ * - forceGrow: Boolean - Used during layout calculation for forced height growth.
+ * - lastBottom: Number - Used during layout calculation for tracking bottom Y.
+ */
+
 /* Ok, so this will be sent the wireframe from it's page manager and work out the postions and sizes for all of the floaters (by index) and also keep an eye on page resizing. I will want to be able to call, say, getLayout(floaterIndex) and it will return {x,y,w,h} */
 class LayoutManager {
   //Having almost completed development I'm not sure why I started with these as static vars?
