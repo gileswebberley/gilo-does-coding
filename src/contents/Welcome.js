@@ -41,7 +41,7 @@ const WelcomeContent = {
       sizeType: 'auto',
       clamp: 170,
       type: 'title',
-      src: `self portrait '<a onpointerdown='window.SiteLinkManager.selectPage("Timeography")'>timeograph</a>'`,
+      src: `self portrait '<a onclick='window.SiteLinkManager.selectPage("Timeography")'>timeograph</a>'`,
     },
     {
       layoutNumber: 7,

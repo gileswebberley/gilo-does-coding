@@ -8,6 +8,7 @@ import Colourist from './scripts/Colourist.js';
 import WelcomeContent from './contents/Welcome.js';
 import TimeographyContent from './contents/Timeography.js';
 import ParticlesContent from './contents/Particles.js';
+import SpectrumContent from './contents/Spectrum.js';
 
 //we'll remove the loading message when this loads...
 document.querySelector('#loader').remove();
@@ -112,5 +113,5 @@ NavManager.setHamburger(hamburger);
 SiteManager.buildPage(WelcomeContent);
 SiteManager.buildPage(TimeographyContent);
 SiteManager.buildPage(ParticlesContent);
-SiteManager.buildPage(Page_Test3);
+SiteManager.buildPage(SpectrumContent);
 SiteManager.buildPage(Page_Test4);

@@ -13,7 +13,7 @@ class FloaterVideo extends Floater {
       'nodownload noremoteplayback'
     );
     this.contentHolder.setAttribute('disablepictureinpicture', '');
-    this.contentHolder.setAttribute('loop', '');
+    // this.contentHolder.setAttribute('loop', '');
     this.contentHolder.setAttribute('playsinline', '');
     this.contentHolder.setAttribute('preload', 'metadata');
     if (this.src.alt) this.contentHolder.setAttribute('poster', this.src.alt);
