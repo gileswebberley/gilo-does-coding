@@ -71,6 +71,7 @@ class Floater {
     this.#isFloating = false;
     // z-index of 1 passed in as we don't want any scaling
     this.#moveTo(this.#revealX, this.#revealY, 1, World.DURATION);
+    //This is now used by the css to remove the border when floating
     this.#element.setAttribute('data-floating', this.#isFloating);
     // This is what we want to happen at the end of the reveal hence it's a timeout with the same duration as the moveTo function is using (I've made it fractionally longer so that the call to resizeContainerRect works as hoped)
     this.#revealTimeout = setTimeout(() => {
