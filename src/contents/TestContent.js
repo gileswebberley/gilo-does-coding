@@ -1,32 +1,3 @@
-//using copilot to document the structure of this type of object which is what you pass to SiteManager.buildPage()
-/**
- * @typedef {Object} PageLayout
- * @property {string} pageId - A unique page identifier
- * @property {string} buttonText - The label for the button within the navigation system
- * @property {string} aspectRation - The base aspect ratio for layout containers (ie the ratio to work out rowHeight based on columnWidth) in the format 'widthUnits:heightUnits'
- * @property {Array<ContentElement>} content - The individual elements that form the page
- *
- * @typedef {Object} ContentElement
- * @property {number} layoutNumber - A unique identifier for the layout element.
- * @property {Object} position - The position of the layout element in the grid.
- * @property {number} position.row - The row position of the layout element.
- * @property {number} position.column - The column position of the layout element.
- * @property {Object} offset - The pixel offset for the layout element.
- * @property {number} offset.x - The horizontal offset as a percentage of width.
- * @property {number} offset.y - The vertical offset as a percentage of height.
- * @property {Object} size - The size of the layout element.
- * @property {number} size.width - The width of the layout element as a percentage of the column width.
- * @property {number} size.height - The height of the layout element if sizeType is:
- * 'fixed' it is as pixels
- * 'auto' it is percentage of the height according to aspectRatio (ie based on columnWidth)
- * 'grow' it is clamped to auto when columnWidth is full otherwise it proportionally bigger than auto based on how much smaller columnWidth is (hard to explain but essentially makes it taller than it would be if the width gets smaller than hoped).
- * @property {string} sizeType - controls the height calculations as described in size.height.
- * @property {number} clamp - The minimum width (in pixels) that this element can be, it will be wrapped if it cannot fit on it's own row. This was developed so images and video in particular can't get too small (sizeType must be 'auto' for this to work, cos it kinda works with the aspect ratio of the w:h).
- * @property {string} type - The type of content (e.g., 'image', 'html', 'iframe', 'blank').
- * @property {Object|string} src - The source of the content. Can be an object for images or a string for HTML/iframe content.
- * @property {string} [src.src] - The source path for an image (if type is 'image').
- * @property {string} [src.alt] - The alt text for an image (if type is 'image') or a url for the poster image if it is of type 'video'.
- */
 const Page_Test = {
   pageId: 'Home',
   buttonText: 'Home Button Testing',

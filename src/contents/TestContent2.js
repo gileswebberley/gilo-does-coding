@@ -1,24 +1,3 @@
-//using copilot to document the structure of this type of object which is what you pass to SiteManager.buildPage()
-/**
- * @typedef {Object} PageLayout
- * @property {number} layoutNumber - A unique identifier for the layout element.
- * @property {Object} position - The position of the layout element in the grid.
- * @property {number} position.row - The row position of the layout element.
- * @property {number} position.column - The column position of the layout element.
- * @property {Object} offset - The pixel offset for the layout element.
- * @property {number} offset.x - The horizontal offset in pixels.
- * @property {number} offset.y - The vertical offset in pixels.
- * @property {Object} size - The size of the layout element.
- * @property {number} size.width - The width of the layout element.
- * @property {number} size.height - The height of the layout element.
- * @property {Object} sizeType - The type of size for the layout element.
- * @property {string} sizeType.width - The width type, either 'auto' or 'fixed'.
- * @property {string} sizeType.height - The height type, either 'auto' or 'fixed'.
- * @property {string} type - The type of content (e.g., 'image', 'html', 'iframe', 'blank').
- * @property {Object|string} src - The source of the content. Can be an object for images or a string for HTML/iframe content.
- * @property {string} [src.src] - The source path for an image (if type is 'image').
- * @property {string} [src.alt] - The alt text for an image (if type is 'image').
- */
 const Page_Test2 = {
   pageId: 'Project-2',
   buttonText: 'Project - Test It 2',

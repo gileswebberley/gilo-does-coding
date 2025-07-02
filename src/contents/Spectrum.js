@@ -70,21 +70,21 @@ const SpectrumContent = {
     {
       layoutNumber: 10,
       position: { row: 4, column: 1 },
-      offset: { x: 5, y: 0 },
+      offset: { x: 5, y: 20 },
       size: { width: 90, height: 90 },
       sizeType: 'auto',
       clamp: 320,
       type: 'video',
       src: {
         src: '../Aldous-Harding.mp4',
-        // alt: `The particle cloud dancing to the motion it sees`,
+        alt: `../Aldous-screenshot.jpg`,
       },
     },
     {
       layoutNumber: 8,
       position: { row: 4, column: 2 },
       offset: { x: 3, y: 0 },
-      size: { width: 95, height: 165 },
+      size: { width: 95, height: 175 },
       sizeType: 'grow',
       type: 'html',
       src: `

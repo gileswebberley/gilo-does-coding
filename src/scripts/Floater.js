@@ -62,7 +62,7 @@ class Floater {
       //I've just discovered that I can stop this processing if the window is not visible (ie running in the background). This is my quick fix, I may come back to this in the future
       if (document.visibilityState === 'hidden') return;
       this.#triggerMove(); // Move to new position
-    }, this.#calculateMyDuration());
+    }, this.#myDuration); // this.#calculateMyDuration()
   }
 
   reveal() {
@@ -71,11 +71,12 @@ class Floater {
     this.#isFloating = false;
     // z-index of 1 passed in as we don't want any scaling
     this.#moveTo(this.#revealX, this.#revealY, 1, World.DURATION);
+    this.#element.setAttribute('data-floating', this.#isFloating);
     // This is what we want to happen at the end of the reveal hence it's a timeout with the same duration as the moveTo function is using (I've made it fractionally longer so that the call to resizeContainerRect works as hoped)
     this.#revealTimeout = setTimeout(() => {
       this.#contentHolder.style.visibility = 'visible';
       // this.#isFloating = false;
-      this.#element.setAttribute('data-floating', this.#isFloating);
+      // this.#element.setAttribute('data-floating', this.#isFloating);
       // clearTimeout(timeout);//no need I reckon as it clears once it's finished - I'll clear it in float() for the case where it's revealed and then quickly set to float again
       // this.resizeContainerRect();
       // this.#revealTimeout = null;

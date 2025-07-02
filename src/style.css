@@ -147,6 +147,7 @@ a {
 
 .floater a {
   text-decoration: underline solid;
+  text-underline-offset: 0.3rem;
 }
 
 /* links within the floater have a link icon added after as we have switched off the decoration */
@@ -300,6 +301,10 @@ This is all of the styling for the navigation system ---------------------------
   color: #ca5811;
   border-radius: calc(var(--content-border-radius) * 2);
   padding: 20px;
+}
+
+.floater[data-floating='true'] {
+  border: none;
 }
 
 /* For the iFrame that is attached to a FloaterIframe */

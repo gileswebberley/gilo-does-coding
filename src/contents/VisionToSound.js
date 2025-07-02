@@ -1,0 +1,115 @@
+const VtSContent = {
+  pageId: 'VtS',
+  buttonText: 'Project - Vision To Sound',
+  aspectRatio: '16:9',
+  content: [
+    {
+      layoutNumber: 1,
+      position: { row: 1, column: 1 },
+      offset: { x: 0, y: 0 },
+      size: { width: 150, height: 25 },
+      sizeType: 'auto',
+      type: 'title',
+      src: `Vision To Sound - C++/OpenFrameworks`,
+    },
+    {
+      layoutNumber: 2,
+      position: { row: 1, column: 2 },
+      offset: { x: 0, y: 0 },
+      size: { width: 1, height: 1 },
+      sizeType: 'fixed',
+      type: 'blank',
+    },
+    {
+      layoutNumber: 3,
+      position: { row: 2, column: 1 },
+      offset: { x: 10, y: 10 },
+      size: { width: 85, height: 85 },
+      sizeType: 'auto',
+      clamp: 320,
+      type: 'image',
+      src: {
+        src: '../visionToSound.jpg',
+        alt: `screen grab of the Vision To Sound demo video`,
+      },
+    },
+    // {
+    //   layoutNumber: 4,
+    //   position: { row: 2, column: 1 },
+    //   offset: { x: 0, y: 20 },
+    //   size: { width: 40, height: 35 },
+    //   sizeType: 'auto',
+    //   clamp: 170,
+    //   type: 'title',
+    //   src: `self portrait '<a onclick='window.SiteLinkManager.selectPage("Timeography")'>timeograph</a>'`,
+    // },
+    {
+      layoutNumber: 7,
+      position: { row: 2, column: 2 },
+      offset: { x: 0, y: 0 },
+      size: { width: 100, height: 125 },
+      sizeType: 'grow',
+      type: 'html',
+      src: `<h2>Continuing to experiment as a learning experience</h2>
+      <p>Inspired by an idea of trying to make reflections on water create music, it continues an interest in converting between the senses. Much like Spectrum Sampler converts sound into visuals, this project was the obvious next step converting visuals into sound. I created a variable grid system which creates 'light sampling nodes' that measure the colour and intensity of the light it 'sees', as though buttons on a sampler or drum machine. This information is used to control triggering and volume whilst the position of the grid-square controls the panning and which sound sample is triggered.</p>`,
+    },
+
+    {
+      layoutNumber: 5,
+      position: { row: 3, column: 1 },
+      offset: { x: 0, y: -15 },
+      size: { width: 100, height: 95 },
+      sizeType: 'grow',
+      type: 'html',
+      src: `<h2>The structure of this code-sketch</h2>
+      <p>The sampler, which is an extension of the Jukebox used in Spectrum Sampler, has a basic bpm control and plays several samples from the folder selected concurrently. Simply point to the folder of samples and the application will attach each sound to a grid square. It is rather slow as the proccessing involved in reading each frame is far from optimised, but it works as a 'sketch' which is how I tend to work when creating.</p>`,
+    },
+    {
+      layoutNumber: 9,
+      position: { row: 3, column: 2 },
+      offset: { x: 10, y: 0 },
+      size: { width: 80, height: 80 },
+      sizeType: 'auto',
+      clamp: 320,
+      type: 'video',
+      src: {
+        src: '../VtS-window.mp4',
+        alt: `../visionToSound.jpg`,
+      },
+    },
+    {
+      layoutNumber: 6,
+      position: { row: 4, column: 2 },
+      offset: { x: 3, y: 0 },
+      size: { width: 95, height: 140 },
+      sizeType: 'grow',
+      type: 'html',
+      src: `
+      <h2>With a webcam or with a movie, what could become of this</h2>
+      <p>One of the videos here is created by filming out of my office window with a webcam by way of demonstrating the basic functionality, whilst the other is to show it's alternative file based system. I would very much like to replace the samples with notes created in consultation with a musician as it is currently working with what I could find for free online. As a proof of concept I thoroughly enjoyed the results but it doesn't sound particularly pleasant in it's current form. I believe it would be an enjoyable interactive experience in a controlled environment where the participants could work together with torches to make a constantly evolving soundscape.</p>`,
+    },
+    {
+      layoutNumber: 11,
+      position: { row: 4, column: 1 },
+      offset: { x: 0, y: 0 },
+      size: { width: 100, height: 100 },
+      sizeType: 'auto',
+      clamp: 320,
+      type: 'video',
+      src: {
+        src: '../VtS.mp4',
+        alt: `../VtS-screengrab.jpg`,
+      },
+    },
+    {
+      layoutNumber: 12,
+      position: { row: 4, column: 1 },
+      offset: { x: 20, y: 200 },
+      size: { width: 80, height: 15 },
+      sizeType: 'grow',
+      type: 'title',
+      src: `check out the <a href="https://github.com/gileswebberley/VisionToSound" target="_blank">source code</a> on GitHub`,
+    },
+  ],
+};
+export default VtSContent;

@@ -9,6 +9,7 @@ import WelcomeContent from './contents/Welcome.js';
 import TimeographyContent from './contents/Timeography.js';
 import ParticlesContent from './contents/Particles.js';
 import SpectrumContent from './contents/Spectrum.js';
+import VtSContent from './contents/VisionToSound.js';
 
 //we'll remove the loading message when this loads...
 document.querySelector('#loader').remove();
@@ -114,4 +115,4 @@ SiteManager.buildPage(WelcomeContent);
 SiteManager.buildPage(TimeographyContent);
 SiteManager.buildPage(ParticlesContent);
 SiteManager.buildPage(SpectrumContent);
-SiteManager.buildPage(Page_Test4);
+SiteManager.buildPage(VtSContent);
