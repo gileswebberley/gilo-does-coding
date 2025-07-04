@@ -76,11 +76,6 @@ class Floater {
     // This is what we want to happen at the end of the reveal hence it's a timeout with the same duration as the moveTo function is using (I've made it fractionally longer so that the call to resizeContainerRect works as hoped)
     this.#revealTimeout = setTimeout(() => {
       this.#contentHolder.style.visibility = 'visible';
-      // this.#isFloating = false;
-      // this.#element.setAttribute('data-floating', this.#isFloating);
-      // clearTimeout(timeout);//no need I reckon as it clears once it's finished - I'll clear it in float() for the case where it's revealed and then quickly set to float again
-      // this.resizeContainerRect();
-      // this.#revealTimeout = null;
     }, World.DURATION + 100);
   }
 

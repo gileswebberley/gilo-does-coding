@@ -8,6 +8,7 @@ import ParticlesContent from './contents/Particles.js';
 import SpectrumContent from './contents/Spectrum.js';
 import VtSContent from './contents/VisionToSound.js';
 import UnityContent from './contents/MeteorStorm.js';
+import WildOasisContent from './contents/WildOasis.js';
 
 //we'll remove the loading message when this loads...
 document.querySelector('#loader').remove();
@@ -115,3 +116,4 @@ SiteManager.buildPage(ParticlesContent);
 SiteManager.buildPage(SpectrumContent);
 SiteManager.buildPage(VtSContent);
 SiteManager.buildPage(UnityContent);
+SiteManager.buildPage(WildOasisContent);

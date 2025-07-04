@@ -1,6 +1,6 @@
-const WelcomeContent = {
-  pageId: 'Welcome',
-  buttonText: 'About This Site',
+const HomeContent = {
+  pageId: 'Home',
+  buttonText: 'Welcome',
   aspectRatio: '16:9',
   content: [
     {
@@ -16,13 +16,13 @@ const WelcomeContent = {
       layoutNumber: 3,
       position: { row: 2, column: 1 },
       offset: { x: 10, y: 10 },
-      size: { width: 80, height: 80 },
+      size: { width: 60, height: 60 },
       sizeType: 'auto',
       clamp: 250,
       type: 'image',
       src: {
-        src: '../pageObjectDef.jpg',
-        alt: `image of the definition of this sites page object`,
+        src: '../selfportrait.jpg',
+        alt: `self portrait produced with my Timeography project`,
       },
     },
     {
@@ -33,7 +33,7 @@ const WelcomeContent = {
       sizeType: 'auto',
       clamp: 170,
       type: 'title',
-      src: `what makes a page'`,
+      src: `self portrait '<a onclick='window.SiteLinkManager.selectPage("Timeography")'>timeograph</a>'`,
     },
     {
       layoutNumber: 7,
@@ -130,4 +130,4 @@ const WelcomeContent = {
     },
   ],
 };
-export default WelcomeContent;
+export default HomeContent;
