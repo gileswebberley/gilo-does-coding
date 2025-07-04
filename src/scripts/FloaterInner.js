@@ -1,4 +1,3 @@
-import Page_Test from '../contents/TestContent';
 import Floater from './Floater';
 
 class FloaterInner extends Floater {
