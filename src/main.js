@@ -1,3 +1,4 @@
+'use strict';
 import './style.css';
 import SiteManager from './scripts/SiteManager.js';
 import NavManager from './scripts/NavManager.js';

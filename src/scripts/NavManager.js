@@ -1,4 +1,4 @@
-import SiteManager from './SiteManager';
+'use strict';
 
 //This will be the class that manages building the navigation bar, it will receive the nav element in it's constructor and then we'll want the SiteManager to be able to call an add button method. I'll want the responsive design of the navigation to be of no concern to this I think, so we'll just add the buttons to the nav element and let CSS take care of it.
 

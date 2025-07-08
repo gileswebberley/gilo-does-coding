@@ -1,5 +1,5 @@
 // I don't think this needs to know the name of the page but instead it will simply return the Page object back to SiteManager so it can call the show() and hide() methods. I think each page will want a LayoutManager that works out sizes and layout based on screen size etc. The LayoutManager will want to be able to get to each individual Floater in some way  so that it can call their moveTo() and setDimensions() methods. No, that's unneccessary, the PageManager will call those but just use the LayoutManager to get an array of size and position objects for each Floater.
-
+'use strict';
 import FloaterBlank from './FloaterBlank';
 import FloaterIframe from './FloaterIframe';
 import FloaterImage from './FloaterImage';

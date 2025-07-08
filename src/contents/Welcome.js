@@ -1,6 +1,6 @@
 const WelcomeContent = {
   pageId: 'Welcome',
-  buttonText: 'About This Site',
+  buttonText: 'Project - This Site',
   aspectRatio: '16:9',
   content: [
     {
@@ -10,13 +10,13 @@ const WelcomeContent = {
       size: { width: 150, height: 25 },
       sizeType: 'auto',
       type: 'title',
-      src: `Welcome to my site, I'm Giles`,
+      src: `Gilo_Does_Coding - JS/HTML5/CSS3`,
     },
     {
       layoutNumber: 3,
       position: { row: 2, column: 1 },
-      offset: { x: 10, y: 10 },
-      size: { width: 80, height: 80 },
+      offset: { x: 10, y: 0 },
+      size: { width: 50, height: 60 },
       sizeType: 'auto',
       clamp: 250,
       type: 'image',
@@ -26,14 +26,14 @@ const WelcomeContent = {
       },
     },
     {
-      layoutNumber: 4,
+      layoutNumber: 9,
       position: { row: 2, column: 1 },
       offset: { x: 0, y: 20 },
-      size: { width: 40, height: 35 },
+      size: { width: 40, height: 15 },
       sizeType: 'auto',
       clamp: 170,
       type: 'title',
-      src: `what makes a page'`,
+      src: `<a href="https://github.com/gileswebberley/gilo-does-coding/blob/main/src/contents/ContentTemplateExample.js" target="_blank">what makes a page</a>`,
     },
     {
       layoutNumber: 7,

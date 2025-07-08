@@ -10,7 +10,7 @@ const TimeographyContent = {
       size: { width: 150, height: 25 },
       sizeType: 'auto',
       type: 'title',
-      src: `Timeography - C++ (OpenFrameworks)`,
+      src: `Timeography - C++/OpenFrameworks`,
     },
     {
       layoutNumber: 2,

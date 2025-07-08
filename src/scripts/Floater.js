@@ -1,3 +1,4 @@
+'use strict';
 import Colourist from './Colourist';
 import World from './World';
 

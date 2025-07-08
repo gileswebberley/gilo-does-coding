@@ -10,7 +10,7 @@ const ParticlesContent = {
       size: { width: 150, height: 25 },
       sizeType: 'auto',
       type: 'title',
-      src: `My Yellow Bird - C++/OpenFrameworks/GLSL`,
+      src: `My Yellow Bird - C++/OpenFrameworks/GLSL/OpenCV`,
     },
     {
       layoutNumber: 2,

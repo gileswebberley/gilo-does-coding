@@ -1,3 +1,4 @@
+'use strict';
 import World from './World';
 
 /**
@@ -172,7 +173,7 @@ class LayoutManager {
       this.pageHeight = layoutHeight + 'px'; // thought it wasn't good logic but it turned out to be me forgetting to add the 'px' :D !!
     }
 
-    //No this doesn't have 'this' in scope...but ah-ha, this is where the Function.call() comes into play :)
+    //No this doesn't have 'this' in scope...but ah-ha, this is where the Function.call() comes into play :) Is this creating the memory build up cos I can't find any forgotten timeouts or intervals or excess event listeners??
     //IMPORTANT - This must be called BEFORE calculateY!!!!!!!!!!!!!!!!!!!!!!!!
     function calculateX(element, rowNumber) {
       //clamping can only be set on auto sized elements - changed this when using it for an actual layout, it can now be set on grow elements too

@@ -1,3 +1,4 @@
+'use strict';
 import Floater from './Floater';
 import NavManager from './NavManager';
 import PageManger from './PageManager';
