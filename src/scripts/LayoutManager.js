@@ -133,16 +133,7 @@ class LayoutManager {
   //This method is why we sort the elements' wireframe in the constructor
   #buildLayout() {
     //These are so each element can be 'aware' of the position of other elements essentially
-    // let currentX = this.originX;
-    // let nextX = 0;
-    // let currentY = this.originY;
-    // let nextY = 0;
-    // let currentRow = 1;
-    // let currentColumn = 1;
-    // let nthChild = 0; //This is because I want to be able to know about where the element sits inside their own containing grid square...It's going to be for wrapping behaviour and whether to attach a offsetY, namely it will be like a text wrap with the alignment to the left (I hope)
-    // let nthWrapped = 0;
-    // //So we have the height based on the width and whether the mode is grow....
-    // let currentWidthModifier = 1;
+    // I THOUGHT I MIGHT HAVE A MEMORY LEAK AS THE 'MEMORY USAGE' IN CHROME WAS SCREAMING ABOUT IT BUILDING UP (ALL THE WAY TO 1GB+!!) AND SO I EXTRACTED THE calculateX/Y METHODS AS IT WAS ALL I COULD THINK OF THAT MIGHT NOT BE GARBAGE COLLECTED. These variables were originally defined in here and so were the methods, I used the call() method to bind them and it was all working correctly (I had never found a need for this methodology before so it seemed like a perfect solution) however I have moved them out now and the memory usage seems to be more under control so I shall have to investigate this further (or if you're reading this and can explain then please do contact me, I'd love some mentoring for exactly this kind of thing!!) - I have experimented now and I have the funny feeling that it is actually being caused by the HMR (hot reloading) that Vite does during development! There is a couple of mentions on stack overflow and Google's AI answer seems to imply that this is a thing! I'll leave it now because I think it's fine and I can always change back if I realise that it was a genius way of doing things after all!! :D
     this.currentX = this.originX;
     this.nextX = 0;
     this.currentY = this.originY;
@@ -157,17 +148,18 @@ class LayoutManager {
     for (let i = 1; i <= this.rowCount; i++) {
       const row = this.#getRowElements(i);
       row.forEach((element) => {
-        //ok, so, I decided it would be more readable by having the various logic inside self contained functions but I wanted them to be able to share this method's variables (eg currentX) but also refer to this class instance's variables (eg this.smallScreenWidth). I realised that this is the perfect time to use the Function.prototype.call() method to bind it to 'this'
+        //ok, so, I decided it would be more readable by having the various logic inside self contained functions but I wanted them to be able to share this method's variables (eg currentX) but also refer to this class instance's variables (eg this.smallScreenWidth). I realised that this is the perfect time to use the Function.prototype.call() method to bind it to 'this' - UPDATE: please read my note at the top about this being the culpret of a possible memory leak.
         // const { x, w } = calculateX.call(this, element, i);
-        const { x, w } = this.calculateX(element, i);
+        const { x, w } = this.#calculateX(element, i);
         // console.log(`calculateX: x:${x} w:${w}`);
         // const { y, h } = calculateY.call(this, element, i);
-        const { y, h } = this.calculateY(element, i);
+        const { y, h } = this.#calculateY(element, i);
         // console.log(`Making layoutMap entry for #${element.layoutNumber}`);
         // if the layout has already been calculated this will simply update the values for each layoutNumber which is why we're using a map rather than array
         this.layoutMap.set(Number(element.layoutNumber), { x, y, w, h });
       });
     }
+    //changed these to instance variables as part of the memory leak investigation
     this.nextY += this.pagePadding;
     const layoutHeight = this.nextY;
     // //add the padding to the bottom before setting the total layout height
@@ -187,7 +179,7 @@ class LayoutManager {
       this.pageHeight = layoutHeight + 'px'; // thought it wasn't good logic but it turned out to be me forgetting to add the 'px' :D !!
     }
 
-    //No this doesn't have 'this' in scope...but ah-ha, this is where the Function.call() comes into play :) Is this creating the memory build up cos I can't find any forgotten timeouts or intervals or excess event listeners??
+    //No this doesn't have 'this' in scope...but ah-ha, this is where the Function.call() comes into play :) Is this creating the memory build up cos I can't find any forgotten timeouts or intervals or excess event listeners?? Could it just be down to the hot reloading during development though??
     //IMPORTANT - This must be called BEFORE calculateY!!!!!!!!!!!!!!!!!!!!!!!!
     // function calculateX(element, rowNumber) {
     //   //clamping can only be set on auto sized elements - changed this when using it for an actual layout, it can now be set on grow elements too
@@ -394,7 +386,9 @@ class LayoutManager {
   }
 
   //----------------------------------------------------------------------------
-  calculateX(element, rowNumber) {
+
+  //IMPORTANT - This must be called BEFORE calculateY !!!!!!!!!!!!!!!!!!!!!!!!
+  #calculateX(element, rowNumber) {
     //clamping can only be set on auto sized elements - changed this when using it for an actual layout, it can now be set on grow elements too
     this.clamped = false;
     this.clampedWidth = null;
@@ -532,7 +526,8 @@ class LayoutManager {
     return { x, w };
   }
 
-  calculateY(element, rowNumber) {
+  //IMPORTANT - This must be called AFTER calculateX !!!!!!!!!!!!!!!!!!!!!!!!
+  #calculateY(element, rowNumber) {
     //if we are on a new row then ignore y-offset
     let isNewRow = false;
 
