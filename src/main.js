@@ -10,6 +10,7 @@ import SpectrumContent from './contents/Spectrum.js';
 import VtSContent from './contents/VisionToSound.js';
 import UnityContent from './contents/MeteorStorm.js';
 import WildOasisContent from './contents/WildOasis.js';
+import HomeContent from './contents/Home.js';
 
 //we'll remove the loading message when this loads...
 document.querySelector('#loader').remove();
@@ -111,6 +112,7 @@ const navElement = document.querySelector('#main-nav');
 const hamburger = document.querySelector('#hamburger-button');
 SiteManager.init(navElement, container);
 NavManager.setHamburger(hamburger);
+SiteManager.buildPage(HomeContent);
 SiteManager.buildPage(WelcomeContent);
 SiteManager.buildPage(TimeographyContent);
 SiteManager.buildPage(ParticlesContent);

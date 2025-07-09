@@ -118,6 +118,10 @@ p {
   padding: 0;
 }
 
+summary {
+  font-weight: 700;
+}
+
 /* Just clearing the automatically added space around the various text elements when used inside the floaters */
 .floater :is(h1, h2, h3, h4) {
   margin: 0;
