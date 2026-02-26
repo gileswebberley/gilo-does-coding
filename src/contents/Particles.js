@@ -93,9 +93,9 @@ const ParticlesContent = {
     },
     {
       layoutNumber: 12,
-      position: { row: 4, column: 2 },
+      position: { row: 5, column: 1 },
       offset: { x: 20, y: 20 },
-      size: { width: 80, height: 15 },
+      size: { width: 80, height: 25 },
       sizeType: 'grow',
       type: 'title',
       src: `check out the <a aria-label="Visit the GitHub repo for this project" href="https://github.com/gileswebberley/ParticleTracker" target="_blank">source code</a> on GitHub`,
