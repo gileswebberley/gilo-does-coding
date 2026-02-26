@@ -13,8 +13,17 @@ const HomeContent = {
       src: `Let me introduce myself, I'm Giles`,
     },
     {
+      layoutNumber: 2,
+      position: { row: 2, column: 2 },
+      offset: { x: 0, y: 0 },
+      size: { width: 100, height: 35 },
+      sizeType: 'auto',
+      type: 'title',
+      src: `Web Developer and Creative Coder`,
+    },
+    {
       layoutNumber: 3,
-      position: { row: 2, column: 1 },
+      position: { row: 3, column: 1 },
       offset: { x: 10, y: 10 },
       size: { width: 60, height: 60 },
       sizeType: 'auto',
@@ -27,7 +36,7 @@ const HomeContent = {
     },
     {
       layoutNumber: 4,
-      position: { row: 2, column: 1 },
+      position: { row: 3, column: 1 },
       offset: { x: 0, y: 20 },
       size: { width: 40, height: 35 },
       sizeType: 'auto',
@@ -37,7 +46,7 @@ const HomeContent = {
     },
     {
       layoutNumber: 7,
-      position: { row: 2, column: 2 },
+      position: { row: 3, column: 2 },
       offset: { x: 0, y: 0 },
       size: { width: 100, height: 170 },
       sizeType: 'grow',
@@ -48,7 +57,7 @@ const HomeContent = {
 
     {
       layoutNumber: 5,
-      position: { row: 3, column: 1 },
+      position: { row: 4, column: 1 },
       offset: { x: 0, y: -15 },
       size: { width: 100, height: 155 },
       sizeType: 'grow',
@@ -62,7 +71,7 @@ const HomeContent = {
     },
     {
       layoutNumber: 8,
-      position: { row: 3, column: 2 },
+      position: { row: 4, column: 2 },
       offset: { x: 0, y: -40 },
       size: { width: 20, height: 35 },
       sizeType: 'auto',
@@ -75,7 +84,7 @@ const HomeContent = {
     },
     {
       layoutNumber: 10,
-      position: { row: 3, column: 2 },
+      position: { row: 4, column: 2 },
       offset: { x: 0, y: -40 },
       size: { width: 30, height: 35 },
       sizeType: 'auto',
@@ -88,7 +97,7 @@ const HomeContent = {
     },
     {
       layoutNumber: 11,
-      position: { row: 3, column: 2 },
+      position: { row: 4, column: 2 },
       offset: { x: 0, y: -40 },
       size: { width: 30, height: 35 },
       sizeType: 'auto',
@@ -101,8 +110,8 @@ const HomeContent = {
     },
     {
       layoutNumber: 6,
-      position: { row: 4, column: 2 },
-      offset: { x: 3, y: -15 },
+      position: { row: 5, column: 2 },
+      offset: { x: 3, y: -5 },
       size: { width: 95, height: 210 },
       sizeType: 'grow',
       type: 'html',
@@ -138,7 +147,7 @@ Bristol had been a favourite city for me since visiting a friend there back in t
     },
     {
       layoutNumber: 12,
-      position: { row: 4, column: 1 },
+      position: { row: 5, column: 1 },
       offset: { x: 20, y: 10 },
       size: { width: 80, height: 35 },
       sizeType: 'grow',

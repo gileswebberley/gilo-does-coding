@@ -11,13 +11,14 @@ import VtSContent from './contents/VisionToSound.js';
 import UnityContent from './contents/MeteorStorm.js';
 import WildOasisContent from './contents/WildOasis.js';
 import HomeContent from './contents/Home.js';
+import SnotifyContent from './contents/Snotify.js';
 
 //we'll remove the loading message when this loads...
 document.querySelector('#loader').remove();
 //adding my email address like this to try to avoid being the victim of spam...
 document.querySelector('#email-address').innerHTML = ` <a
               href='mailto:gileswebberley@gmail.com?subject=${encodeURI(
-                'Message from portfolio site'
+                'Message from portfolio site',
               )}'
               target="_blank"
               rel="noreferrer"
@@ -36,11 +37,11 @@ function setHeaderFooterColour() {
   const timeColours = Colourist.getTimeBasedColourBasedOnColourScheme();
   document.documentElement.style.setProperty(
     '--header-footer-time-colour',
-    timeColours.bg
+    timeColours.bg,
   );
   document.documentElement.style.setProperty(
     '--header-footer-time-colour-text',
-    timeColours.text
+    timeColours.text,
   );
 }
 setHeaderFooterColour();
@@ -48,7 +49,7 @@ setHeaderFooterColour();
 function setBodyColour() {
   document.documentElement.style.setProperty(
     'background-color',
-    Colourist.getBackgroundColour()
+    Colourist.getBackgroundColour(),
   );
 }
 setBodyColour();
@@ -58,23 +59,23 @@ function setNavColours() {
   const navSwatch = Colourist.getNavSwatch();
   document.documentElement.style.setProperty(
     '--colour-nav-button-text',
-    navSwatch.text
+    navSwatch.text,
   );
   document.documentElement.style.setProperty(
     '--colour-nav-button-bg',
-    navSwatch.bg
+    navSwatch.bg,
   );
   document.documentElement.style.setProperty(
     '--colour-nav-button-border',
-    navSwatch.border
+    navSwatch.border,
   );
   document.documentElement.style.setProperty(
     '--colour-nav-button-visited',
-    navSwatch.visited
+    navSwatch.visited,
   );
   document.documentElement.style.setProperty(
     '--colour-nav-button-hover',
-    navSwatch.hover
+    navSwatch.hover,
   );
 }
 setNavColours();
@@ -90,7 +91,7 @@ function setDarkModeToggleButton() {
   //continuing my attempts to make this a bit more accessible friendly
   darkModeToggle.setAttribute(
     'aria-checked',
-    Colourist.colourScheme === 'dark'
+    Colourist.colourScheme === 'dark',
   );
 }
 setDarkModeToggleButton();
@@ -114,9 +115,10 @@ SiteManager.init(navElement, container);
 NavManager.setHamburger(hamburger);
 SiteManager.buildPage(HomeContent);
 SiteManager.buildPage(WelcomeContent);
+SiteManager.buildPage(SnotifyContent);
+SiteManager.buildPage(WildOasisContent);
 SiteManager.buildPage(TimeographyContent);
 SiteManager.buildPage(ParticlesContent);
 SiteManager.buildPage(SpectrumContent);
 SiteManager.buildPage(VtSContent);
 SiteManager.buildPage(UnityContent);
-SiteManager.buildPage(WildOasisContent);
