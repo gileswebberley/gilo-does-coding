@@ -105,7 +105,7 @@ const VtSContent = {
       layoutNumber: 12,
       position: { row: 4, column: 1 },
       offset: { x: 20, y: 200 },
-      size: { width: 80, height: 15 },
+      size: { width: 80, height: 25 },
       sizeType: 'grow',
       type: 'title',
       src: `check out the <a href="https://github.com/gileswebberley/VisionToSound" target="_blank">source code</a> on GitHub`,
