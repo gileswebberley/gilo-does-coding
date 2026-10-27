@@ -79,7 +79,7 @@ class PageManger {
       );
       // console.log(`Floater ${content.layoutNumber} position:`, x, y, w, h);
       currentFloater.setRevealPosition(x, y);
-      currentFloater.float();
+      // currentFloater.float();//let's put this in the floater's constructor
       currentFloater.setDimensions(w, h);
     });
   }

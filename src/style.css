@@ -186,7 +186,7 @@ a {
   margin: 0 auto;
   min-height: 100%;
   overflow: hidden; /* So it ignores the Floaters going out of the browser window*/
-  /* as we're transitioning to using the transform3d rather than top, left, z-index we'll set up a 3d viewport */
+  /* as we're transitioning to using the transform3d rather than top, left, z-index we'll set up a 3d viewport - not actually appropriate to this project as this container changes size and that shifts positions of the floaters because of the z-axis calculations*/
   /* perspective: 1500px; */
   /* transform-style: preserve-3d; */
   align-self: flex-start;
@@ -238,7 +238,7 @@ This is all of the styling for the navigation system ---------------------------
   top: 50%;
   transform: translate(-50%, 0%) rotate(-45deg);
 }
-
+/* Think about using sibling-count and a grid to make them layout more pleasantly at some point */
 #main-nav {
   position: absolute;
   z-index: 100;
@@ -314,19 +314,18 @@ This is all of the styling for the navigation system ---------------------------
   position: absolute;
   top: 0;
   left: 0;
-  margin: 0;
+  transform: translate3d(0, 0, 0);
+  /* margin: 0; */
   /* background-color: rgb(238, 142, 9); set in the Floater script */
   border: 2px solid;
   color: #ca5811;
   border-radius: calc(var(--content-border-radius) * 2);
   padding: 20px;
   /* to try to aleviate the stuttering movement when changing colour-mode. We use this in combination with the transform3d to get some of the work passed onto the gpu as I understand */
-  /* transform-style: preserve-3d; */
-  /* z-index: calc(var(--floater-z)+99); */
-  will-change: transform, width, height;
-  /* transform-origin: top left; */
+  will-change: transform; /*, width, height;*/
+  transform-origin: top left;
 }
-
+/* set by js when floating, this removes the border because it was aliasing as it scaled and rotated */
 .floater[data-floating='true'] {
   border: none;
 }
@@ -362,7 +361,10 @@ iframe {
 }
 
 .content-title {
-  font-size: clamp(1.6rem, 2.8cqb, 4.4rem);
+  /* now being sized by JS */
+  /* font-size: clamp(1.6rem, 8cqh, 4.4rem); */
+  /* set a baseline size */
+  font-size: 1rem;
   overflow-wrap: anywhere;
   text-wrap: balance;
   font-weight: 400;
@@ -372,6 +374,7 @@ iframe {
   word-spacing: -0.3rem;
   line-height: 1.2;
   text-align: center;
+  /* word-break: break-all; */
 }
 
 /* We want to change the floater's styling when it's being used as a FloaterTitle */
@@ -382,7 +385,7 @@ iframe {
   /* min-height: fit-content; */
   min-height: calc-size(fit-content, size - 1.5rem);
   /* This is so we can use container size units in our font-size clamp */
-  container-type: inline-size;
+  /* container-type: size; */
 }
 
 .content-video {

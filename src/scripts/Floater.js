@@ -46,27 +46,30 @@ class Floater {
 
     this.#container = container; //Do not give container a z-index!
     this.#container.appendChild(this.#element);
+    // Wait until the next animation frames when the browser has guaranteed
+    // laid out the element and given it physical width/height
     const { x, y, z } = this.#createRandomPosition();
-    // Seed initial position values before running loops
+
+    // Seed initial position values safely
     this.#currentX = x;
     this.#currentY = y;
     this.#currentZ = z;
+
+    // Strip transitions, place it instantly, and force a layout lock
+    this.#element.style.transition = 'none';
     this.#setPosition(x, y, z);
-
-    // Force a DOM reflow so the browser applies the position instantly before enabling transitions
-    this.#element.offsetHeight;
-
-    // Now safely activate transitions for all future floating loops or reveals
-    // this.#element.style.transition = `
-    //   transform ${this.#myDuration}ms ${this.#easingStyle},
-    //   background-color ${this.#myDuration}ms ${this.#easingStyle},
-    //   color ${this.#myDuration}ms ${this.#easingStyle}
-    // `.replace(/\s+/g, ' ');
+    void this.#element.offsetHeight;
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        // NOW it is safe to start the floating cycle
+        this.float();
+      });
+    });
   }
 
   float() {
     //call this first so that when a new page is selected they go at full speed
-    // this.#triggerMove();
+    this.#triggerMove();
     this.#isFloating = true;
     // this was when I was playing with the divs being self aware as it were
     this.#element.setAttribute('data-floating', this.#isFloating);
@@ -81,19 +84,10 @@ class Floater {
     this.#contentHolder.style.visibility = 'hidden';
     //moved this from the top of the function based on advise from gemini
     // this.#triggerMove();
-    // depending on the individual personality this creates the actual movement cyclically
-    // this.#floatTimeout = setInterval(() => {
-    //   //I've just discovered that I can stop this processing if the window is not visible (ie running in the background). This is my quick fix, I may come back to this in the future
-    //   if (document.visibilityState === 'hidden') return;
-    //   this.#triggerMove(); // Move to new position
-    // }, this.#myDuration); // this.#calculateMyDuration()
-    //Alternative suggested by gemini
     // Use a clean recursive loop via setTimeout instead of a rigid setInterval
-    // This allows the duration variations to actually affect the layout speed on every loop tick!
-    // const duration = this.#calculateMyDuration();
     const runLoop = () => {
       if (!this.#isFloating) return; // Exit loop if no longer floating
-
+      // don't use the processor if the window is hidden
       if (document.visibilityState !== 'hidden') {
         this.#triggerMove();
       }
@@ -101,10 +95,11 @@ class Floater {
       this.#floatTimeout = setTimeout(runLoop, this.#calculateMyDuration());
     };
 
-    // this.#floatTimeout = setTimeout(runLoop, this.#calculateMyDuration());
-    this.#floatTimeout = setTimeout(runLoop, 50);
-    this.#element.style.transformOrigin = 'top left';
-    //end of alternative
+    // kick off the loading movement
+    this.#floatTimeout = setTimeout(() => {
+      // this.#element.style.transformOrigin = 'top left';// with changes to rotation logic this is now hardcoded in the css
+      runLoop();
+    }, 50);
   }
 
   reveal() {
@@ -113,7 +108,7 @@ class Floater {
     // changed to timeout based on gemini's suggestion
     clearTimeout(this.#floatTimeout);
     this.#isFloating = false;
-    this.#element.style.transformOrigin = 'center'; // Reset transform origin to top left for reveal
+    // this.#element.style.transformOrigin = 'center'; // Reset transform origin to top left for reveal - no longer needed as I have worked on the tranform matrix in the setPosition function
     // z-index of 1 passed in as we don't want any scaling
     this.#moveTo(this.#revealX, this.#revealY, 1, World.DURATION);
     //This is now used by the css to remove the border when floating
@@ -207,16 +202,8 @@ class Floater {
     this.#element = document.createElement('div');
     this.#element.style.position = 'absolute';
     this.#element.setAttribute('data-layout-number', layoutNumber);
-    // this.#element.setAttribute('data-floating', this.#isFloating);
+    this.#element.setAttribute('data-floating', this.#isFloating);
     this.#element.className = 'floater'; // Add a class for styling
-    //set up an initial transition (this is over-written by moveTo()) but now we're setting dimensions from the PageManager we want this here as we won't be setting it in the css
-    //This is now done in the constructor
-    // this.#element.style.transition = `
-    //   transform ${this.#myDuration}ms ${this.#easingStyle},
-    //   background-color ${this.#myDuration}ms ${this.#easingStyle},
-    //   color ${this.#myDuration}ms ${this.#easingStyle}
-    // `.replace(/\s+/g, ' ');
-    // add the listener for the custom event emitted by Colourist
     document.addEventListener('colourModeChange', (e) => {
       this.#colouriseFloater();
     });
@@ -303,41 +290,41 @@ class Floater {
       console.error('Invalid position values for setPosition:', x, y, z);
       return;
     }
-    // this.#element.style.setProperty('--floater-z', z); // Set the custom property for z-index
     // Combine all spatial manipulations into a single transform chain
-    // 1. translate3d handles X, Y, and forces a hardware-accelerated layer
+    // translate3d handles X, Y, and forces a hardware-accelerated layer - be sure to set the z to 0px so that the perspective calculations do not make the floaters shift when the container changes size
     let transformStr = `translate3d(${x}px, ${y}px, 0px)`;
-
-    // 2. Append rotation
-    transformStr += ' ' + this.#rotateTowardsTarget(x, y);
-
-    // 3. Append scaling
+    // Append scaling
     transformStr += ' ' + this.#setZBasedScale(z);
-
-    // Apply styles (No more top/left DOM manipulation)
-    this.#element.style.zIndex = z;
+    // as we have set the transform-origin to top left to help with distribution the rotation is quite ugly, to fix it we'll simply shift the transform matrix for the rotation calculations
+    transformStr += ' translate(50%, 50%)';
+    // Append rotation
+    transformStr += ' ' + this.#rotateTowardsTarget(x, y);
+    transformStr += ' translate(-50%, -50%)';
     this.#element.style.transform = transformStr;
-
+    // z-index is now part of the transition which works as hoped even though AI says it can't
+    this.#element.style.zIndex = z;
     // Track the final target destination safely
     this.#currentX = x;
     this.#currentY = y;
+    // used for the random position calculation as a way of working out the actual screen size rather than the offset size so that the floaters are distributed evenly in the container
     this.#currentZ = z;
   }
 
   // change these to return their transform strings instead
-  #rotateTowardsTarget(targetX, targetY) {
+  #rotateTowardsTarget(targetX, targetY, stringReturn = true) {
     if (!this.#isFloating) {
-      return 'rotate(0deg)'; // No rotation when not floating
+      return stringReturn ? 'rotate(0deg)' : 0; // No rotation when not floating
     }
     typeof targetX !== 'number' && (targetX = parseFloat(targetX));
     typeof targetY !== 'number' && (targetY = parseFloat(targetY));
+    const randomRotation = Math.random() * 720;
     if (isNaN(targetX) || isNaN(targetY)) {
       console.error(
         'Invalid target values for rotateTowardsTarget:',
         targetX,
         targetY,
       );
-      return `rotate(${Math.random() * 360}deg)`;
+      return stringReturn ? `rotate(${randomRotation}deg)` : randomRotation;
     }
     // Safely look up previous destination to prevent mid-transition mathematical decay loops
     const baseLineX =
@@ -349,10 +336,10 @@ class Floater {
     const dy = targetY - baseLineY;
 
     if (dx === 0 && dy === 0) {
-      return `rotate(${Math.random() * 720}deg)`;
+      return stringReturn ? `rotate(${randomRotation}deg)` : randomRotation;
     }
     const angle = Math.atan2(dy, dx) * (180 / Math.PI); // Convert radians to degrees
-    return `rotate(${angle + 360}deg)`; // Return the rotation transform string
+    return stringReturn ? `rotate(${angle + 360}deg)` : angle + 360; // Return the rotation transform string
   }
 
   // I'm converting to use transform3d by adding perspective: 1500px; transform-style: preserve-3d; to the container css
