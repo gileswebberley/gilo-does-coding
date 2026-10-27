@@ -5,11 +5,11 @@ const World = {
   PAGE_PADDING: 20,
   FLOATER_GAP: 10,
   //these are for the Floater
-  DEPTH: 200,
-  DURATION: 1000,
+  DEPTH: 1000,
+  DURATION: 800,
   //these are randomly chosen from and essentially multiply the duration for the amount of time floaters take to move from one position to the next
-  MAX_DRAG: 10,
-  MIN_DRAG: 3,
+  MAX_DRAG: 7,
+  MIN_DRAG: 4,
   POSSIBLE_EASING_STYLES: ['ease-in', 'ease-out', 'ease-in-out', 'linear'],
   BIRTH_POSITION: {
     x: 0,

@@ -12,12 +12,14 @@ import UnityContent from './contents/MeteorStorm.js';
 import WildOasisContent from './contents/WildOasis.js';
 import HomeContent from './contents/Home.js';
 import SnotifyContent from './contents/Snotify.js';
+import NatoursContent from './contents/Natours.js';
+import World from './scripts/World.js';
 
 //we'll remove the loading message when this loads...
 document.querySelector('#loader').remove();
 //adding my email address like this to try to avoid being the victim of spam...
 document.querySelector('#email-address').innerHTML = ` <a
-              href='mailto:gileswebberley@gmail.com?subject=${encodeURI(
+              href='mailto:portfolio@gilo.me.uk?subject=${encodeURI(
                 'Message from portfolio site',
               )}'
               target="_blank"
@@ -25,7 +27,7 @@ document.querySelector('#email-address').innerHTML = ` <a
               aria-label="Click to open your email client and compose an email to me"
               tabindex="0"
             >
-            <i class="fa-regular fa-envelope"></i></a>&nbsp; gileswebberley@gmail.com`;
+            <i class="fa-regular fa-envelope"></i></a>&nbsp; portfolio@gilo.me.uk`;
 //finally let's set the logo to clear all pages' reveal
 document.querySelector('#logo').addEventListener('click', (e) => {
   e.preventDefault();
@@ -109,14 +111,17 @@ darkModeToggle.addEventListener('click', (e) => {
 
 // Now build the site...
 const container = document.querySelector('#container');
+// we are now using the transform3d translate method so I'll set the perspective on the container to be related to the World.depth value
+container.style.perspective = `${World.DEPTH * 1.1}px`;
 const navElement = document.querySelector('#main-nav');
 const hamburger = document.querySelector('#hamburger-button');
 SiteManager.init(navElement, container);
 NavManager.setHamburger(hamburger);
 SiteManager.buildPage(HomeContent);
 SiteManager.buildPage(WelcomeContent);
-SiteManager.buildPage(SnotifyContent);
 SiteManager.buildPage(WildOasisContent);
+SiteManager.buildPage(SnotifyContent);
+SiteManager.buildPage(NatoursContent);
 SiteManager.buildPage(TimeographyContent);
 SiteManager.buildPage(ParticlesContent);
 SiteManager.buildPage(SpectrumContent);

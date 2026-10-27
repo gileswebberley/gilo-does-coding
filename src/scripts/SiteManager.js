@@ -2,6 +2,7 @@
 import Floater from './Floater';
 import NavManager from './NavManager';
 import PageManger from './PageManager';
+import World from './World';
 
 class SiteManager {
   static #instance = null; // Singleton instance
@@ -36,14 +37,14 @@ class SiteManager {
     const pageManager = new PageManger(
       pageData.content,
       this.#pageContainer,
-      pageData.aspectRatio
+      pageData.aspectRatio,
     );
     pageManager.init(); //this builds the layout manager wireframe
     SiteManager.#addPage(pageData.pageId, pageManager); // Add the page manager to the map
     NavManager.addButton(
       pageData.pageId,
       pageData.buttonText,
-      SiteManager.getInstance().selectPage
+      SiteManager.getInstance().selectPage,
     );
   }
 
@@ -74,7 +75,8 @@ class SiteManager {
 
   // I think I want to pass an instance to the nav manager to keep it less coupled so perhaps I should define an instance method for this instead of a static one?
   static selectPage(pageName) {
-    Floater.repressFloaters = true;
+    //trying to make the currently open floaters receed at full speed rather than repressed speed
+    Floater.repressFloaters = false;
     if (!this.#pages.has(pageName)) {
       console.error(`Page ${pageName} does not exist.`);
       return;
@@ -83,11 +85,18 @@ class SiteManager {
       console.log(`Page ${pageName} is already open.`);
       return; // No need to change the page if it's already open
     } else if (this.#openPage !== '') {
+      // Floater.repressFloaters = false;
       // Hide the currently open page before showing the selected one
       this.#pages.get(this.#openPage).hide();
+      // Floater.repressFloaters = true;
     }
+
     this.#openPage = pageName;
     this.#pages.get(pageName).show();
+    //seems to achieve the receed at full speed rather than repressed speed
+    setTimeout(() => {
+      Floater.repressFloaters = true;
+    }, World.DURATION);
   }
 
   // can I access these private static variables from here? Yep, passing this into NavManager.addButton as a callback seems to work fine!

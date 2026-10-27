@@ -26,7 +26,7 @@ const SnotifyContent = {
       offset: { x: 10, y: 0 },
       size: { width: 85, height: 95 },
       sizeType: 'auto',
-      clamp: 320,
+      // clamp: 320,
       type: 'image',
       src: {
         src: '../login.gif',
@@ -80,19 +80,6 @@ const SnotifyContent = {
         alt: `desktop view of a scrolled playlist showing the sticky header and the way the listing items are highlighted when they are hovered over`,
       },
     },
-    // {
-    //   layoutNumber: 11,
-    //   position: { row: 4, column: 1 },
-    //   offset: { x: 0, y: 0 },
-    //   size: { width: 50, height: 50 },
-    //   sizeType: 'auto',
-    //   clamp: 300,
-    //   type: 'video',
-    //   src: {
-    //     src: '../dinner_at_manons_sample.mp4',
-    //     alt: `../tm-dinner_at_manons.jpg`,
-    //   },
-    // },
     {
       layoutNumber: 8,
       position: { row: 4, column: 2 },

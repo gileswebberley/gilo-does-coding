@@ -37,37 +37,37 @@ class PageManger {
         case 'image':
           this.floaterMap.set(
             content.layoutNumber,
-            new FloaterImage(content.src, this.pageContainer)
+            new FloaterImage(content.src, this.pageContainer),
           );
           break;
         case 'title':
           this.floaterMap.set(
             content.layoutNumber,
-            new FloaterTitle(content.src, this.pageContainer)
+            new FloaterTitle(content.src, this.pageContainer),
           );
           break;
         case 'video':
           this.floaterMap.set(
             content.layoutNumber,
-            new FloaterVideo(content.src, this.pageContainer)
+            new FloaterVideo(content.src, this.pageContainer),
           );
           break;
         case 'html':
           this.floaterMap.set(
             content.layoutNumber,
-            new FloaterInner(content.src, this.pageContainer)
+            new FloaterInner(content.src, this.pageContainer),
           );
           break;
         case 'iframe':
           this.floaterMap.set(
             content.layoutNumber,
-            new FloaterIframe(content.src, this.pageContainer)
+            new FloaterIframe(content.src, this.pageContainer),
           );
           break;
         case 'blank':
           this.floaterMap.set(
             content.layoutNumber,
-            new FloaterBlank(this.pageContainer)
+            new FloaterBlank(this.pageContainer),
           );
           break;
         default:
@@ -75,12 +75,12 @@ class PageManger {
       }
       const currentFloater = this.floaterMap.get(content.layoutNumber);
       const { x, y, w, h } = this.layoutManager.getFloaterLayoutObject(
-        content.layoutNumber
+        content.layoutNumber,
       );
       // console.log(`Floater ${content.layoutNumber} position:`, x, y, w, h);
       currentFloater.setRevealPosition(x, y);
-      currentFloater.setDimensions(w, h);
       currentFloater.float();
+      currentFloater.setDimensions(w, h);
     });
   }
 
@@ -103,11 +103,11 @@ class PageManger {
 
     // Right, this checks the height of the page currently (in case another page is open) and stores it so it can change the height to 100% to get the viewportHeight within LayoutManager and then put it back to how it found it. This means that the various pages don't interfere with the container height for other pages. It's a bit hacky as sharing the container amongst pages probably wasn't the ultimate decision to have made early on, but it works so I'm going with it as a solution to the problem I was trying to overcome!
     const tempHeight = getComputedStyle(this.pageContainer).getPropertyValue(
-      'height'
+      'height',
     );
     this.pageContainer.style.height = '100%';
     this.layoutManager.inspectScreenForLayout(
-      this.pageContainer.getBoundingClientRect()
+      this.pageContainer.getBoundingClientRect(),
     );
     if (!this.isOpen) {
       this.pageContainer.style.height = tempHeight;
@@ -116,8 +116,8 @@ class PageManger {
     }
     this.floaterMap.forEach((floater, key) => {
       const { x, y, w, h } = this.layoutManager.getFloaterLayoutObject(key);
-      floater.setDimensions(w, h);
       floater.setRevealPosition(x, y);
+      floater.setDimensions(w, h);
     });
   }
 
@@ -137,7 +137,7 @@ class PageManger {
     this.layoutManager = new LayoutManager(
       wireframe,
       this.pageContainer.getBoundingClientRect(),
-      this.baseLayoutAspectRatio
+      this.baseLayoutAspectRatio,
     );
   }
 

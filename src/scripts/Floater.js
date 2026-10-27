@@ -16,9 +16,13 @@ class Floater {
   #revealY;
   #contentHolder;
   #revealTimeout;
-  #floatInterval;
+  #floatTimeout;
   #myDuration;
   #easingStyle;
+  //trying to avoid the drift of floaters to the bottom right of the container
+  #currentX = 0;
+  #currentY = 0;
+  #currentZ = 0;
 
   /**
    *
@@ -33,19 +37,36 @@ class Floater {
     }
     // it's a 'floater' so let's get it floating! This has to be declared first so it can be checked in the setRevealPosition method
     this.#isFloating = true; //this is true because it is checked in the setRevealPosition
-    this.setRevealPosition(revealX, revealY);
+    // The layout manager will be setting the reveal positions but I want a manual override available still I think so I'll allow this if revealX/Y are passed in
+    if (revealX !== 0 || revealY !== 0) {
+      this.setRevealPosition(revealX, revealY);
+    }
     this.#createPersonality();
     this.#createFloaterDiv(layoutNumber);
 
     this.#container = container; //Do not give container a z-index!
     this.#container.appendChild(this.#element);
     const { x, y, z } = this.#createRandomPosition();
+    // Seed initial position values before running loops
+    this.#currentX = x;
+    this.#currentY = y;
+    this.#currentZ = z;
     this.#setPosition(x, y, z);
+
+    // Force a DOM reflow so the browser applies the position instantly before enabling transitions
+    this.#element.offsetHeight;
+
+    // Now safely activate transitions for all future floating loops or reveals
+    // this.#element.style.transition = `
+    //   transform ${this.#myDuration}ms ${this.#easingStyle},
+    //   background-color ${this.#myDuration}ms ${this.#easingStyle},
+    //   color ${this.#myDuration}ms ${this.#easingStyle}
+    // `.replace(/\s+/g, ' ');
   }
 
   float() {
-    this.#triggerMove();
     //call this first so that when a new page is selected they go at full speed
+    // this.#triggerMove();
     this.#isFloating = true;
     // this was when I was playing with the divs being self aware as it were
     this.#element.setAttribute('data-floating', this.#isFloating);
@@ -53,23 +74,46 @@ class Floater {
       clearTimeout(this.#revealTimeout);
     }
     //a bit of housework to stop any possibility of these leaking
-    if (this.#floatInterval) {
-      clearInterval(this.#floatInterval);
+    if (this.#floatTimeout) {
+      clearTimeout(this.#floatTimeout);
     }
     // just unneccesarily processor intensive to show the contents whilst floating (and the reason for the name 'reveal')
     this.#contentHolder.style.visibility = 'hidden';
+    //moved this from the top of the function based on advise from gemini
+    // this.#triggerMove();
     // depending on the individual personality this creates the actual movement cyclically
-    this.#floatInterval = setInterval(() => {
-      //I've just discovered that I can stop this processing if the window is not visible (ie running in the background). This is my quick fix, I may come back to this in the future
-      if (document.visibilityState === 'hidden') return;
-      this.#triggerMove(); // Move to new position
-    }, this.#myDuration); // this.#calculateMyDuration()
+    // this.#floatTimeout = setInterval(() => {
+    //   //I've just discovered that I can stop this processing if the window is not visible (ie running in the background). This is my quick fix, I may come back to this in the future
+    //   if (document.visibilityState === 'hidden') return;
+    //   this.#triggerMove(); // Move to new position
+    // }, this.#myDuration); // this.#calculateMyDuration()
+    //Alternative suggested by gemini
+    // Use a clean recursive loop via setTimeout instead of a rigid setInterval
+    // This allows the duration variations to actually affect the layout speed on every loop tick!
+    // const duration = this.#calculateMyDuration();
+    const runLoop = () => {
+      if (!this.#isFloating) return; // Exit loop if no longer floating
+
+      if (document.visibilityState !== 'hidden') {
+        this.#triggerMove();
+      }
+
+      this.#floatTimeout = setTimeout(runLoop, this.#calculateMyDuration());
+    };
+
+    // this.#floatTimeout = setTimeout(runLoop, this.#calculateMyDuration());
+    this.#floatTimeout = setTimeout(runLoop, 50);
+    this.#element.style.transformOrigin = 'top left';
+    //end of alternative
   }
 
   reveal() {
     //stop the floating cycle cos now we want to take control of the floater
-    clearInterval(this.#floatInterval);
+    // clearInterval(this.#floatTimeout);
+    // changed to timeout based on gemini's suggestion
+    clearTimeout(this.#floatTimeout);
     this.#isFloating = false;
+    this.#element.style.transformOrigin = 'center'; // Reset transform origin to top left for reveal
     // z-index of 1 passed in as we don't want any scaling
     this.#moveTo(this.#revealX, this.#revealY, 1, World.DURATION);
     //This is now used by the css to remove the border when floating
@@ -106,10 +150,12 @@ class Floater {
    * @param {number} y - eqivalent to setting the css top property (must be an absolute pixel value)
    */
   setRevealPosition(x, y) {
-    typeof x !== 'number' && (x = parseInt(x));
-    typeof y !== 'number' && (y = parseInt(y));
+    // because they can be passed through as strings with the 'px' suffix from the css
+    typeof x !== 'number' && (x = parseFloat(x));
+    typeof y !== 'number' && (y = parseFloat(y));
+    // console.log(`Setting reveal position to ${x}, ${y}`);
     if (typeof x !== 'number' || typeof y !== 'number') {
-      throw new Error('Reveal position coordinates: unable to parseInt');
+      throw new Error('Reveal position coordinates: unable to parseFloat');
     }
     this.#revealX = x;
     this.#revealY = y;
@@ -125,18 +171,15 @@ class Floater {
    * @param {number} height - eqivalent to setting the css height property (must be an absolute pixel value)
    */
   setDimensions(width, height) {
-    typeof width !== 'number' && (width = parseInt(width));
-    typeof height !== 'number' && (height = parseInt(height));
+    typeof width !== 'number' && (width = parseFloat(width));
+    typeof height !== 'number' && (height = parseFloat(height));
     if (typeof width !== 'number' || typeof height !== 'number') {
-      throw new Error('Width and height: unable to parseInt');
+      throw new Error('Width and height: unable to parseFloat');
     }
+    //if this has happened whilst open we want it to happen quickly - this was being overridden by the transition in moveTo() since converting to transform3d so I've added the width height to there which works on resize as hoped
+
     this.#element.style.width = `${width}px`;
     this.#element.style.height = `${height}px`;
-    //if this has happened whilst open we want it to happen quickly
-    // if (!this.#isFloating) {
-    this.#element.style.transition = `all ${World.DURATION}ms ${
-      this.#easingStyle
-    }`;
     // }
   }
 
@@ -155,7 +198,7 @@ class Floater {
     this.#myDuration = World.DURATION * speed;
     this.#easingStyle =
       World.POSSIBLE_EASING_STYLES[
-        Math.floor(Math.random() * World.POSSIBLE_EASING_STYLES.length)
+        Math.floor(Math.random() * (World.POSSIBLE_EASING_STYLES.length - 1))
       ];
   }
 
@@ -167,9 +210,12 @@ class Floater {
     // this.#element.setAttribute('data-floating', this.#isFloating);
     this.#element.className = 'floater'; // Add a class for styling
     //set up an initial transition (this is over-written by moveTo()) but now we're setting dimensions from the PageManager we want this here as we won't be setting it in the css
-    this.#element.style.transition = `all ${this.#myDuration}ms ${
-      this.#easingStyle
-    }`;
+    //This is now done in the constructor
+    // this.#element.style.transition = `
+    //   transform ${this.#myDuration}ms ${this.#easingStyle},
+    //   background-color ${this.#myDuration}ms ${this.#easingStyle},
+    //   color ${this.#myDuration}ms ${this.#easingStyle}
+    // `.replace(/\s+/g, ' ');
     // add the listener for the custom event emitted by Colourist
     document.addEventListener('colourModeChange', (e) => {
       this.#colouriseFloater();
@@ -188,83 +234,141 @@ class Floater {
   }
 
   #triggerMove() {
+    if (!this.#isFloating) return; // Exit if not floating
     const { x, y, z } = this.#createRandomPosition();
     this.#moveTo(x, y, z, this.#calculateMyDuration()); //slow them down when a page is showing
   }
 
+  //avoiding boundingRect for the floaters as it may have been causing the drift to the bottom right of the container due to the scale transforms
   #createRandomPosition() {
-    const actualSize = this.#element.getBoundingClientRect();
-    //stupidly I didn't consider the fact that absolute positioned #elements are positioned 'absolutely' in relation to their container. I don't want to use 'fixed' positioning otherwise I don't believe they will scroll inside the container. Therefore I have removed the calculation of the top and left
+    // FIX: Using offsetWidth/Height ignores the CSS scale() transformations!
+    const elementWidth = this.#element.offsetWidth || 300;
+    const elementHeight = this.#element.offsetHeight || 300;
+
     const containerRect = this.#container.getBoundingClientRect();
-    const x = Math.random() * (containerRect.width - actualSize.width);
-    const y = Math.random() * (containerRect.height - actualSize.height);
+
+    // Accurately bound positioning layout space, but add scaling into the calculations to avoid clustering in the centre of a narrow screen
+    const scalar = this.#calculateScaleFromZ(this.#currentZ) / 100;
+    const scaledWidth = elementWidth * scalar;
+    const scaledHeight = elementHeight * scalar;
+    const maxX = containerRect.width - scaledWidth;
+    const maxY = containerRect.height - scaledHeight;
+
+    const x = Math.random() * (maxX > 0 ? maxX : 0);
+    const y = Math.random() * (maxY > 0 ? maxY : 0);
+    //this keeps the floaters below a certain depth to make them less distracting when a page is open
     const z = Floater.repressFloaters
       ? Math.floor((Math.random() * World.DEPTH) / 2 + World.DEPTH / 2) * -1
-      : Math.floor(Math.random() * World.DEPTH) * -1; //this keeps the floaters below a certain depth to make them less distracting when a page is open
+      : Math.floor(Math.random() * World.DEPTH) * -1;
+
     return { x, y, z };
   }
 
   // essentially set's the transition property before calling setPosition()
   #moveTo(x, y, z, duration = World.DURATION) {
-    typeof x !== 'number' && (x = parseInt(x));
-    typeof y !== 'number' && (y = parseInt(y));
-    typeof z !== 'number' && (z = parseInt(z));
+    typeof x !== 'number' && (x = parseFloat(x));
+    typeof y !== 'number' && (y = parseFloat(y));
+    typeof z !== 'number' && (z = parseFloat(z));
+
     if (isNaN(x) || isNaN(y) || isNaN(z)) {
       console.error('Invalid position values for moveTo:', x, y, z);
       return;
     }
+    //if the page is open let's set duration to be the default
+    if (!this.#isFloating) {
+      duration = World.DURATION;
+    }
     //I think I want to scale the duration based on the distance it's moving? Hmm no, this would take a re-engineering of the floating loop logic so maybe come back to this for v2
-    this.#element.style.transition = `all ${duration}ms ${this.#easingStyle}`;
+    // Smooth, hardware-accelerated transitions
+    // Notice that left and top are completely gone from the transition rule!
+    this.#element.style.transition = `
+      transform ${duration}ms ${this.#easingStyle},
+      z-index ${duration}ms,
+      width ${duration}ms ${this.#easingStyle},
+      height ${duration}ms ${this.#easingStyle},
+      background-color ${duration}ms ${this.#easingStyle},
+      color ${duration}ms ${this.#easingStyle}
+    `.replace(/\s+/g, ' ');
     //I think this helps it sync the animation to the native screen refresh
     requestAnimationFrame(() => this.#setPosition(x, y, z));
   }
 
   // This does the grunt work of actually setting the style properties including the transform (used for scaling and rotation)
   #setPosition(x, y, z = 1) {
-    typeof x !== 'number' && (x = parseInt(x));
-    typeof y !== 'number' && (y = parseInt(y));
-    typeof z !== 'number' && (z = parseInt(z));
+    //suggested change by gemini to avoid the parseInt() and just use Number() instead, no, it's not safe and I can't see any reason not to sanitize the input when I so simply can. I'll just use parseFlaot instead of parseInt so we keep the floating points
+    typeof x !== 'number' && (x = parseFloat(x));
+    typeof y !== 'number' && (y = parseFloat(y));
+    typeof z !== 'number' && (z = parseFloat(z));
     if (isNaN(x) || isNaN(y) || isNaN(z)) {
       console.error('Invalid position values for setPosition:', x, y, z);
       return;
     }
-    this.#element.style.left = `${x}px`;
-    this.#element.style.top = `${y}px`;
+    // this.#element.style.setProperty('--floater-z', z); // Set the custom property for z-index
+    // Combine all spatial manipulations into a single transform chain
+    // 1. translate3d handles X, Y, and forces a hardware-accelerated layer
+    let transformStr = `translate3d(${x}px, ${y}px, 0px)`;
+
+    // 2. Append rotation
+    transformStr += ' ' + this.#rotateTowardsTarget(x, y);
+
+    // 3. Append scaling
+    transformStr += ' ' + this.#setZBasedScale(z);
+
+    // Apply styles (No more top/left DOM manipulation)
     this.#element.style.zIndex = z;
-    let transformStr;
-    //let's test an idea of using translate rather than top left - no, it makes the rotation function fall apart (because it uses top/left for the calculations) and is not any smoother than what I've got already
-    // transformStr = `translate(${x}px, ${y}px) `;
-    // transformStr += ' ';
-    transformStr = this.#rotateTowardsTarget(x, y);
-    transformStr += ' ';
-    transformStr += this.#setZBasedScale(z);
     this.#element.style.transform = transformStr;
+
+    // Track the final target destination safely
+    this.#currentX = x;
+    this.#currentY = y;
+    this.#currentZ = z;
   }
 
   // change these to return their transform strings instead
   #rotateTowardsTarget(targetX, targetY) {
-    typeof targetX !== 'number' && (targetX = parseInt(targetX));
-    typeof targetY !== 'number' && (targetY = parseInt(targetY));
+    if (!this.#isFloating) {
+      return 'rotate(0deg)'; // No rotation when not floating
+    }
+    typeof targetX !== 'number' && (targetX = parseFloat(targetX));
+    typeof targetY !== 'number' && (targetY = parseFloat(targetY));
     if (isNaN(targetX) || isNaN(targetY)) {
       console.error(
         'Invalid target values for rotateTowardsTarget:',
         targetX,
-        targetY
+        targetY,
       );
-      return;
+      return `rotate(${Math.random() * 360}deg)`;
     }
-    const dx = targetX - parseFloat(this.#element.style.left);
-    const dy = targetY - parseFloat(this.#element.style.top);
+    // Safely look up previous destination to prevent mid-transition mathematical decay loops
+    const baseLineX =
+      typeof this.#currentX === 'number' ? this.#currentX : targetX;
+    const baseLineY =
+      typeof this.#currentY === 'number' ? this.#currentY : targetY;
+
+    const dx = targetX - baseLineX;
+    const dy = targetY - baseLineY;
+
+    if (dx === 0 && dy === 0) {
+      return `rotate(${Math.random() * 720}deg)`;
+    }
     const angle = Math.atan2(dy, dx) * (180 / Math.PI); // Convert radians to degrees
-    return `rotate(${angle}deg)`; // Return the rotation transform string
+    return `rotate(${angle + 360}deg)`; // Return the rotation transform string
   }
 
+  // I'm converting to use transform3d by adding perspective: 1500px; transform-style: preserve-3d; to the container css
   #setZBasedScale(z) {
     if (typeof z !== 'number') {
-      z = parseInt(z);
+      z = parseFloat(z);
     }
+    if (isNaN(z) || z === 0) z = 1;
+
+    return `scale(${this.#calculateScaleFromZ(z)}%)`;
+  }
+
+  // moving the scale calculation itself out into a seperate function so I can use it in the createRandomPosition() function to allow for the whole screen to be used as they are now collecting in the middle of a smaller screen
+  #calculateScaleFromZ(z) {
     // just fiddled around with so that they don't become too small
-    return `scale(${(95 / World.DEPTH) * (World.DEPTH / Math.abs(z)) + 5}%)`;
+    return (95 / World.DEPTH) * (World.DEPTH / Math.abs(z)) + 5;
   }
 
   // Set the container height to fit content so it will scroll when the floaters overflow the height of the container
