@@ -46,8 +46,8 @@
   /* background-color: var(--colour-blue-300); */
 
   color-scheme: light dark;
-  transition: color 1.6s ease;
-  transition: background-color 1.4s ease;
+  /* transition: color 1.6s ease;
+  transition: background-color 1.4s ease; */
   /* --header-footer-time-colour: var(--colour-orange);
   --header-footer-time-colour-text: var(--colour-orange-900); */
   /* color: rgba(255, 255, 255, 0.87);
@@ -434,6 +434,9 @@ footer {
   /* color-scheme: dark; */
   color: var(--header-footer-time-colour-text);
   background-color: var(--header-footer-time-colour);
+  transition:
+    color 1.6s,
+    background-color 1.8s;
   /* font-size: 2rem; */
 }
 

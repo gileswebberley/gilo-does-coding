@@ -102,7 +102,7 @@ class FloaterTitle extends Floater {
     const computedStyle = getComputedStyle(this.contentHolder);
     // I don't like the line-height being hard-coded as 1.2 so let's get that information here too
     const rawLineHeight = computedStyle.lineHeight; //can be "normal", a pixel value, a raw value (like 1.2), or a percentage. Interesting to discover though, percentages and values like rem etc are calculated into explicit pixel values by the browser so no need to worry about those cases in here
-    // set a line-height behaviour mode for use in the while loop
+    // set a line-height multiplier for use in the while loop
     const currentFontSize = parseFloat(computedStyle.fontSize);
     let unitlessHeightMultiplier = 1.2; //same as setting line-height to "normal"
     if (rawLineHeight.includes('px')) {

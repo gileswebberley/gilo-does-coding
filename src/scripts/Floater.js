@@ -43,12 +43,6 @@ class Floater {
     }
     this.#createPersonality();
     this.#createFloaterDiv(layoutNumber);
-    // // set the default transition duration
-    // this.#element.style.setProperty(
-    //   '--transition-duration',
-    //   `${World.DURATION}ms`,
-    // );
-    // and inside here we set the random easing style property
 
     this.#container = container; //Do not give container a z-index!
     this.#container.appendChild(this.#element);
