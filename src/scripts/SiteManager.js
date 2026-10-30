@@ -39,7 +39,11 @@ class SiteManager {
       this.#pageContainer,
       pageData.aspectRatio,
     );
-    pageManager.init(); //this builds the layout manager wireframe
+    //because we are doing the font size calculations using the canvas2d font metrics in floaterTitle now we should wait until any custom fonts are loaded before initialising the pages
+    document.fonts.ready.then(() => {
+      pageManager.init();
+    });
+    // pageManager.init(); //this builds the layout manager wireframe
     SiteManager.#addPage(pageData.pageId, pageManager); // Add the page manager to the map
     NavManager.addButton(
       pageData.pageId,

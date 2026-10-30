@@ -171,7 +171,16 @@ class Floater {
     if (typeof width !== 'number' || typeof height !== 'number') {
       throw new Error('Width and height: unable to parseFloat');
     }
-    //if this has happened whilst open we want it to happen quickly - this was being overridden by the transition in moveTo() since converting to transform3d so I've added the width height to there which works on resize as hoped
+    //if this has happened whilst open we want it to happen quickly - this was being overridden by the transition in moveTo() since converting to transform3d so I've added the width height to there which works on resize as hoped. I have now discovered that when the screen is resized whilst another page is open the transition for setting width and height will run at the repressed speed meaning when they open they can be crawling to the correct dimensions so we'll have to override that transition
+    const duration = this.#calculateMyDuration();
+    this.#element.style.transition = `
+      transform ${duration}ms ${this.#easingStyle},
+      z-index ${duration}ms,
+      width ${duration}ms ${this.#easingStyle},
+      height ${duration}ms ${this.#easingStyle},
+      background-color ${duration}ms ${this.#easingStyle},
+      color ${duration}ms ${this.#easingStyle}
+    `.replace(/\s+/g, ' ');
 
     this.#element.style.width = `${width}px`;
     this.#element.style.height = `${height}px`;

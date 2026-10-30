@@ -95,11 +95,21 @@ class FloaterTitle extends Floater {
     const maxAllowedWidth = targetWidth - visualPadding * 2;
     const maxAllowedHeight = targetHeight - visualPadding * 2;
 
-    // Extract raw characters, stripping active link markup tags safely
+    // Extract raw characters, stripping active link markup tags safely by using textContent rather than the HTML string itself
     const rawTextString = this.contentHolder.textContent || '';
 
     // Fetch typography parameters from your stylesheet
     const computedStyle = getComputedStyle(this.contentHolder);
+    // I don't like the line-height being hard-coded as 1.2 so let's get that information here too
+    const rawLineHeight = computedStyle.lineHeight; //can be "normal", a pixel value, a raw value (like 1.2), or a percentage. Interesting to discover though, percentages and values like rem etc are calculated into explicit pixel values by the browser so no need to worry about those cases in here
+    // set a line-height behaviour mode for use in the while loop
+    let isFixedPixelHeight = rawLineHeight.includes('px');
+    let fixedPixelValue = isFixedPixelHeight ? parseFloat(rawLineHeight) : 0;
+    let unitlessHeightMultiplier = 1.2; //same as setting line-height to "normal"
+    if (!isFixedPixelHeight && !isNaN(parseFloat(rawLineHeight))) {
+      unitlessHeightMultiplier = parseFloat(rawLineHeight);
+    }
+
     const fontFamily = computedStyle.fontFamily || 'sans-serif';
     const fontWeight = computedStyle.fontWeight || '400';
 
@@ -121,17 +131,29 @@ class FloaterTitle extends Floater {
     let optimalFontSize = maxFont;
 
     while (optimalFontSize > minFont) {
+      // to use the measureText function you must define the style first
       ctx.font = `${fontWeight} ${optimalFontSize}px ${fontFamily}`;
 
       // Calculate single continuous text width metrics
+      //Unlike DOM properties like offsetWidth or scrollWidth (which tell you the size of the HTML element wrapper box), measureText() asks the operating system's underlying font rendering engine to calculate the exact vector physics of the text characters themselves, right down to the sub-pixel level.
+      // It executes instantly in memory, completely bypassing the browser’s slow rendering and painting queue.
       const textMetrics = ctx.measureText(rawTextString);
+      // the original typographical metrics available from measureText, although you can now access the height as well by adding together actualBoundingBoxAscent and actualBoundingBoxDescent (the top of an H and bottom of a j for example)
       const totalSingleLineWidth = textMetrics.width;
 
       // Determine how many lines this font size forces the string to wrap into
       const linesNeeded = Math.ceil(totalSingleLineWidth / maxAllowedWidth);
 
       // Compute vertical box accumulation matching line-height: 1.2
-      const totalBlockHeight = linesNeeded * (optimalFontSize * 1.2);
+      // const totalBlockHeight = linesNeeded * (optimalFontSize * 1.2);
+      // adding in the dynamic line height logic
+      let totalBlockHeight = 0;
+      if (isFixedPixelHeight) {
+        totalBlockHeight = linesNeeded * fixedPixelValue;
+      } else {
+        totalBlockHeight =
+          linesNeeded * (optimalFontSize * unitlessHeightMultiplier);
+      }
 
       // CRITICAL CHECK: Does it stay under the width OR wrap comfortably under the line cap limit?
       if (totalSingleLineWidth <= maxAllowedWidth) {
