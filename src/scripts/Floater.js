@@ -43,6 +43,12 @@ class Floater {
     }
     this.#createPersonality();
     this.#createFloaterDiv(layoutNumber);
+    // // set the default transition duration
+    // this.#element.style.setProperty(
+    //   '--transition-duration',
+    //   `${World.DURATION}ms`,
+    // );
+    // and inside here we set the random easing style property
 
     this.#container = container; //Do not give container a z-index!
     this.#container.appendChild(this.#element);
@@ -176,11 +182,13 @@ class Floater {
     this.#element.style.transition = `
       transform ${duration}ms ${this.#easingStyle},
       z-index ${duration}ms,
-      width ${duration}ms ${this.#easingStyle},
-      height ${duration}ms ${this.#easingStyle},
+      width ${World.DURATION}ms ${this.#easingStyle},
+      height ${World.DURATION}ms ${this.#easingStyle},
       background-color ${duration}ms ${this.#easingStyle},
       color ${duration}ms ${this.#easingStyle}
     `.replace(/\s+/g, ' ');
+    //we've now put the transition into the style so all we need to change is the duration property that it relies on
+    // this.#element.style.setProperty('--transition-duration', duration);
 
     this.#element.style.width = `${width}px`;
     this.#element.style.height = `${height}px`;
@@ -204,6 +212,7 @@ class Floater {
       World.POSSIBLE_EASING_STYLES[
         Math.floor(Math.random() * (World.POSSIBLE_EASING_STYLES.length - 1))
       ];
+    // this.#element.style.setProperty('--transition-easing', this.#easingStyle);
   }
 
   #createFloaterDiv(layoutNumber) {
@@ -213,6 +222,17 @@ class Floater {
     this.#element.setAttribute('data-layout-number', layoutNumber);
     this.#element.setAttribute('data-floating', this.#isFloating);
     this.#element.className = 'floater'; // Add a class for styling
+    // set the default transition duration
+    // this.#element.style.setProperty('--transition-duration', World.DURATION);
+    // this.#element.style.setProperty('--transition-easing', this.#easingStyle);
+    // this.#element.style.transition = `
+    //   transform calc(var(--transition-duration) * 1ms) var(--transition-easing),
+    //   z-index calc(var(--transition-duration) * 1ms),
+    //   width calc(var(--transition-duration) * 1ms) var(--transition-easing),
+    //   height calc(var(--transition-duration) * 1ms) var(--transition-easing),
+    //   background-color calc(var(--transition-duration) * 1ms) var(--transition-easing),
+    //   color calc(var(--transition-duration) * 1ms) var(--transition-easing)
+    // `.replace(/\s+/g, ' ');
     document.addEventListener('colourModeChange', (e) => {
       this.#colouriseFloater();
     });
@@ -280,11 +300,13 @@ class Floater {
     this.#element.style.transition = `
       transform ${duration}ms ${this.#easingStyle},
       z-index ${duration}ms,
-      width ${duration}ms ${this.#easingStyle},
-      height ${duration}ms ${this.#easingStyle},
+      width ${World.DURATION}ms ${this.#easingStyle},
+      height ${World.DURATION}ms ${this.#easingStyle},
       background-color ${duration}ms ${this.#easingStyle},
       color ${duration}ms ${this.#easingStyle}
     `.replace(/\s+/g, ' ');
+    //new version where we set the css property for duration instead of overwriting the transition itself
+    // this.#element.style.setProperty('--transition-duration', duration);
     //I think this helps it sync the animation to the native screen refresh
     requestAnimationFrame(() => this.#setPosition(x, y, z));
   }

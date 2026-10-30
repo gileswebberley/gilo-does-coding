@@ -324,6 +324,21 @@ This is all of the styling for the navigation system ---------------------------
   /* to try to aleviate the stuttering movement when changing colour-mode. We use this in combination with the transform3d to get some of the work passed onto the gpu as I understand */
   will-change: transform; /*, width, height;*/
   transform-origin: top left;
+  /* trying to alieviate the transition setting race conditions we'll simply set some properties and have the entire transition hard-coded in this style - this solution simply didn't work */
+  /* --- CONFIGURATION BASICK LINE ARRAYS --- */
+  /* --transition-duration: 300; */
+  /* Fallback to a standard ease-in-out if JS hasn't assigned a personality yet */
+  /* --transition-easing: ease-in-out; */
+
+  /* Bind all properties cleanly to both the duration and easing variables */
+  /* transition:
+    transform calc(var(--transition-duration) * 1ms) var(--transition-easing),
+    z-index calc(var(--transition-duration) * 1ms),
+    width calc(var(--transition-duration) * 1ms) var(--transition-easing),
+    height calc(var(--transition-duration) * 1ms) var(--transition-easing),
+    background-color calc(var(--transition-duration) * 1ms)
+      var(--transition-easing),
+    color calc(var(--transition-duration) * 1ms) var(--transition-easing); */
 }
 /* set by js when floating, this removes the border because it was aliasing as it scaled and rotated */
 .floater[data-floating='true'] {
