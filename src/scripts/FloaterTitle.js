@@ -103,10 +103,13 @@ class FloaterTitle extends Floater {
     // I don't like the line-height being hard-coded as 1.2 so let's get that information here too
     const rawLineHeight = computedStyle.lineHeight; //can be "normal", a pixel value, a raw value (like 1.2), or a percentage. Interesting to discover though, percentages and values like rem etc are calculated into explicit pixel values by the browser so no need to worry about those cases in here
     // set a line-height behaviour mode for use in the while loop
-    let isFixedPixelHeight = rawLineHeight.includes('px');
-    let fixedPixelValue = isFixedPixelHeight ? parseFloat(rawLineHeight) : 0;
+    const currentFontSize = parseFloat(computedStyle.fontSize);
     let unitlessHeightMultiplier = 1.2; //same as setting line-height to "normal"
-    if (!isFixedPixelHeight && !isNaN(parseFloat(rawLineHeight))) {
+    if (rawLineHeight.includes('px')) {
+      // If the browser hands you "24px", turn it into a fluid ratio (e.g., 24 / 16 = 1.5)
+      unitlessHeightMultiplier = parseFloat(rawLineHeight) / currentFontSize;
+    } else if (!isNaN(parseFloat(rawLineHeight))) {
+      // If it's already a raw unitless multiplier (e.g., 1.2), use it directly
       unitlessHeightMultiplier = parseFloat(rawLineHeight);
     }
 
@@ -117,7 +120,6 @@ class FloaterTitle extends Floater {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
 
-    // --- FIX STEP 1: CALCULATE THE DYNAMIC LINE CAP ---
     // If the box is short and wide, it can only support 1 or 2 lines of text.
     // If the box is tall or square, it can support up to 3 lines cleanly.
     let maxLinesAllowed = 2;
@@ -127,7 +129,7 @@ class FloaterTitle extends Floater {
       maxLinesAllowed = 1; // Ultra-short banners are locked to a single line
     }
 
-    // --- FIX STEP 2: RUN DETERMINISTIC STEP-DOWN LOOP ---
+    //RUN DETERMINISTIC STEP-DOWN LOOP
     let optimalFontSize = maxFont;
 
     while (optimalFontSize > minFont) {
@@ -146,16 +148,11 @@ class FloaterTitle extends Floater {
 
       // Compute vertical box accumulation matching line-height: 1.2
       // const totalBlockHeight = linesNeeded * (optimalFontSize * 1.2);
-      // adding in the dynamic line height logic
-      let totalBlockHeight = 0;
-      if (isFixedPixelHeight) {
-        totalBlockHeight = linesNeeded * fixedPixelValue;
-      } else {
-        totalBlockHeight =
-          linesNeeded * (optimalFontSize * unitlessHeightMultiplier);
-      }
+      //dynamic line height based on the multiplier worked out outside the loop
+      const totalBlockHeight =
+        linesNeeded * (optimalFontSize * unitlessHeightMultiplier);
 
-      // CRITICAL CHECK: Does it stay under the width OR wrap comfortably under the line cap limit?
+      // Does it stay under the width OR wrap comfortably under the line cap limit?
       if (totalSingleLineWidth <= maxAllowedWidth) {
         // Fits beautifully on 1 line
         break;
