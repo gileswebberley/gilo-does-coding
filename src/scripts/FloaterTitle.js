@@ -1,19 +1,27 @@
 import Floater from './Floater';
 
 class FloaterTitle extends Floater {
+  // track the dimensions set by the layout manager when it calls setDimensions so that on reveal we always know what the target size will be for our new text sizing functionality
+  #latestTargetWidth = 0;
+  #latestTargetHeight = 0;
+
   constructor(src, ...rest) {
     super(...rest);
     this.src = src;
     //Add an element to hold the content so it can have it's visibilty toggled in float() and reveal()
     this.contentHolder = document.createElement('h1');
     this.contentHolder.classList.add('content-title');
+    // as I am writing long strings which include forward slashes we can add in a 'soft word-break' element after them. However, we also have <a> tags inside those strings and we don't want to break them by adding <wbr> eg http:/<wbr>/<wbr> etc
     if (
       typeof this.src === 'string' &&
       (this.src.includes('<a') || this.src.includes('/'))
     ) {
       // 1. Create a safe offscreen fragment container to parse the markup safely
+      // The <template> element is a specialized HTML tag specifically engineered to hold raw HTML markup without actually rendering it on the screen. It acts as an offscreen blueprint.
+      //To run your link-safe injectWbrToTextNodes loop, you first need to convert that flat this.src text string into live, interactable JavaScript node objects. That is exactly what the template element achieves, a "safe offscreen sandbox tree".
       const template = document.createElement('template');
       template.innerHTML = this.src;
+      //When you read template.content, it doesn't return standard HTML. It returns a specialized object called a DocumentFragment. These do not have a parent and so live outside the webpage structure meaning changes to to their children do not trigger a screen paint. Once these fragments are appended they "pour" their pre-formatted child nodes into the container that they are appended and then "vanish" from memory. If you hear about Web Components then you will likely come across these used alongside the ShadowDOM
       const fragment = template.content;
 
       // 2. Traversal function: Walk exclusively through the raw text nodes
@@ -48,138 +56,102 @@ class FloaterTitle extends Floater {
   // Override setDimensions to capture when the box layout mutates
   setDimensions(width, height) {
     super.setDimensions(width, height);
-    //Run the text fitting immediately using the raw pixel metrics passed in
-    // this.#fitTextToContainer(parseFloat(width), parseFloat(height));
+    //track the sizes that have been assigned by this function for use in the reveal logic
+    this.#latestTargetWidth = parseFloat(width);
+    this.#latestTargetHeight = parseFloat(height);
+
     // Wait until the layout manager releases its temporary 100% height
-    // lock and the browser paint queue reads the real element dimensions.
     requestAnimationFrame(() => {
       // we're running into sync issues so let's wait two frames and see how that works
       requestAnimationFrame(() => {
-        this.#fitTextToContainer(parseFloat(width), parseFloat(height));
+        this.#fitTextToContainer(
+          this.#latestTargetWidth,
+          this.#latestTargetHeight,
+        );
       });
-      // const parent = this.contentHolder?.parentElement;
-      // if (parent) {
-      //   this.#fitTextToContainer(parent.offsetWidth, parent.offsetHeight);
-      // }
     });
   }
 
   // Override reveal to ensure text size updates when transitioning out of floating state
   reveal() {
     super.reveal();
-    requestAnimationFrame(() => {
-      const parent = this.contentHolder?.parentElement;
-      if (parent) {
-        this.#fitTextToContainer(parent.offsetWidth, parent.offsetHeight);
-      }
-    });
+    if (this.#latestTargetWidth && this.#latestTargetHeight) {
+      this.#fitTextToContainer(
+        this.#latestTargetWidth,
+        this.#latestTargetHeight,
+      );
+    }
   }
 
-  // // Private text fitting layout algorithm
+  //with a lot of help from gemini this function creates an offscreen canvas that works out the largest font possible for the length of the string vs the size of the container. By means of noting our learnings here's the final sign-off paragraph from Gemini
+  //The Canvas-driven approach is a fantastic tool to keep in your back pocket. Whenever you find yourself battling a browser layout engine that is aggressively caching values, dropping frame updates, or thrashing the CPU mid-transition, shifting those checks into a completely off-screen, data-driven vector space like Canvas will save you every single time. It treats text like raw coordinates rather than a messy, slow DOM tree.
   #fitTextToContainer(targetWidth, targetHeight) {
     if (!this.contentHolder || !targetWidth || !targetHeight) return;
 
-    let minFont = 10;
-    let maxFont = 44;
-    let perfectFont = minFont;
+    const minFont = 10; // 1rem minimum safety gate
+    const maxFont = 44; // 4.4rem maximum limit
+    const visualPadding = 12; // Internal padding safety clearance
 
-    const visualPadding = 5;
     const maxAllowedWidth = targetWidth - visualPadding * 2;
     const maxAllowedHeight = targetHeight - visualPadding * 2;
 
-    // --- FIX STEP 1: Lock the container dimensions strictly to the target box size ---
-    // This forces the balanced text wrapping engine to break lines using the exact
-    // boundaries of the current screen frame, preventing large screen leaks.
-    this.contentHolder.style.width = `${maxAllowedWidth}px`;
-    this.contentHolder.style.maxWidth = `${maxAllowedWidth}px`;
+    // Extract raw characters, stripping active link markup tags safely
+    const rawTextString = this.contentHolder.textContent || '';
 
-    // Fast binary calculation loop
-    while (minFont <= maxFont) {
-      let mid = Math.floor((minFont + maxFont) / 2);
-      this.contentHolder.style.fontSize = `${mid}px`;
+    // Fetch typography parameters from your stylesheet
+    const computedStyle = getComputedStyle(this.contentHolder);
+    const fontFamily = computedStyle.fontFamily || 'sans-serif';
+    const fontWeight = computedStyle.fontWeight || '400';
 
-      // --- FIX STEP 2: Use offsetWidth/Height to fetch clean, local layout metrics ---
-      // This forces the engine to bypass the cached scroll tree state.
-      const textWidth = this.contentHolder.offsetWidth;
-      const textHeight = this.contentHolder.offsetHeight;
+    // Setup offscreen canvas utility
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
 
-      if (textWidth <= maxAllowedWidth && textHeight <= maxAllowedHeight) {
-        perfectFont = mid;
-        minFont = mid + 1;
-      } else {
-        maxFont = mid - 1;
-      }
+    // --- FIX STEP 1: CALCULATE THE DYNAMIC LINE CAP ---
+    // If the box is short and wide, it can only support 1 or 2 lines of text.
+    // If the box is tall or square, it can support up to 3 lines cleanly.
+    let maxLinesAllowed = 2;
+    if (targetHeight / targetWidth > 1.2) {
+      maxLinesAllowed = 3; // Tall boxes get extra lines
+    } else if (targetHeight < 60) {
+      maxLinesAllowed = 1; // Ultra-short banners are locked to a single line
     }
 
-    // --- FIX STEP 3: Clean up and restore fluid layouts ---
-    // Revert styling parameters so your CSS can maintain natural page flow rules
-    this.contentHolder.style.width = '100%';
-    this.contentHolder.style.maxWidth = 'none';
+    // --- FIX STEP 2: RUN DETERMINISTIC STEP-DOWN LOOP ---
+    let optimalFontSize = maxFont;
 
-    // Apply the verified layout font size target
-    this.contentHolder.style.fontSize = `${perfectFont}px`;
+    while (optimalFontSize > minFont) {
+      ctx.font = `${fontWeight} ${optimalFontSize}px ${fontFamily}`;
+
+      // Calculate single continuous text width metrics
+      const textMetrics = ctx.measureText(rawTextString);
+      const totalSingleLineWidth = textMetrics.width;
+
+      // Determine how many lines this font size forces the string to wrap into
+      const linesNeeded = Math.ceil(totalSingleLineWidth / maxAllowedWidth);
+
+      // Compute vertical box accumulation matching line-height: 1.2
+      const totalBlockHeight = linesNeeded * (optimalFontSize * 1.2);
+
+      // CRITICAL CHECK: Does it stay under the width OR wrap comfortably under the line cap limit?
+      if (totalSingleLineWidth <= maxAllowedWidth) {
+        // Fits beautifully on 1 line
+        break;
+      } else if (
+        linesNeeded <= maxLinesAllowed &&
+        totalBlockHeight <= maxAllowedHeight
+      ) {
+        // Wraps cleanly, and doesn't break your line cap or push fit-content bounds
+        break;
+      }
+
+      // If it breaks constraints, step down 1px and evaluate again
+      optimalFontSize--;
+    }
+
+    // Write the perfect size onto the element in a single step
+    this.contentHolder.style.fontSize = `${optimalFontSize}px`;
   }
-  // fix for resize mistakes --
-  // #fitTextToContainer(targetWidth, targetHeight) {
-  //   if (!this.contentHolder || !targetWidth || !targetHeight) return;
-
-  //   let minFont = 10; // Equivalent to 1rem
-  //   let maxFont = 44; // Equivalent to 4.4rem
-  //   let perfectFont = minFont;
-
-  //   const visualPadding = 5;
-  //   const maxAllowedWidth = targetWidth - visualPadding * 2;
-  //   const maxAllowedHeight = targetHeight - visualPadding * 2;
-
-  //   // --- FIX: Create an isolated measurement clone outside the DOM layout tree ---
-  //   // This completely prevents floaters from breaking each other's measurements during loops
-  //   const sandboxNode = this.contentHolder.cloneNode(true);
-  //   sandboxNode.style.position = 'absolute';
-  //   sandboxNode.style.visibility = 'hidden';
-  //   sandboxNode.style.top = '-9999px';
-  //   sandboxNode.style.left = '-9999px';
-  //   sandboxNode.style.width = `${maxAllowedWidth}px`;
-  //   sandboxNode.style.maxWidth = `${maxAllowedWidth}px`;
-
-  //   // Copy computed styling attributes to ensure text-wrapping matches perfectly
-  //   sandboxNode.style.fontFamily = getComputedStyle(
-  //     this.contentHolder,
-  //   ).fontFamily;
-  //   sandboxNode.style.fontWeight = getComputedStyle(
-  //     this.contentHolder,
-  //   ).fontWeight;
-  //   sandboxNode.style.lineHeight = getComputedStyle(
-  //     this.contentHolder,
-  //   ).lineHeight;
-  //   sandboxNode.style.textAlign = getComputedStyle(
-  //     this.contentHolder,
-  //   ).textAlign;
-
-  //   document.body.appendChild(sandboxNode);
-
-  //   // Fast binary calculation loop against the clean sandbox node
-  //   while (minFont <= maxFont) {
-  //     let mid = Math.floor((minFont + maxFont) / 2);
-  //     sandboxNode.style.fontSize = `${mid}px`;
-
-  //     // Measure the text's local bounds completely un-impacted by other floaters or parent transitions
-  //     const textWidth = sandboxNode.offsetWidth;
-  //     const textHeight = sandboxNode.offsetHeight;
-
-  //     if (textWidth <= maxAllowedWidth && textHeight <= maxAllowedHeight) {
-  //       perfectFont = mid;
-  //       minFont = mid + 1; // It fits! Try to scale it up larger
-  //     } else {
-  //       maxFont = mid - 1; // Overflowing the padded space! Shrink the boundary
-  //     }
-  //   }
-
-  //   // Clean up the DOM sandbox node instantly
-  //   document.body.removeChild(sandboxNode);
-
-  //   // Lock in the absolute largest possible safe font size choice on the real element
-  //   this.contentHolder.style.fontSize = `${perfectFont}px`;
-  // }
 }
 
 export default FloaterTitle;

@@ -365,12 +365,13 @@ iframe {
   /* font-size: clamp(1.6rem, 8cqh, 4.4rem); */
   /* set a baseline size */
   font-size: 1rem;
-  overflow-wrap: anywhere;
+  /* overflow-wrap: anywhere; */
   text-wrap: balance;
   font-weight: 400;
   width: 100%;
-  max-height: fit-content;
-  min-width: fit-content;
+  /* with our new font size setting functionality in floaterTitle class we no longer need to leave this overflow to chance */
+  /* max-height: fit-content; */
+  /* min-width: fit-content; */
   word-spacing: -0.3rem;
   line-height: 1.2;
   text-align: center;
