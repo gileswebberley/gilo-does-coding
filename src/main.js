@@ -127,3 +127,6 @@ SiteManager.buildPage(ParticlesContent);
 SiteManager.buildPage(SpectrumContent);
 SiteManager.buildPage(VtSContent);
 SiteManager.buildPage(UnityContent);
+const navHolder = document.querySelector('#nav-holder');
+navHolder.style.opacity = 1;
+navHolder.style.visibility = 'visible';

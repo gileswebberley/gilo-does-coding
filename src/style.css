@@ -1,4 +1,6 @@
-@import url('https://fonts.googleapis.com/css2?family=Special+Elite&text=gilo_does_coding&display=swap');
+/*
+As this is for the logo only I'll import it in the index.html 
+@import url('https://fonts.googleapis.com/css2?family=Special+Elite&text=gilo_does_coding&display=swap'); */
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap');
 /* by including the 'text' param to the font url it only downloads those characters so less bandwidth is used */
@@ -43,20 +45,25 @@
   line-height: 1.5;
   font-weight: 400;
 
-  /* background-color: var(--colour-blue-300); */
-
-  color-scheme: light dark;
-  /* transition: color 1.6s ease;
-  transition: background-color 1.4s ease; */
-  /* --header-footer-time-colour: var(--colour-orange);
-  --header-footer-time-colour-text: var(--colour-orange-900); */
-  /* color: rgba(255, 255, 255, 0.87);
-  background-color: #242424; */
-
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  color-scheme: light dark;
+  /* Define light mode colurs */
+  background-color: var(--colour-blue-300);
+  --header-footer-time-colour: var(--colour-orange-200);
+  --header-footer-time-colour-text: var(--colour-orange-700);
+}
+
+/* Set up the dark mode colours */
+@media (prefers-color-scheme: dark) {
+  :root {
+    background-color: var(--colour-blue-700);
+    --header-footer-time-colour: var(--colour-orange-700);
+    --header-footer-time-colour-text: var(--colour-orange-200);
+  }
 }
 
 *,
@@ -140,6 +147,9 @@ summary {
   font-family: 'Special Elite', 'Courier New', Courier, monospace;
   font-size: clamp(1.2rem, 7.5dvw, 4.2rem);
   line-height: 80%;
+  max-width: calc(100% - 4.5rem);
+  overflow-wrap: anywhere;
+  text-wrap: balance;
   cursor: pointer;
 }
 
@@ -198,6 +208,13 @@ This is all of the styling for the navigation system ---------------------------
 #nav-holder {
   position: relative;
   margin-right: 0;
+  /* hide whilst loading */
+  opacity: 0;
+  visibility: hidden;
+  /* modern browsers will wait before switching visibility too - once it's fully visible it will be clickable */
+  transition:
+    opacity 1.3s ease,
+    visibility 1.4s;
 }
 
 #hamburger-button {
@@ -270,7 +287,11 @@ This is all of the styling for the navigation system ---------------------------
 
 @media screen and (max-width: 480px) {
   #main-nav {
+    /* flex-direction: column; */
     width: fit-content;
+    /* max-width: 90vw; */
+    max-height: calc(100dvh - 11rem);
+    overflow-y: auto;
   }
 }
 
@@ -324,21 +345,7 @@ This is all of the styling for the navigation system ---------------------------
   /* to try to aleviate the stuttering movement when changing colour-mode. We use this in combination with the transform3d to get some of the work passed onto the gpu as I understand */
   will-change: transform; /*, width, height;*/
   transform-origin: top left;
-  /* trying to alieviate the transition setting race conditions we'll simply set some properties and have the entire transition hard-coded in this style - this solution simply didn't work */
-  /* --- CONFIGURATION BASICK LINE ARRAYS --- */
-  /* --transition-duration: 300; */
-  /* Fallback to a standard ease-in-out if JS hasn't assigned a personality yet */
-  /* --transition-easing: ease-in-out; */
-
-  /* Bind all properties cleanly to both the duration and easing variables */
-  /* transition:
-    transform calc(var(--transition-duration) * 1ms) var(--transition-easing),
-    z-index calc(var(--transition-duration) * 1ms),
-    width calc(var(--transition-duration) * 1ms) var(--transition-easing),
-    height calc(var(--transition-duration) * 1ms) var(--transition-easing),
-    background-color calc(var(--transition-duration) * 1ms)
-      var(--transition-easing),
-    color calc(var(--transition-duration) * 1ms) var(--transition-easing); */
+  /* trying to alieviate the transition setting race conditions we'll simply set some properties and have the entire transition hard-coded in this style - this solution simply didn't work, deleted */
 }
 /* set by js when floating, this removes the border because it was aliasing as it scaled and rotated */
 .floater[data-floating='true'] {
@@ -446,7 +453,8 @@ header {
 
 footer {
   padding-top: 1rem;
-  padding-bottom: 1rem;
+  /* on a mobile screen there is a small strip at the bottom which without this is the body colour - this goes with the <meta> tag viewport-fit=cover being set */
+  padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
   border-top: 2px solid var(--header-footer-time-colour-text);
 }
 

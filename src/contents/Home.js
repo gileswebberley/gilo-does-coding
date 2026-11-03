@@ -64,7 +64,7 @@ const HomeContent = {
       type: 'html',
       src: `<h2>The very brief history of Giles</h2>
       <img src="../sweet-love-walking-new-brighton.jpg" alt="timeograph of my wife in New Brighton" style="width: 30%; height: auto; float:left; margin-right: 5%;" />
-      <p>I want you to feel like you can know me a bit so I'll give you some significant bits n bobs that led me here if that's ok with you? If you'd rather just check out my CV then you can download that <a href="../giles_webberley_cv_2025.pdf" download="Giles Webberley CV">here</a> instead.</p>
+      <p>I want you to feel like you can know me a bit so I'll give you some significant bits n bobs that led me here if that's ok with you? If you'd rather just check out my CV then you can download that <a href="../giles_webberley_cv_2026-v2.pdf" download="Giles Webberley CV">here</a> instead.</p>
       <p>In a nutshell I have been a lighting cameraman for broadcast work, then I was a web designer/developer. When that ended I went back to lens based media with a career in photography (mainly weddings). I then went through some big life changes and found myself managing bars and becoming a mixologist (not just a naff name for a cocktail bartender btw, I was designing inovative cocktail menus so this is the only word for it I think). Since having to stop that work I have been trying to switch career back to the only office job I ever loved, which was being creative with code.</p>
 
       `,
@@ -149,8 +149,9 @@ Bristol had been a favourite city for me since visiting a friend there back in t
       layoutNumber: 12,
       position: { row: 5, column: 1 },
       offset: { x: 20, y: 10 },
-      size: { width: 80, height: 35 },
+      size: { width: 80, height: 55 },
       sizeType: 'grow',
+      // sizeType: 'auto',
       type: 'title',
       src: `if you think I could be a good addition to your team then please do gimme a shout, I'm living on the Wirral and looking for my forever 'home' :D`,
     },
