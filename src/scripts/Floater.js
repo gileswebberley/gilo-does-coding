@@ -8,6 +8,8 @@ class Floater {
   static repressFloaters = false; // Static variable to control whether floaters should be able to use the entire depth, so they stay in the background and slow down when a page is open. Implementation could be more subtle but it works for now
   static repressMoveSpeedDivisor = 5;
 
+  static isLowPowerDevice = false;
+
   //I'm going to make everything apart from the Floater API private I think, I don't want to be able to mess up the inner workings (like setting the element to null or something equally catastrophic!!)
   #isFloating;
   #element;
@@ -55,8 +57,19 @@ class Floater {
     this.#currentY = y;
     this.#currentZ = z;
 
+    //check for system capabilities
+    // 1. PERFORMANCE DETECTION: Now in SiteManager.init()
+    // Fallback to low-power rules if on a small screen or if the hardware reports low capabilities
+    // const isLowPowerDevice =
+    //   (navigator.deviceMemory && navigator.deviceMemory < 4) ||
+    //   (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4);
+
     // Strip transitions, place it instantly, and force a layout lock
     this.#element.style.transition = 'none';
+    if (Floater.isLowPowerDevice) {
+      this.#element.style.willChange = 'auto';
+    }
+
     this.#setPosition(x, y, z);
     void this.#element.offsetHeight;
     requestAnimationFrame(() => {
@@ -216,17 +229,6 @@ class Floater {
     this.#element.setAttribute('data-layout-number', layoutNumber);
     this.#element.setAttribute('data-floating', this.#isFloating);
     this.#element.className = 'floater'; // Add a class for styling
-    // set the default transition duration
-    // this.#element.style.setProperty('--transition-duration', World.DURATION);
-    // this.#element.style.setProperty('--transition-easing', this.#easingStyle);
-    // this.#element.style.transition = `
-    //   transform calc(var(--transition-duration) * 1ms) var(--transition-easing),
-    //   z-index calc(var(--transition-duration) * 1ms),
-    //   width calc(var(--transition-duration) * 1ms) var(--transition-easing),
-    //   height calc(var(--transition-duration) * 1ms) var(--transition-easing),
-    //   background-color calc(var(--transition-duration) * 1ms) var(--transition-easing),
-    //   color calc(var(--transition-duration) * 1ms) var(--transition-easing)
-    // `.replace(/\s+/g, ' ');
     document.addEventListener('colourModeChange', (e) => {
       this.#colouriseFloater();
     });
@@ -315,9 +317,12 @@ class Floater {
       console.error('Invalid position values for setPosition:', x, y, z);
       return;
     }
+
     // Combine all spatial manipulations into a single transform chain
-    // translate3d handles X, Y, and forces a hardware-accelerated layer - be sure to set the z to 0px so that the perspective calculations do not make the floaters shift when the container changes size
-    let transformStr = `translate3d(${x}px, ${y}px, 0px)`;
+    // translate3d handles X, Y, and forces a hardware-accelerated layer on capable machines - be sure to set the z to 0px so that the perspective calculations do not make the floaters shift when the container changes size
+    let transformStr = Floater.isLowPowerDevice
+      ? `translate(${x}px, ${y}px)`
+      : `translate3d(${x}px, ${y}px, 0px)`;
     // Append scaling
     transformStr += ' ' + this.#setZBasedScale(z);
     // as we have set the transform-origin to top left to help with distribution the rotation is quite ugly, to fix it we'll simply shift the transform matrix for the rotation calculations
