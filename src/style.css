@@ -46,9 +46,9 @@ As this is for the logo only I'll import it in the index.html
   font-weight: 400;
 
   font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  text-rendering: auto;
+  -webkit-font-smoothing: subpixel-antialiased;
+  -moz-osx-font-smoothing: auto;
 
   color-scheme: light dark;
   /* Define light mode colurs */

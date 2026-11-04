@@ -48,7 +48,7 @@ const ParticlesContent = {
       layoutNumber: 5,
       position: { row: 3, column: 1 },
       offset: { x: 0, y: 5 },
-      size: { width: 100, height: 115 },
+      size: { width: 100, height: 125 },
       sizeType: 'grow',
       type: 'html',
       src: `<h2>Playing with a little bit of chaos, again</h2>
