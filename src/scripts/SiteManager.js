@@ -30,8 +30,9 @@ class SiteManager {
     // 1. PERFORMANCE DETECTION:
     // Fallback to low-power rules if on a small screen or if the hardware reports low capabilities
     Floater.isLowPowerDevice =
-      (navigator.deviceMemory && navigator.deviceMemory < 4) ||
+      (navigator.deviceMemory && navigator.deviceMemory <= 4) ||
       (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4);
+    console.log(`isLowPowerDevice = ${Floater.isLowPowerDevice}`);
   }
 
   static buildPage(pageData) {
